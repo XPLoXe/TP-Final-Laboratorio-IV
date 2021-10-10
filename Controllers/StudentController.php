@@ -29,7 +29,7 @@
         {
             $student = new Student();
             $student->setRecordId($recordId);
-            $student->setfirstName($firstName);
+            $student->setFirstName($firstName);
             $student->setLastName($lastName);
 
             $this->studentDAO->Add($student);
