@@ -4,9 +4,8 @@
     interface IPasswordDAO
     {
         //function Add(Career $career);
-        function GetAll();
-        function SearchByID();
-        function RetrieveData();
+        public function GetAll();
+        public function CheckUser($id, $password);
 
     }
 ?>
