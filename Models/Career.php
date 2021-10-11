@@ -3,18 +3,18 @@
 
     class Career
     {
-        private $name;
-        private $description;
-        private $active;
+        private int $careerId;
+        private string $description;
+        private bool $active;
 
-        public function getName(): string
+        public function getCareerId(): int
         {
-            return $this->name;
+            return $this->careerId;
         }
 
-        public function setName($name): void
+        public function setCareerId($careerId): void
         {
-            $this->name = $name;
+            $this->careerId = $careerId;
         }
         
         public function getDescription(): string
