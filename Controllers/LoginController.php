@@ -1,16 +1,22 @@
 <?php
     namespace Controllers;
 
-    class LoginController
+use DAO\StudentDAO;
+
+class LoginController
     {
-        public function Login()
+        public function Login($email, $password)
         {
             $parameters = array();
             if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $parameters = $_POST;
                 $email = $_POST["user"];
                 $password = $_POST["password"];
-        
+                $students = array();
+                $studentsDAO = new StudentDAO;
+                $students = $studentsDAO->GetAll();
+                
+
 
                 if (($email == "usuario") && ($password == "123"))
                 {

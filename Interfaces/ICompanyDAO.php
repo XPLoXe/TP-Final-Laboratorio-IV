@@ -3,7 +3,7 @@
 
     use Models\Company as Company;
 
-    interface ICompanytDAO
+    interface ICompanyDAO
     {
         function Add(Company $company);
         function GetAll();
