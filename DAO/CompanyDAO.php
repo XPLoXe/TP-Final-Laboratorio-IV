@@ -57,6 +57,40 @@ class CompanyDAO implements ICompanyDAO
         return null;
     }
 
+    public function getCompanyByName($name){
+        
+        $this->RetrieveData();
+
+        foreach ($this->companyList as $company) {
+
+            if ($company->getName() == $name) {
+                return $company;
+            }
+
+        }
+
+        return null;
+    }
+
+    public function getActiveCompanies(){
+        
+        $this->RetrieveData();
+
+        $activeCompanies = array();
+
+        foreach ($this->companyList as $company) {
+
+            if ($company->isActive()) {
+                array_push($activeCompanies,$company);
+            }
+
+        }
+
+        return $activeCompanies;
+    }
+
+
+
     private function RetrieveData()
     {
         $this->$companyList = array();
@@ -80,8 +114,8 @@ class CompanyDAO implements ICompanyDAO
                 $company->setLogo($valuesArray["logo"]); //Revisar esto
                 $company->setEmail($valuesArray["email"]);
                 $company->setPhoneNumber($valuesArray["phoneNumber"]);
+                $company->setActive($valuesArray["active"]);
 
-            
                 array_push($this->$companyList, $company);
             }
         }
@@ -103,6 +137,8 @@ class CompanyDAO implements ICompanyDAO
             $valuesArray["logo"] = $company->getLogo(); //Revisar esto
             $valuesArray["email"] = $company->getEmail();
             $valuesArray["phoneNumber"] = $company->getPhoneNumber();
+            $valuesArray["active"] = $company->isActive();
+
 
             array_push($arrayToEncode, $valuesArray);
         }

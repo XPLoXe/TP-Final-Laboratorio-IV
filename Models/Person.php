@@ -1,29 +1,28 @@
 <?php
-    namespace Models;
+namespace Models;
 
-    class Person
+class Person
+{
+    private $firstName;
+    private $lastName;
+
+    public function getFirstName()
     {
-        private $firstName;
-        private $lastName;
-
-        public function getFirstName()
-        {
-            return $this->firstName;
-        }
-
-        public function setFirstName($firstName)
-        {
-            $this->firstName = $firstName;
-        }
-
-        public function getLastName()
-        {
-            return $this->lastName;
-        }
-
-        public function setLastName($lastName)
-        {
-            $this->lastName = $lastName;
-        }
+        return $this->firstName;
     }
-?>
+
+    public function setFirstName($firstName)
+    {
+        $this->firstName = $firstName;
+    }
+
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName($lastName)
+    {
+        $this->lastName = $lastName;
+    }
+}

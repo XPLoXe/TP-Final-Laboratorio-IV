@@ -53,7 +53,7 @@ class StudentDAO implements IStudentDAO
 
         foreach ($this->studentList as $student) {
 
-            if ($student->getActive()) {
+            if ($student->isActive()) {
                 array_push($activeStudents, $student);
             }
 

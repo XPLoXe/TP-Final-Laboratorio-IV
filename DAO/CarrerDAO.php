@@ -53,7 +53,7 @@ class CarrerDAO implements ICarrertDAO
 
         foreach ($this->carrerList as $carrer) {
 
-            if ($carrer->getActive()) {
+            if ($carrer->isActive()) {
                 array_push($activeCarrers, $carrer);
             }
 
