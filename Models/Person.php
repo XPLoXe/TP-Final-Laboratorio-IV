@@ -1,6 +1,5 @@
 <?php
     namespace Models;
-
     class Person
     {
         private string $firstName;
@@ -72,3 +71,4 @@
             $this->active = $active;
         }
     }
+?>
