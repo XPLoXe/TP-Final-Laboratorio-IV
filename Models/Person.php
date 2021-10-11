@@ -4,7 +4,7 @@
     {
         private string $firstName;
         private string $lastName;
-        private int $dni;
+        private string $dni;
         private string $gender;
         private DateTime $birthDate;
         private string $email;
@@ -16,7 +16,7 @@
             return $this->firstName;
         }
 
-        public function setFirstName($firstName): void
+        public function setFirstName(string $firstName): void
         {
             $this->firstName = $firstName;
         }
@@ -26,7 +26,7 @@
             return $this->lastName;
         }
 
-        public function setLastName($lastName): void
+        public function setLastName(string $lastName): void
         {
             $this->lastName = $lastName;
         }
@@ -38,7 +38,7 @@
 
         public function setDni($dni): void
         {
-            $this->dni = $dni;
+            $this->dni = (string) $dni;
         }
 
         public function getGender(): string
@@ -46,7 +46,7 @@
             return $this->gender;
         }
 
-        public function setGender($gender): void
+        public function setGender(string $gender): void
         {
             $this->gender = $gender;
         }
@@ -56,7 +56,7 @@
             return $this->birthDate;
         }
 
-        public function setBirthDate($birthDate): void
+        public function setBirthDate(DateTime $birthDate): void
         {
             $this->birthDate = $birthDate;
         }
@@ -66,7 +66,7 @@
             return $this->active;
         }
 
-        public function setActive($active): void
+        public function setActive(bool $active): void
         {
             $this->active = $active;
         }
