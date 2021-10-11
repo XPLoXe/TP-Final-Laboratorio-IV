@@ -88,10 +88,10 @@ class StudentDAO implements IStudentDAO
 
         foreach ($arrayToDecode as $valuesArray) {
 
-            $student = new Student(); 
+            $student = new Student();
 
             $student->setStudentId($valuesArray["studentId"]);
-            $student->setCareerId($valuesArray["carrerId"]);
+            $student->setCareerId($valuesArray["careerId"]);
 
             $student->setFirstName($valuesArray["firstName"]);
             $student->setLastName($valuesArray["lastName"]);
