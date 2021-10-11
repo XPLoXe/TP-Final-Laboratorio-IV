@@ -1,67 +1,111 @@
 <?php
-    namespace DAO;
+namespace DAO;
 
-    use DAO\IStudentDAO as IStudentDAO;
-    use Models\Student as Student;
+use Interfaces\IStudentDAO as IStudentDAO;
+use Models\Student as Student;
 
-    class StudentDAO implements IStudentDAO
+class StudentDAO implements IStudentDAO
+{
+    private $studentList = array();
+
+    public function GetAll()
     {
-        private $studentList = array();
+        $this->RetrieveData();
 
-        public function Add(Student $student)
-        {
-            $this->RetrieveData();
-            
-            array_push($this->studentList, $student);
-
-            $this->SaveData();
-        }
-
-        public function GetAll()
-        {
-            $this->RetrieveData();
-
-            return $this->studentList;
-        }
-
-        private function SaveData()
-        {
-            $arrayToEncode = array();
-
-            foreach($this->studentList as $student)
-            {
-                $valuesArray["recordId"] = $student->getRecordId();
-                $valuesArray["firstName"] = $student->getFirstName();
-                $valuesArray["lastName"] = $student->getLastName();
-
-                array_push($arrayToEncode, $valuesArray);
-            }
-
-            $jsonContent = json_encode($arrayToEncode, JSON_PRETTY_PRINT);
-            
-            file_put_contents('Data/students.json', $jsonContent);
-        }
-
-        private function RetrieveData()
-        {
-            $this->studentList = array();
-
-            if(file_exists('Data/students.json'))
-            {
-                $jsonContent = file_get_contents('Data/students.json');
-
-                $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
-
-                foreach($arrayToDecode as $valuesArray)
-                {
-                    $student = new Student();
-                    $student->setRecordId($valuesArray["recordId"]);
-                    $student->setFirstName($valuesArray["firstName"]);
-                    $student->setLastName($valuesArray["lastName"]);
-
-                    array_push($this->studentList, $student);
-                }
-            }
-        }
+        return $this->studentList;
     }
-?>
+
+    private function getStudentsFromApi()
+    {
+        $apiStudent = curl_init(API_URL . "Student");
+
+        curl_setopt($apiStudent, CURLOPT_HTTPHEADER, array('x-api-key:' . API_KEY));
+        curl_setopt($apiStudent, CURLOPT_RETURNTRANSFER, true);
+
+        $dataAPI = curl_exec($apiStudent);
+
+        return $dataAPI;
+
+    }
+
+    public function getStudentByEmail($email)
+    {
+
+        $this->RetrieveData();
+
+        foreach ($this->studentList as $student) {
+
+            if ($student->getEmail() == $email) {
+                return $student;
+            }
+
+        }
+
+        return null;
+    }
+
+    public function getActiveStudents()
+    {
+
+        $this->RetrieveData();
+
+        $activeStudents = array();
+
+        foreach ($this->studentList as $student) {
+
+            if ($student->isActive()) {
+                array_push($activeStudents, $student);
+            }
+
+        }
+
+        return $activeStudents;
+    }
+
+    public function getStudentById($id){
+
+        $this->RetrieveData();
+
+        foreach ($this->studentList as $student) {
+
+            if ($student->getStudentId() == $id) {
+                return $student;
+            }
+
+        }
+
+        return null;
+
+    }
+
+    private function RetrieveData()
+    {
+        $this->studentList = array();
+
+        $dataAPI = $this->getStudentsFromApi();
+
+        $arrayToDecode = json_decode($dataAPI, true);
+
+        foreach ($arrayToDecode as $valuesArray) {
+
+            $student = new Student();
+
+            $student->setStudentId($valuesArray["studentId"]);
+            $student->setCareerId($valuesArray["careerId"]);
+
+            $student->setFirstName($valuesArray["firstName"]);
+            $student->setLastName($valuesArray["lastName"]);
+            $student->setDni($valuesArray["dni"]);
+            $student->setFileNumber($valuesArray["fileNumber"]);
+            $student->setGender($valuesArray["gender"]);
+            $student->setBirthDate($valuesArray["birthDate"]);
+            $student->setEmail($valuesArray["email"]);
+            $student->setPhoneNumber($valuesArray["phoneNumber"]);
+            $student->setActive($valuesArray["active"]);
+
+            array_push($this->studentList, $student);
+        }
+
+    }
+
+}

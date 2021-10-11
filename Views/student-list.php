@@ -17,7 +17,7 @@
                               {
                                    ?>
                                         <tr>
-                                             <td><?php echo $student->getRecordId() ?></td>
+                                             <td><?php echo $student->getFileNumber() ?></td>
                                              <td><?php echo $student->getLastName() ?></td>
                                              <td><?php echo $student->getFirstName() ?></td>
                                         </tr>
