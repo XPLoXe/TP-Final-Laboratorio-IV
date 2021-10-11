@@ -25,10 +25,10 @@
             require_once(VIEWS_PATH."student-list.php");
         }
 
-        public function Add($recordId, $firstName, $lastName)
+        public function Add($fileNumber, $firstName, $lastName)
         {
             $student = new Student();
-            $student->setRecordId($recordId);
+            $student->setFileNumber($fileNumber);
             $student->setFirstName($firstName);
             $student->setLastName($lastName);
 
