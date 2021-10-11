@@ -5,16 +5,17 @@
 
     class Student extends Person
     {
-        private $recordId;
-        private $studentId;
-        private $careerId;
+        private int $recordId;
+        private int $studentId;
+        private int $careerId;
+        private int $fileNumber;
 
         public function getRecordId(): int
         {
             return $this->recordId;
         }
 
-        public function setRecordId($recordId): void
+        public function setRecordId(int $recordId): void
         {
             $this->recordId = $recordId;
         }
@@ -24,7 +25,7 @@
             return $this->studentId;
         }
 
-        public function setStudentId($studentId): void
+        public function setStudentId(int $studentId): void
         {
             $this->studentId = $studentId;
         }
@@ -34,9 +35,19 @@
             return $this->careerId;
         }
 
-        public function setCareerId($careerId): void
+        public function setCareerId(int $careerId): void
         {
             $this->careerId = $careerId;
+        }
+
+        public function getFileNumber(): int
+        {
+            return $this->fileNumber;
+        }
+
+        public function setFileNumber(int $fileNumber): void
+        {
+            $this->fileNumber = $fileNumber;
         }
     }
 ?>
