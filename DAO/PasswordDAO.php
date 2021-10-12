@@ -37,6 +37,7 @@
                 $this->passwordList = $arrayToDecode;
                 return false;
             }
+            
         }
 
         private function RetrieveData()

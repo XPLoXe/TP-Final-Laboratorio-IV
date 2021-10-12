@@ -27,15 +27,14 @@ class LoginController
                 $passwordList = array();
                 $passwordList = $passwordDAO->GetAll();
 
+                if (($email == "admin@admin.com") && ($password == "12345")) {
+                    $_SESSION["IsAdmin"] = true;
+                    require_once(VIEWS_PATH."student-list.php"); //admin page redirect 
+                }
 
                 if (!is_null($student)) {
-                    if (($email == "admin@admin.com") && ($password == "12345")) {
-                        session_start();
-                        $_SESSION["IsAdmin"] = true;
-                        require_once(VIEWS_PATH."student-list.php"); //admin page redirect 
-                    }
-                    elseif ($passwordDAO->CheckUser($student->getStudentID(), $password)) {
-                        session_start();
+                    
+                    if ($passwordDAO->CheckUser($student->getStudentID(), $password)) {
                         $_SESSION["loggedUser"] = $student;
                         $_SESSION["IsAdmin"] = false;
                         require_once(VIEWS_PATH."student-list.php"); //regular user redirect
@@ -43,9 +42,15 @@ class LoginController
                     else
                     {
                         echo "<script> if(confirm('Email or Password Incorrect, please try again'));";
-                        echo "window.location = '..".VIEWS_PATH."index.php';
+                        echo "window.location = ".VIEWS_PATH."index.php';
                         </script>";
                     }
+                }
+                else
+                {
+                    echo "<script> if(confirm('Email not found'));";
+                    echo "window.location = ".VIEWS_PATH."index.php';
+                    </script>";
                 }
             }
             else

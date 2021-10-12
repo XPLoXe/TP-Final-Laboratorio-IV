@@ -13,7 +13,7 @@
                     </thead>
                     <tbody>
                          <?php
-                              foreach($studentList as $student)
+                              /* foreach($studentList as $student)
                               {
                                    ?>
                                         <tr>
@@ -22,7 +22,7 @@
                                              <td><?php echo $student->getFirstName() ?></td>
                                         </tr>
                                    <?php
-                              }
+                              } */
                          ?>
                          </tr>
                     </tbody>
