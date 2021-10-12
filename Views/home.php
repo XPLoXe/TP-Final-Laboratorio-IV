@@ -3,8 +3,6 @@
 <?php
     require_once('nav.php');
     if (!isset($_SESSION["loggedUser"])) {
-        session_start();
-
         require_once('index.php');
     }
 ?>
@@ -17,7 +15,7 @@
           <main class="d-flex align-items-center justify-content-center height-100">
                <div class="content">
                     <header class="text-center">
-                         <h1>Bienvenido <?php echo $_SESSION["loggedUser"]->getFirstName();?> <br> Bolsa de Trabajo</h1>
+                         <h1>Bienvenido <?php echo (isset($_SESSION['loggedUser'])) ? $_SESSION["loggedUser"]->getFirstName() : 'Admin' ?> <br> Bolsa de Trabajo</h1>
                     </header>
                </div>
           </main>

@@ -10,50 +10,49 @@
         public function Login($email, $password)
         {
             $parameters = array();
-            if ($_SERVER['REQUEST_METHOD'] == "POST") {
+            if ($_SERVER['REQUEST_METHOD'] == "POST") 
+            {
                 $parameters = $_POST;
                 $email = $_POST["email"];
                 $password = $_POST["password"];
 
-                //loading students
-                $studentsDAO = new StudentDAO();
-                $studentsList = array();
-                $studentsList = $studentsDAO->GetAll();
-                $student = new Student();
-                $student = $studentsDAO->getStudentByEmail($email);
-
-                //loading passwords
-                $passwordDAO = new PasswordDAO();
-                $passwordList = array();
-                $passwordList = $passwordDAO->GetAll();
-
                 if (($email == "admin@admin.com") && ($password == "12345")) {
                     $_SESSION["isAdmin"] = true;
                     require_once(VIEWS_PATH."home.php"); //admin page redirect
-                }
+                } else
+                {
+                    //loading students
+                    $studentsDAO = new StudentDAO();
+                    $studentsList = array();
+                    $studentsList = $studentsDAO->GetAll();
+                    $student = new Student();
+                    $student = $studentsDAO->getStudentByEmail($email);
 
-                if (!is_null($student)) {
-                    
-                    if ($passwordDAO->CheckUser($student->getStudentID(), $password)) {
-                        $_SESSION["loggedUser"] = $student;
-                        $_SESSION["isAdmin"] = false;
-                        require_once(VIEWS_PATH."home.php"); //regular user redirect
+                    //loading passwords
+                    $passwordDAO = new PasswordDAO();
+                    $passwordList = array();
+                    $passwordList = $passwordDAO->GetAll();
+
+                    if (!is_null($student)) {
+                        
+                        if ($passwordDAO->CheckUser($student->getStudentID(), $password)) {
+                            $_SESSION["loggedUser"] = $student;
+                            $_SESSION["isAdmin"] = false;
+                            require_once(VIEWS_PATH."home.php"); //regular user redirect
+                        }
+                        else
+                        {
+                            echo "<script> if(confirm('Email or Password Incorrect, please try again'));</script>";
+                            require_once(VIEWS_PATH."index.php");
+                        }
                     }
                     else
                     {
-                        echo "<script> if(confirm('Email or Password Incorrect, please try again'));";
-                        echo "</script>";
+                        echo "<script> if(confirm('Email not found'));</script>";
                         require_once(VIEWS_PATH."index.php");
                     }
                 }
-                else
-                {
-                    echo "<script> if(confirm('Email not found'));";
-                    echo "</script>";
-                    require_once(VIEWS_PATH."index.php");
-                }
-            }
-            else
+            } else
             {
                 header("location:index.php");
             }
