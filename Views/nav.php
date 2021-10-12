@@ -1,27 +1,19 @@
 <nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
     <span class="navbar-text">
-        <strong>
-            <?php 
-            if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'])
-                echo 'Admin';
-            else if (isset($_SESSION['loggedUser']))
-                echo $_SESSION['loggedUser']->getFirstName()." ".$_SESSION['loggedUser']->getLastName();
+        <a href="<?php echo FRONT_ROOT ?>Home/Index">
+            <strong>
+            <?php
+                echo Utils\Utils::getLoggedUserFullName();
             ?>
-        </strong>
+            </strong>
+        </a>
     </span>
     <ul class="navbar-nav ml-auto">
         <?php
-        if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) 
-        {
-            echo '<li class="nav-item"><a class="nav-link" href="'.FRONT_ROOT.'Student/ShowAddView">Agregar Alumno</a></li>"';
-        }
-        ?>        
-        <?php
-        if ((isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) || isset($_SESSION['loggedUser'])) 
-        {
-            echo '<li class="nav-item"><a class="nav-link" href="'.FRONT_ROOT.'Student/ShowListView">Listar Alumnos</a></li>';
-            echo '<li class="nav-item"><a class="nav-link" href="'.FRONT_ROOT.'Login/Logout">Cerrar Sesión</a></li>"';
-        }
+        if (Utils\Utils::isAdmin())
+            include_once('nav-admin.php');
         ?>
+        <li class="nav-item"><a class="nav-link" href="<?php echo FRONT_ROOT ?>Student/ShowListView">Listar Alumnos</a></li>;
+        <li class="nav-item"><a class="nav-link" href="<?php echo FRONT_ROOT ?>Login/Logout">Cerrar Sesión</a></li>;
     </ul>
 </nav>

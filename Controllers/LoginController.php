@@ -5,6 +5,8 @@
     use DAO\StudentDAO;
     use Models\Student;
 
+    use Utils\Utils as Utils;
+
     class LoginController
     {
         public function Login($email, $password)
@@ -43,18 +45,18 @@
                         else
                         {
                             echo "<script> if(confirm('Email or Password Incorrect, please try again'));</script>";
-                            require_once(VIEWS_PATH."index.php");
+                            require_once(VIEWS_PATH."login.php");
                         }
                     }
                     else
                     {
                         echo "<script> if(confirm('Email not found'));</script>";
-                        require_once(VIEWS_PATH."index.php");
+                        require_once(VIEWS_PATH."login.php");
                     }
                 }
             } else
             {
-                header("location:index.php");
+                header("location:login.php");
             }
         }
 
@@ -63,7 +65,7 @@
         {
             $_SESSION = array(); //Clean every variable set in $_SESSION (session_destroy() does not clean them)
             session_destroy();
-            require_once(VIEWS_PATH."index.php");
+            require_once(VIEWS_PATH."login.php");
         }
     }
 ?>
