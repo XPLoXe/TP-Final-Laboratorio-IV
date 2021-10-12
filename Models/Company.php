@@ -3,6 +3,7 @@
 
     class Company
     {
+        private int $companyId;
         private string $name;
         private int $yearFoundation;
         private string $city;
@@ -90,6 +91,16 @@
         public function setActive($active): void
         {
             $this->active = $active;
+        }
+
+        public function getCompanyId(): int
+        {
+            return $this->companyId;
+        }
+
+        public function setCompanyId($companyId): void
+        {
+            $this->companyId = $companyId;
         }
     }
 ?>
