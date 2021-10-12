@@ -1,11 +1,11 @@
 <?php
     namespace Controllers;
 
-use DAO\PasswordDAO;
-use DAO\StudentDAO;
-use Models\Student;
+    use DAO\PasswordDAO;
+    use DAO\StudentDAO;
+    use Models\Student;
 
-class LoginController
+    class LoginController
     {
         public function Login($email, $password)
         {
@@ -28,16 +28,16 @@ class LoginController
                 $passwordList = $passwordDAO->GetAll();
 
                 if (($email == "admin@admin.com") && ($password == "12345")) {
-                    $_SESSION["IsAdmin"] = true;
-                    require_once(VIEWS_PATH."student-list.php"); //admin page redirect 
+                    $_SESSION["isAdmin"] = true;
+                    require_once(VIEWS_PATH."index.php"); //admin page redirect
                 }
 
                 if (!is_null($student)) {
                     
                     if ($passwordDAO->CheckUser($student->getStudentID(), $password)) {
                         $_SESSION["loggedUser"] = $student;
-                        $_SESSION["IsAdmin"] = false;
-                        require_once(VIEWS_PATH."student-list.php"); //regular user redirect
+                        $_SESSION["isAdmin"] = false;
+                        require_once(VIEWS_PATH."index.php"); //regular user redirect
                     }
                     else
                     {
@@ -57,6 +57,14 @@ class LoginController
             {
                 header("location:index.php");
             }
+        }
+
+
+        public function Logout()
+        {
+            $_SESSION = array(); //Clean every variable set in $_SESSION (session_destroy() does not clean them)
+            session_destroy();
+            require_once(VIEWS_PATH."index.php");
         }
     }
 ?>
