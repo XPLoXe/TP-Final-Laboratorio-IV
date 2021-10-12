@@ -1,9 +1,5 @@
 <!DOCTYPE html>
 
-<?php
-    require_once('nav.php');
-?>
-
 <html>
      <head>
           <link rel="stylesheet" type="text/css" href="css\estilos.css">
