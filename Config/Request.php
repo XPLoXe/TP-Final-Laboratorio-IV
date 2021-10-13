@@ -15,41 +15,39 @@
          
             $urlArray = array_filter($urlArray);
 
-            if(empty($urlArray))
+            if (empty($urlArray))
                 $this->controller = "Home";            
             else
                 $this->controller = ucwords(array_shift($urlArray));
 
-            if(empty($urlArray))
+            if (empty($urlArray))
                 $this->method = "Index";
             else
                 $this->method = array_shift($urlArray);
 
             $methodRequest = $this->getMethodRequest();
                         
-            if($methodRequest == "GET")
+            if ($methodRequest == "GET")
             {
                 unset($_GET["url"]);
 
-                if(!empty($_GET))
+                if (!empty($_GET))
                 {                    
-                    foreach($_GET as $key => $value)                    
+                    foreach ($_GET as $key => $value)                    
                         array_push($this->parameters, $value);
                 }
                 else
                     $this->parameters = $urlArray;
             }
-            elseif ($_POST)
+            else if ($_POST)
                 $this->parameters = $_POST;
             
-            if($_FILES)
+            if ($_FILES)
             {
                 unset($this->parameters["button"]);
-                
-                foreach($_FILES as $file)
-                {
-                    array_push($this->parameters, $file);
-                }
+
+                foreach ($_FILES as $key => $file)
+                    $this->parameters[$key] = $file;
             }
         }
 
