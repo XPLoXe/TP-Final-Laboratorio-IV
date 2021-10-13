@@ -14,6 +14,7 @@
             return Utils::isAdmin() || isset($_SESSION['loggedUser']);
         }
 
+        
         public static function getLoggedUserFullName(): string
         {
             $name = (Utils::isAdmin()) ? "Admin" : $_SESSION['loggedUser']->getFirstName() . " " . $_SESSION['loggedUser']->getLastName();
