@@ -25,35 +25,61 @@
             require_once(VIEWS_PATH."company-list.php");
         }
 
-        public function Add($name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active)
+        public function Add($name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber)
         {
-            $company = new Company();
-            
-            //The ID is set in SaveData in CompanyDAO
+            $parameters=array();
 
-            $company->setName($name);
-            $company->setYearFoundation($yearFoundation);
-            $company->setCity($city);
-            $company->setDescription($description);
-            $company->setLogo($logo);
-            $company->setEmail($email);
-            $company->setPhoneNumber($phoneNumber);
-            $company->setActive($active);
+            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
 
-            $this->companyDAO->Add($company);
+                $parameters = $_POST;
+                $name = $_POST["name"];
+                $yearFoundation = $_POST["yearFoundation"];
+                $city = $_POST["city"];
+                $description = $_POST["description"];
+                $logo = $_POST["logo"];
+                $email = $_POST["email"];
+                $phoneNumber = $_POST["phoneNumber"];
 
-            $this->ShowAddView();
+                $company = new Company();
+                
+                //The ID is set in SaveData in CompanyDAO
+
+                $company->setName($name);
+                $company->setYearFoundation($yearFoundation);
+                $company->setCity($city);
+                $company->setDescription($description);
+                $company->setLogo($logo);
+                $company->setEmail($email);
+                $company->setPhoneNumber($phoneNumber);
+                $company->setActive(true);
+
+                $this->companyDAO->Add($company);
+
+                $this->ShowListView();
+
+            }//Poner un else de q pasa si no es post
         }
 
-        public function Alter(Company $companyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active){
+        public function Alter($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active){
+
+           $parameters = array();
 
             if ($_SERVER['REQUEST_METHOD'] == "POST") { 
 
                 $parameters = $_POST;
 
-                $companyToDelete = $_POST["companyInfo"];
+                $idCompanyToAlter = $_POST["companyId"];
+                $name = $_POST["name"];
+                $yearFoundation = $_POST["yearFoundation"];
+                $city = $_POST["city"];
+                $description = $_POST["description"];
+                $logo = $_POST["logo"];
+                $email = $_POST["email"]; 
+                $phoneNumber = $_POST["phoneNumber"];
+                $active = $_POST["active"];
 
-                $this->companyDAO->alterCompany($companyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active);
+
+                $this->companyDAO->alterCompany($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active);
 
             }
 

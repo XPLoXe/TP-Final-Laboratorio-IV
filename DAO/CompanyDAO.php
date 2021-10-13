@@ -105,13 +105,13 @@ class CompanyDAO implements ICompanyDAO
         return false;
     }
 
-    public function alterCompany(Company $companyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active){// return a boolean
+    public function alterCompany($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active){// return a boolean
 
         $this->RetrieveData();
 
         foreach($this->companyList as $company){
 
-                if($company->getCompanyId() == $companyToAlter->getCompanyId()){
+                if( $company->getCompanyId() == $idCompanyToAlter ){
 
                     if(!empty($name))
                         $company->setName($name);
@@ -144,11 +144,9 @@ class CompanyDAO implements ICompanyDAO
 
                 }
 
-
         }
 
         return false;
-
 
     }
 
