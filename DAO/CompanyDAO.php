@@ -1,152 +1,252 @@
 <?php
-namespace DAO;
 
-use Interfaces\ICompanyDAO as ICompanyDAO;
-use Models\Company as Company;
+    namespace DAO;
 
-class CompanyDAO implements ICompanyDAO
-{
-    private $companyList = array();
+    use Interfaces\ICompanyDAO as ICompanyDAO;
+    use Models\Company as Company;
 
-    public function Add(Company $company){
-
-        $this->RetrieveData();
-            
-        array_push($this->companyList, $company);
-
-        $this->SaveData();
-
-    }
-
-    public function GetAll()
+    class CompanyDAO implements ICompanyDAO
     {
-        $this->RetrieveData();
+        private $companyList = array();
 
-        return $this->companyList;
-    }
+        public function Add(Company $company)
+        {
+            $this->RetrieveData();
 
-    public function getCompanyByEmail($email)
-    {
+            array_push($this->companyList, $company);
 
-        $this->RetrieveData();
+            $this->SaveData();
+        }
 
-        foreach ($this->companyList as $$company) {
 
-            if ($email == $company->getEmail()) {
-                return $company;
+        public function GetAll()
+        {
+            $this->RetrieveData();
+
+            return $this->companyList;
+        }
+
+        public function getCompanyByEmail($email)
+        {
+            $this->RetrieveData();
+
+            foreach ($this->companyList as $$company) {
+
+                if ($email == $company->getEmail()) {
+                    return $company;
+                }
             }
 
+            return null;
         }
 
-        return null;
-    }
+        public function getCompanyById($id)
+        {
+            $this->RetrieveData();
 
-    public function getCompanyById($id)
-    {
+            foreach ($this->companyList as $company) {
 
-        $this->RetrieveData();
-
-        foreach ($this->companyList as $company) {
-
-            if ($company->getCompanyId() == $id) {
-                return $company;
+                if ($company->getCompanyId() == $id)
+                    return $company;
             }
 
+            return null;
         }
 
-        return null;
-    }
+        public function getCompaniesFilterByName($name)
+        {
+            $this->RetrieveData();
 
-    public function getCompanyByName($name){
-        
-        $this->RetrieveData();
+            $filterCompanies = array();
 
-        foreach ($this->companyList as $company) {
+            foreach ($this->companyList as $company) {
 
-            if ($company->getName() == $name) {
-                return $company;
+                if (array_search($name, $company->getName()) && $company->isActive())
+                    array_push($filterCompanies, $company);
             }
 
-        }
+            if (!empty($filterCompanies)) {
+                $this->companyList = $filterCompanies;
+                $this->companyList = $filterCompanies;
+                $this->companyList = $filterCompanies;
+                $this->companyList = $filterCompanies;
+                $this->companyList = $filterCompanies;
 
-        return null;
-    }
-
-    public function getActiveCompanies(){
-        
-        $this->RetrieveData();
-
-        $activeCompanies = array();
-
-        foreach ($this->companyList as $company) {
-
-            if ($company->isActive()) {
-                array_push($activeCompanies,$company);
+                return true;
+                /*Si tiene algun dato el arreglo con las companias filtradas, quiere decir q tuvimos exito al encontrar companias
+                    que contengan el string ingresado por usuario
+                    Me da un toque de miedo modificar el $this->companyList pero todavia no veo un escenario donde pierda datos*/
             }
 
+            return false;
+            /*Si ingresamos un 1 en el input, y no hay ninguna empresa q contenga un 1 como nombre, nos arrojara un false
+                y con este return podemos mostrar un mensaje diciendo q ninguna compania contiene el string ingresado*/
         }
 
-        return $activeCompanies;
-    }
+        public function deleteCompany($companyToDelete)
+        { // return a boolean
+
+            $this->RetrieveData();
+
+            foreach ($this->companyList as $company) {
+
+                if ($company->getCompanyId() == $companyToDelete->getCompanyId()) {
+
+                    $companyToDelete->setActive(false);
+
+                    $this->SaveData();
+
+                    return true; //With this i can stop to iterate and we can check that the company was altered
+
+                }
+            }
+
+            return false;
+        }
+
+        public function alterCompany($idCompanyToAlter, $name, $yearFoundation, $city, $description, $email, $phoneNumber, $active)
+        { // return a boolean
+
+            $this->RetrieveData();
+
+            foreach ($this->companyList as $company) {
+
+                if ($company->getCompanyId() == $idCompanyToAlter) {
+
+                    if (!empty($name))
+                        $company->setName($name);
+
+                    if (!empty($yearFoundation))
+                        $company->setYearFoundation($yearFoundation);
+
+                    if (!empty($city))
+                        $company->setCity($city);
+
+                    if (!empty($description))
+                        $company->setDescription($description);
+
+                    if (!empty($logo))
+                        $company->setLogo($logo);
+
+                    if (!empty($email))
+                        $company->setEmail($email);
+
+                    if (!empty($phoneNumber))
+                        $company->setPhoneNumber($phoneNumber);
+
+                    if (!empty($active))
+                        $company->setActive($active);
 
 
+                    $this->SaveData(); //i hope not have problems with the Id 
+                    $this->SaveData(); //i hope not have problems with the Id 
+                    $this->SaveData(); //i hope not have problems with the Id 
+                    $this->SaveData(); //i hope not have problems with the Id 
+                    $this->SaveData(); //i hope not have problems with the Id 
 
-    private function RetrieveData()
-    {
-        $this->$companyList = array();
+                    return true;
+                }
+            }
 
-        if (file_exists('Data/companies.json')) {
+            return false;
+        }
 
-            $jsonContent = file_get_contents('Data/companies.json');
+        public function getActiveCompanies()
+        {
 
-            $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
+            $this->RetrieveData();
 
-            foreach ($arrayToDecode as $valuesArray) {
+            $activeCompanies = array();
 
-                $company = new Company();
+            foreach ($this->companyList as $company) {
 
-                $company->setCompanyId($valuesArray["companyId"]);
+                if ($company->isActive()) {
+                    array_push($activeCompanies, $company);
+                }
+            }
 
-                $company->setName($valuesArray["name"]);
-                $company->setYearFoundation($valuesArray["yearFoundation"]);
-                $company->setCity($valuesArray["city"]);
-                $company->setDescription($valuesArray["description"]);
-                $company->setLogo($valuesArray["logo"]); //Revisar esto
-                $company->setEmail($valuesArray["email"]);
-                $company->setPhoneNumber($valuesArray["phoneNumber"]);
-                $company->setActive($valuesArray["active"]);
+            return $activeCompanies;
+        }
 
-                array_push($this->$companyList, $company);
+        public function getNewCompanyId()
+        {
+
+            $newCompanyId = 0;
+
+            $this->RetrieveData();
+
+            if (!empty($this->companyList)) {
+
+
+                foreach ($this->companyList as $company) {
+
+                    if ($company->getCompanyId() > $newCompanyId)
+                        $newCompanyId = $company->getCompanyId();
+                }
+
+                return $newCompanyId++;
+            } else {
+
+                return $newCompanyId;
             }
         }
 
-    }
+        private function RetrieveData()
+        {
+            $this->companyList = array();
 
-    private function SaveData()
-    {
-        $arrayToEncode = array();
+            if (file_exists('Data/companies.json')) {
 
-        foreach($this->$companyList as $company)
-        {           
+                $jsonContent = file_get_contents('Data/companies.json');
 
-            $valuesArray["companyId"] = $company->getCompanyId();
-            $valuesArray["name"] = $company->getName();
-            $valuesArray["yearFoundation"] = $company->getYearFoundation();
-            $valuesArray["city"] = $company->getCity();
-            $valuesArray["description"] = $company->getDescription();
-            $valuesArray["logo"] = $company->getLogo(); //Revisar esto
-            $valuesArray["email"] = $company->getEmail();
-            $valuesArray["phoneNumber"] = $company->getPhoneNumber();
-            $valuesArray["active"] = $company->isActive();
+                $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
 
+                foreach ($arrayToDecode as $valuesArray) {
 
-            array_push($arrayToEncode, $valuesArray);
+                    $company = new Company();
+
+                    $company->setCompanyId($valuesArray["companyId"]);
+                    $company->setName($valuesArray["name"]);
+                    $company->setYearFoundation($valuesArray["yearFoundation"]);
+                    $company->setCity($valuesArray["city"]);
+                    $company->setDescription($valuesArray["description"]);
+                    $company->setLogo($valuesArray["logo"]); //check this
+                    $company->setEmail($valuesArray["email"]);
+                    $company->setPhoneNumber($valuesArray["phoneNumber"]);
+                    $company->setActive($valuesArray["active"]);
+
+                    array_push($this->companyList, $company);
+                }
+            }
         }
 
-        $jsonContent = json_encode($arrayToEncode, JSON_PRETTY_PRINT);
-        
-        file_put_contents('Data/companies.json', $jsonContent);
+        public function SaveImage($tmp, $target)
+        {
+            move_uploaded_file($tmp, $target);
+        }
+
+        private function SaveData()
+        {
+            $arrayToEncode = array();
+
+            foreach ($this->companyList as $company) {
+
+                $valuesArray["companyId"] = $this->getNewCompanyId();
+
+                $valuesArray["name"] = $company->getName();
+                $valuesArray["yearFoundation"] = $company->getYearFoundation();
+                $valuesArray["city"] = $company->getCity();
+                $valuesArray["description"] = $company->getDescription();
+                $valuesArray["logo"] = $company->getLogo(); //Check this, because we use a picture
+                $valuesArray["email"] = $company->getEmail();
+                $valuesArray["phoneNumber"] = $company->getPhoneNumber();
+                $valuesArray["active"] = $company->isActive();
+
+
+                array_push($arrayToEncode, $valuesArray);
+            }
+
+            $jsonContent = json_encode($arrayToEncode, JSON_PRETTY_PRINT);
+            file_put_contents(JSON_PATH . 'companies.json', $jsonContent);
+        }
     }
-
-
-}
