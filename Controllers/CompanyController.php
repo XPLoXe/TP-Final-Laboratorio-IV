@@ -25,27 +25,6 @@
             require_once(VIEWS_PATH."company-list.php");
         }
 
-        public function Add($parameters)
-        {
-            $tmp = ($parameters['logo']['tmp_name']);
-            $target = IMG_PATH.$parameters['logo']['name'];
-            #die(var_dump($_FILES));
-            $company = new Company();
-            $company->setName($parameters['name']);
-            $company->setYearFoundation($parameters['yearFoundation']);
-            $company->setCity($parameters['city']);
-            $company->setDescription($parameters['description']);
-            $company->setLogo($parameters['logo']['name']);
-            $company->setEmail($parameters['email']);
-            $company->setPhoneNumber($parameters['phoneNumber']);
-            $company->setActive(true);
-
-            $this->companyDAO->Add($company);
-            $this->companyDAO->SaveImage($tmp, $target);
-
-            $this->ShowListView();
-        }
-
         public function Alter($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active){
 
            $parameters = array();
@@ -88,28 +67,56 @@
 
         }
 
+        public function Add($parameters)
+        {
+            $tmp = ($parameters['logo']['tmp_name']);
+            $target = IMG_PATH.$parameters['logo']['name'];
+            #die(var_dump($_FILES));
+            $company = new Company();
+            $company->setName($parameters['name']);
+            $company->setYearFoundation($parameters['yearFoundation']);
+            $company->setCity($parameters['city']);
+            $company->setDescription($parameters['description']);
+            $company->setLogo($parameters['logo']['name']);
+            $company->setEmail($parameters['email']);
+            $company->setPhoneNumber($parameters['phoneNumber']);
+            $company->setActive(true);
+
+            $this->companyDAO->Add($company);
+            $this->companyDAO->SaveImage($tmp, $target);
+
+            $this->ShowListView();
+        }
         
-        public function FilterByName($name){
+        public function FilterByName($parameters){
 
-            $parameters = array();
+            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
 
-            if ($_SERVER['REQUEST_METHOD'] == "POST") { //Maybe this is GET
-
-                $parameters = $_POST;
-
-                $name = $_POST["nameToFilter"];
-
-                $aCompanyWasFiltered  = $this->companyDAO->getCompaniesFilterByName($name);//This modificate the $companyList if there is any filter ocasion
-
-                if(!$aCompanyWasFiltered){
-
-                    $msgErrorFilter = '<strong style="color:red; font-size:large;">None of the Companies contains the input</strong>';
+                if(empty($parameters["nameToFilter"])){//Si ingreso el input vacio apareceran todas las companias
 
                     $this->ShowListView();
 
                 }else{
 
-                    require_once(VIEWS_PATH."company-list.php");
+                    $aCompanyWasFiltered  = $this->companyDAO->getCompaniesFilterByName($parameters["nameToFilter"]);//This modificate the $companyList if there is any filter ocasion
+
+                    if($aCompanyWasFiltered===false){
+
+                        $msgErrorFilter = '<strong style="color:red; font-size:small ;"> Ninguna Compañia contiene el nombre ingresado </strong>';
+
+                        $companyList = $this->companyDAO->GetAll(); //No llamo al metodo ShowListView porq no me aparecera el msg
+
+                        require_once(VIEWS_PATH."company-list.php");
+    
+                    }else{
+
+                        $companyList = $this->companyDAO->getCompanyList();
+
+                        require_once(VIEWS_PATH."company-list.php");
+
+                    }
+
+                    
 
                 }
 

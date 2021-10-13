@@ -1,6 +1,7 @@
 <?php
 require_once 'nav.php';
 ?>
+
 <main class="py-5">
     <section id="listado" class="mb-5">
         <div class="container">
@@ -10,22 +11,15 @@ require_once 'nav.php';
                 <div class="row">
                     <div class="col-lg-4">
                         <div class="form-group">
-                            <label for="">Filter by name</label>
-                            <input type="text" name="nameToFilter" class="form-control" placeholder="Insert Company Name">
+                            <input type="text" name="nameToFilter" class="form-control" placeholder="Ingrese nombre de la compañia">
                         </div>
                     </div>
                 </div>
                 <button type="submit" name="button" class="btn btn-dark ml-auto d-block">Filter</button>
             </form>
 
-            <?php if (isset($msgErrorFilter)) echo $msgErrorFilter; ?>
+            <?php if (isset($msgErrorFilter)) echo $msgErrorFilter;  ?>
 
-            <script>
-                function selectCompanyId(companyId) {
-                    document.getId.id.value = $(this).closest('tr').attr('id');
-                    document.getElementsByName('getId')[0].submit();
-                }
-            </script>
 
             <form action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='getId' method='POST' class="bg-light-alpha p-5">
                 <input type='hidden' name='companyId' id='id'>
@@ -51,7 +45,7 @@ require_once 'nav.php';
                                     </tr>
                                 <?php }
                         } else {
-                                ?><tr>There is no companies</tr><?php
+                                ?><tr><td>There is no companies</td></tr><?php
                                                             } ?>
                     </tbody>
                 </table>

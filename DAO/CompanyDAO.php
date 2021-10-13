@@ -18,7 +18,11 @@
             $this->SaveData();
         }
 
-
+        public function getCompanyList()
+        {
+            return $this->companyList;
+        }
+        
         public function GetAll()
         {
             $this->RetrieveData();
@@ -53,6 +57,16 @@
             return null;
         }
 
+        public function isNameinCompanyName($companyName,$name){
+
+            if(strripos($companyName,$name)===false){
+                return false;
+            }else{
+                return true;
+            }
+
+        }
+
         public function getCompaniesFilterByName($name)
         {
             $this->RetrieveData();
@@ -61,26 +75,22 @@
 
             foreach ($this->companyList as $company) {
 
-                if (array_search($name, $company->getName()) && $company->isActive())
+                if ( $this->isNameinCompanyName($company->getName(),$name) && $company->isActive() )
                     array_push($filterCompanies, $company);
             }
 
             if (!empty($filterCompanies)) {
-                $this->companyList = $filterCompanies;
-                $this->companyList = $filterCompanies;
-                $this->companyList = $filterCompanies;
-                $this->companyList = $filterCompanies;
-                $this->companyList = $filterCompanies;
 
+                $this->companyList = $filterCompanies;
                 return true;
-                /*Si tiene algun dato el arreglo con las companias filtradas, quiere decir q tuvimos exito al encontrar companias
-                    que contengan el string ingresado por usuario
-                    Me da un toque de miedo modificar el $this->companyList pero todavia no veo un escenario donde pierda datos*/
+
+            }else{
+
+                return false;
+
             }
 
-            return false;
-            /*Si ingresamos un 1 en el input, y no hay ninguna empresa q contenga un 1 como nombre, nos arrojara un false
-                y con este return podemos mostrar un mensaje diciendo q ninguna compania contiene el string ingresado*/
+            
         }
 
         public function deleteCompany($companyToDelete)
@@ -232,4 +242,6 @@
             $jsonContent = json_encode($arrayToEncode, JSON_PRETTY_PRINT);
             file_put_contents(JSON_PATH . 'companies.json', $jsonContent);
         }
+
+    
     }
