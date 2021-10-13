@@ -25,39 +25,25 @@
             require_once(VIEWS_PATH."company-list.php");
         }
 
-        public function Add($name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber)
+        public function Add($parameters)
         {
-            $parameters=array();
+            $tmp = ($parameters['logo']['tmp_name']);
+            $target = IMG_PATH.$parameters['logo']['name'];
+            #die(var_dump($_FILES));
+            $company = new Company();
+            $company->setName($parameters['name']);
+            $company->setYearFoundation($parameters['yearFoundation']);
+            $company->setCity($parameters['city']);
+            $company->setDescription($parameters['description']);
+            $company->setLogo($parameters['logo']['name']);
+            $company->setEmail($parameters['email']);
+            $company->setPhoneNumber($parameters['phoneNumber']);
+            $company->setActive(true);
 
-            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
+            $this->companyDAO->Add($company);
+            $this->companyDAO->SaveImage($tmp, $target);
 
-                $parameters = $_POST;
-                $name = $_POST["name"];
-                $yearFoundation = $_POST["yearFoundation"];
-                $city = $_POST["city"];
-                $description = $_POST["description"];
-                $logo = $_POST["logo"];
-                $email = $_POST["email"];
-                $phoneNumber = $_POST["phoneNumber"];
-
-                $company = new Company();
-                
-                //The ID is set in SaveData in CompanyDAO
-
-                $company->setName($name);
-                $company->setYearFoundation($yearFoundation);
-                $company->setCity($city);
-                $company->setDescription($description);
-                $company->setLogo($logo);
-                $company->setEmail($email);
-                $company->setPhoneNumber($phoneNumber);
-                $company->setActive(true);
-
-                $this->companyDAO->Add($company);
-
-                $this->ShowListView();
-
-            }//Poner un else de q pasa si no es post
+            $this->ShowListView();
         }
 
         public function Alter($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active){
@@ -102,6 +88,7 @@
 
         }
 
+        
         public function FilterByName($name){
 
             $parameters = array();
@@ -130,7 +117,8 @@
 
         }
 
-        public function ShowInfo($companyId){
+        public function ShowInfo($companyId)
+        {
 
             $parameters = array();
 
@@ -148,4 +136,3 @@
 
         }
     }
-?>

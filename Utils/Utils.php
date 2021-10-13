@@ -11,7 +11,7 @@
         
         public static function isUserLoggedIn(): bool
         {
-            return isset($_SESSION['loggedUser']);
+            return isset($_SESSION['loggedUser']) || Utils::isAdmin();
         }
 
         public static function getLoggedUserFullName(): string

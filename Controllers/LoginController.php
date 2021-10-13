@@ -9,7 +9,7 @@
 
     class LoginController
     {
-        public function Login($email, $password)
+        public function Login()
         {
             $parameters = array();
             if ($_SERVER['REQUEST_METHOD'] == "POST") 
@@ -21,7 +21,7 @@
                 if (($email == "admin@admin.com") && ($password == "12345")) {
                     $_SESSION["isAdmin"] = true;
                     //require_once(VIEWS_PATH."home.php"); //admin page redirect
-                    require_once(VIEWS_PATH."company-add.php"); //Lo hago para debuggear nomas
+                    require_once(VIEWS_PATH."home.php"); //Lo hago para debuggear nomas
                 } else
                 {
                     //loading students

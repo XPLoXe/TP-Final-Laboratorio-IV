@@ -17,10 +17,11 @@
 
             $controller = new $controllerClassName;
             
-            if(!isset($methodParameters))            
+            if (!isset($methodParameters))           
                 call_user_func(array($controller, $methodName));
             else
-                call_user_func_array(array($controller, $methodName), $methodParameters);
+                #die(var_dump($methodParameters));
+                call_user_func_array(array($controller, $methodName), array($methodParameters));
         }
     }
 ?>
