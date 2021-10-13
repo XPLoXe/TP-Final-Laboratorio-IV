@@ -168,29 +168,7 @@
             return $activeCompanies;
         }
 
-        public function getNewCompanyId()
-        {
-
-            $newCompanyId = 0;
-
-            $this->RetrieveData();
-
-            if (!empty($this->companyList)) {
-
-
-                foreach ($this->companyList as $company) {
-
-                    if ($company->getCompanyId() > $newCompanyId)
-                        $newCompanyId = $company->getCompanyId();
-                }
-
-                return $newCompanyId++;
-            } else {
-
-                return $newCompanyId;
-            }
-        }
-
+       
         private function RetrieveData()
         {
             $this->companyList = array();
@@ -225,14 +203,19 @@
             move_uploaded_file($tmp, $target);
         }
 
+        public function getNewCompanyId($company){
+
+            return array_search($company,$this->companyList);
+
+        }
+
         private function SaveData()
         {
             $arrayToEncode = array();
 
             foreach ($this->companyList as $company) {
 
-                $valuesArray["companyId"] = $this->getNewCompanyId();
-
+                $valuesArray["companyId"] = $this->getNewCompanyId($company);
                 $valuesArray["name"] = $company->getName();
                 $valuesArray["yearFoundation"] = $company->getYearFoundation();
                 $valuesArray["city"] = $company->getCity();
