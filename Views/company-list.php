@@ -46,10 +46,13 @@ require_once 'nav.php';
                                         <!-- <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowAddview" name='edit' method='POST' class="bg-light-alpha p-5">
                                         </form> -->
                                         <form id="delete" action="<?php echo FRONT_ROOT ?>Company/Delete" name='edit' method='POST' class="bg-light-alpha p-5">
+                                        </form>
+                                        <form id="edit" action="<?php echo FRONT_ROOT ?>Company/company-alter.php" name='edit' method='POST' class="bg-light-alpha p-5">
                                             <td><button class="btn btn-dark" type= "submit" name="edit" form="edit" >Edit</button> <button class="btn btn-dark" type="submit" name="delete" form="delete" >Delete</button></td>
                                         </form>
                                         
-                                        <!-- <td><input type = "button" alt="asd"></td> -->
+                                        
+    
                                         
                                         
                                         <!-- <input type="image" src="<?php echo IMG_PATH."Edit.php"?>" name="submit" alt="submit"/>; -->
@@ -60,11 +63,6 @@ require_once 'nav.php';
                                 ?><tr><td>There is no companies</td></tr><?php
                                                             } ?>
                                 
-                                <!-- <input type="image" src="<?php echo ROOT.IMG_PATH."Edit.png" ?>" name="submit" alt="suasdbmit"/>;
-                                <button class="btn btn-dark btn-block btn-lg" type="submit">Login</button>
-                                <form  action="<?php echo FRONT_ROOT ?>Login/Login" method="post" class="login-form bg-dark-alpha p-5 text-white">
-                                    <button class="btn btn-dark btn-block btn-lg" type="submit">Login</button>
-                                </form> -->
                     </tbody>
                 </table>
             </form>
