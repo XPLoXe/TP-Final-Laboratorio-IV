@@ -26,7 +26,7 @@
         public function GetAll()
         {
             $this->RetrieveData();
-
+            
             return $this->companyList;
         }
 
@@ -93,25 +93,14 @@
             
         }
 
-        public function deleteCompany($companyToDelete)
-        { // return a boolean
-
+        public function deleteCompany($id)
+        {
             $this->RetrieveData();
 
-            foreach ($this->companyList as $company) {
+            $company = $this->getCompanyById($id);
+            $company->setActive(false);
 
-                if ($company->getCompanyId() == $companyToDelete->getCompanyId()) {
-
-                    $companyToDelete->setActive(false);
-
-                    $this->SaveData();
-
-                    return true; //With this i can stop to iterate and we can check that the company was altered
-
-                }
-            }
-
-            return false;
+            $this->SaveData();
         }
 
         public function alterCompany($idCompanyToAlter, $name, $yearFoundation, $city, $description, $email, $phoneNumber, $active)
@@ -213,11 +202,10 @@
             move_uploaded_file($tmp, $target);
         }
 
-        public function getNewCompanyId($company){
-
-            return array_search($company,$this->companyList);
-
-        }
+        public function getCompanyPositionInArray($company)
+        {
+            return array_search($company,$this->companyList); //TODO: Rewrite this to avoid edge case where a company is deleted
+        }                                                     // and every id is now offset from array index
 
         private function SaveData()
         {
@@ -225,15 +213,15 @@
 
             foreach ($this->companyList as $company) {
 
-                $valuesArray["companyId"] = $this->getNewCompanyId($company);
-                $valuesArray["name"] = $company->getName();
-                $valuesArray["yearFoundation"] = $company->getYearFoundation();
-                $valuesArray["city"] = $company->getCity();
-                $valuesArray["description"] = $company->getDescription();
-                $valuesArray["logo"] = $company->getLogo(); //Check this, because we use a picture
-                $valuesArray["email"] = $company->getEmail();
-                $valuesArray["phoneNumber"] = $company->getPhoneNumber();
-                $valuesArray["active"] = $company->isActive();
+                $valuesArray['companyId'] = $this->getCompanyPositionInArray($company);
+                $valuesArray['name'] = $company->getName();
+                $valuesArray['yearFoundation'] = $company->getYearFoundation();
+                $valuesArray['city'] = $company->getCity();
+                $valuesArray['description'] = $company->getDescription();
+                $valuesArray['logo'] = $company->getLogo();
+                $valuesArray['email'] = $company->getEmail();
+                $valuesArray['phoneNumber'] = $company->getPhoneNumber();
+                $valuesArray['active'] = $company->isActive();
 
 
                 array_push($arrayToEncode, $valuesArray);
@@ -241,7 +229,5 @@
 
             $jsonContent = json_encode($arrayToEncode, JSON_PRETTY_PRINT);
             file_put_contents(JSON_PATH . 'companies.json', $jsonContent);
-        }
-
-    
+        }    
     }
