@@ -1,5 +1,9 @@
 <?php
     require_once('nav.php');
+    if (!isset($_SESSION["loggedUser"])) 
+    {
+     require_once('login.php');
+    }
 ?>
 <main class="py-5">
      <section id="listado" class="mb-5">
