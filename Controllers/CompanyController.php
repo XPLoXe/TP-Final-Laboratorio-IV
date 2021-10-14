@@ -20,7 +20,7 @@
 
         public function ShowListView()
         {
-            $companyList = $this->companyDAO->GetAll();
+            $companyList = $this->companyDAO->GetAll(true);
 
             require_once(VIEWS_PATH."company-list.php");
         }
@@ -31,8 +31,8 @@
             require_once(VIEWS_PATH."company-alter.php");
         }
 
-        public function Alter($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active){
-
+        public function Alter($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active)
+        {
            $parameters = array();
 
             if ($_SERVER['REQUEST_METHOD'] == "POST") { 
@@ -58,18 +58,11 @@
 
         }
 
-        public function Delete(Company $companyToDelete){ //When we delete a company we put the active atribute in false   
-         
-            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
+        public function Delete($parameters)
+        { 
+            $this->companyDAO->deleteCompany($parameters['delete']);
 
-                $parameters = $_POST;
-
-                $companyToDelete = $_POST["companyInfo"];
-
-                $this->companyDAO->deleteCompany($companyToDelete);
-            }
-
-                $this->ShowListView();
+            $this->ShowListView();
 
         }
 
@@ -132,8 +125,7 @@
 
         public function ShowInfo($parameters)
         {
-            $company = $this->companyDAO->getCompanyById($parameters['companyId']);
+            $company = $this->companyDAO->getCompanyById($parameters['id']);
             require_once(VIEWS_PATH."company-info.php");
-            //Seria imposible que no exista el id de la compania pasado por parametro
         }
     }

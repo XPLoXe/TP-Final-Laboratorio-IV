@@ -32,7 +32,12 @@ require_once 'nav.php';
                 </thead>
                 <tbody>
                     <?php
-                    if (!empty($companyList)) {
+                    if (!empty($companyList)) { ?>
+                        <form id="info" action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='info' method='POST' class="bg-light-alpha p-5">
+                        </form>
+                        <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowAlterView" name='alter' method='POST' class="bg-light-alpha p-5"></form>
+                        <form id="delete" action="<?php echo FRONT_ROOT ?>Company/Delete" name='delete' method='POST' class="bg-light-alpha p-5">
+                        </form> <?php
                         foreach ($companyList as $company) {
                             if ($company->isActive()) { ?>
                                 <tr>
@@ -40,22 +45,19 @@ require_once 'nav.php';
                                     <td><?php echo $company->getName() ?></td>
                                     <td><?php echo $company->getEmail() ?></td>
                                     <td><?php echo $company->getPhoneNumber();
-                                    } ?></td>
-                                    <form id="info" action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='info' method='POST' class="bg-light-alpha p-5">
+                                    ?></td>
+                                    <td><button class="btn btn-dark" type="submit" name="id" form="info" value='<?php echo $company->getCompanyId() ?>'>Details</button>
+                                    <button class="btn btn-dark" type= "submit" name="alter" form="edit" value='<?php echo $company->getCompanyId() ?>'>Edit</button> 
+                                    <button class="btn btn-dark" type="submit" name="delete" form="delete" value='<?php echo $company->getCompanyId() ?>'>Delete</button></td>
                                     </form>
-                                    <form id="delete" action="<?php echo FRONT_ROOT ?>Company/Delete" name='delete' method='POST' class="bg-light-alpha p-5">
-                                    </form>
-                                    <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowAlterView" name='edit' method='POST' class="bg-light-alpha p-5">
-                                    </form>
-                                    <td><button class="btn btn-dark" type="submit" name="companyId" form="info" value='<?php echo $company->getCompanyId()?>'>Details</button>
-                                    <button class="btn btn-dark" type= "submit" name="button" form="edit" value="">Edit</button> 
-                                    <button class="btn btn-dark" type="submit" name="button" form="delete" value="">Delete</button></td>
-                                </tr>
-                            <?php }
+                                </tr> <?php }
+                        }
                     } else {
-                            
-                            ?><tr><td>There is no companies</td></tr><?php
-                                                        } ?>
+                            ?>  <tr>
+                                    <td>ERROR: There are no companies</td>
+                                </tr>
+                    <?php
+                    } ?>
                             
                 </tbody>
             </table>
