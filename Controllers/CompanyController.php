@@ -25,8 +25,9 @@
             require_once(VIEWS_PATH."company-list.php");
         }
 
-        public function ShowAlterView()
+        public function ShowAlterView($parameters)
         {
+            $company = $this->companyDAO->getCompanyById($parameters['companyId']);
             require_once(VIEWS_PATH."company-alter.php");
         }
 
@@ -129,22 +130,10 @@
 
         }
 
-        public function ShowInfo($companyId)
+        public function ShowInfo($parameters)
         {
-
-            $parameters = array();
-
-            if ($_SERVER['REQUEST_METHOD'] == "POST") {
-
-                $parameters = $_POST;
-
-                $companyInfo = $this->companyDAO->getCompanyById($_POST["companyId"]);
-
-                require_once(VIEWS_PATH."company-info.php");
-
-                //Seria imposible q no exista el id de la compania pasado por parametro
-
-            }
-
+            $company = $this->companyDAO->getCompanyById($parameters['companyId']);
+            require_once(VIEWS_PATH."company-info.php");
+            //Seria imposible que no exista el id de la compania pasado por parametro
         }
     }
