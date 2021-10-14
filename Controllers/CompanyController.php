@@ -25,6 +25,11 @@
             require_once(VIEWS_PATH."company-list.php");
         }
 
+        public function ShowAlterView()
+        {
+            require_once(VIEWS_PATH."company-alter.php");
+        }
+
         public function Alter($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active){
 
            $parameters = array();

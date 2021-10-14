@@ -21,7 +21,7 @@ require_once 'nav.php';
             <?php if (isset($msgErrorFilter)) echo $msgErrorFilter;  ?>
 
 
-            <form action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='getId' method='POST' class="bg-light-alpha p-5">
+            <form action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='getId' method='POST' class="bg-light-alpha p-5" id="info">
                 <input type='hidden' name='companyId' id='id'>
                 <table class="table bg-light-alpha">
                     <thead>
@@ -43,19 +43,15 @@ require_once 'nav.php';
                                         <td><?php echo $company->getEmail() ?></td>
                                         <td><?php echo $company->getPhoneNumber();
                                         } ?></td>
-                                        <!-- <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowAddview" name='edit' method='POST' class="bg-light-alpha p-5">
-                                        </form> -->
-                                        <form id="delete" action="<?php echo FRONT_ROOT ?>Company/Delete" name='edit' method='POST' class="bg-light-alpha p-5">
+                                        <form id="delete" action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='info' method='POST' class="bg-light-alpha p-5">
                                         </form>
-                                        <form id="edit" action="<?php echo FRONT_ROOT ?>Company/company-alter.php" name='edit' method='POST' class="bg-light-alpha p-5">
-                                            <td><button class="btn btn-dark" type= "submit" name="edit" form="edit" >Edit</button> <button class="btn btn-dark" type="submit" name="delete" form="delete" >Delete</button></td>
+                                        <form id="delete" action="<?php echo FRONT_ROOT ?>Company/Delete" name='delete' method='POST' class="bg-light-alpha p-5">
                                         </form>
-                                        
-                                        
-    
-                                        
-                                        
-                                        <!-- <input type="image" src="<?php echo IMG_PATH."Edit.php"?>" name="submit" alt="submit"/>; -->
+                                        <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowAlterView" name='edit' method='POST' class="bg-light-alpha p-5">
+                                            <td><button class="btn btn-dark" type="submit" name="delete" form="info" >Details</button>
+                                            <button class="btn btn-dark" type= "submit" name="edit" form="edit" >Edit</button> 
+                                            <button class="btn btn-dark" type="submit" name="delete" form="delete" >Delete</button></td>
+                                        </form>
                                     </tr>
                                 <?php }
                         } else {
