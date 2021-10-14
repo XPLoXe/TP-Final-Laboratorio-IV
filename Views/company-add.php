@@ -30,7 +30,8 @@
                          <div class="col-lg-4">
                               <div class="form-group">
                                    <label for="">Description</label>
-                                   <input type="text" name="description" class="form-control" required>
+                                   <textarea id="bio" name="description" class="form-control" required></textarea>
+                                   <!-- <input type="text" name="description" class="form-control" required> -->
                               </div>
                          </div>
                          <div class="col-lg-4">

@@ -50,7 +50,7 @@ require_once 'nav.php';
                                     <?php
                                     if (Utils\Utils::isAdmin())
                                     {
-                                    echo '<button class="btn btn-dark" type= "submit" name="alter" form="edit" value=' . $company->getCompanyId() . '>Edit</button>'; 
+                                    echo '<button class="btn btn-dark" type= "submit" name="alter" form="edit" value=' . $company->getCompanyId() . '>Edit</button> '; 
                                     echo '<button class="btn btn-dark" type="submit" name="delete" form="delete" value=' . $company->getCompanyId() . '>Delete</button>';
                                     } ?></td>
                                     </form>
