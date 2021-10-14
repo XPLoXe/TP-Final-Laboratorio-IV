@@ -47,8 +47,12 @@ require_once 'nav.php';
                                     <td><?php echo $company->getPhoneNumber();
                                     ?></td>
                                     <td><button class="btn btn-dark" type="submit" name="id" form="info" value='<?php echo $company->getCompanyId() ?>'>Details</button>
-                                    <button class="btn btn-dark" type= "submit" name="alter" form="edit" value='<?php echo $company->getCompanyId() ?>'>Edit</button> 
-                                    <button class="btn btn-dark" type="submit" name="delete" form="delete" value='<?php echo $company->getCompanyId() ?>'>Delete</button></td>
+                                    <?php
+                                    if (Utils\Utils::isAdmin())
+                                    {
+                                    echo '<button class="btn btn-dark" type= "submit" name="alter" form="edit" value=' . $company->getCompanyId() . '>Edit</button>'; 
+                                    echo '<button class="btn btn-dark" type="submit" name="delete" form="delete" value=' . $company->getCompanyId() . '>Delete</button>';
+                                    } ?></td>
                                     </form>
                                 </tr> <?php }
                         }
