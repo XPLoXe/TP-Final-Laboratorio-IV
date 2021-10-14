@@ -20,6 +20,20 @@ require_once 'nav.php';
 
             <?php if (isset($msgErrorFilter)) echo $msgErrorFilter;  ?>
 
+            <script type="text/javascript">
+
+                function confirmDelete(){
+
+                    var response = confirm('Estas seguro que desea borrar la compañia ?');
+                    
+                    if( response == true)
+                        return true;
+                    else
+                        return false;
+                    
+                }
+            </script>
+
 
             <table class="table bg-light-alpha">
                 <thead>
@@ -51,7 +65,7 @@ require_once 'nav.php';
                                     if (Utils\Utils::isAdmin())
                                     {
                                     echo '<button class="btn btn-dark" type= "submit" name="alter" form="edit" value=' . $company->getCompanyId() . '>Edit</button> '; 
-                                    echo '<button class="btn btn-dark" type="submit" name="delete" form="delete" value=' . $company->getCompanyId() . '>Delete</button>';
+                                    echo '<button class="btn btn-dark" type="submit" onclick="return confirmDelete()" name="delete" form="delete" value=' . $company->getCompanyId() . '>Delete</button>';
                                     } ?></td>
                                     </form>
                                 </tr> <?php }
