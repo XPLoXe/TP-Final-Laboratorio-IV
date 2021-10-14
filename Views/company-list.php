@@ -15,7 +15,7 @@ require_once 'nav.php';
                         </div>
                     </div>
                 </div>
-                <button type="submit" name="button" class="btn btn-dark ml-auto d-block">Filter</button>
+                <button type="submit" name="button" class="btn btn-dark d-block">Filter</button>
             </form>
 
             <?php if (isset($msgErrorFilter)) echo $msgErrorFilter;  ?>
@@ -29,6 +29,8 @@ require_once 'nav.php';
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone Number</th>
+                        <th>Actions</th>
+                        <!-- <th>Delete</th> -->
                     </thead>
                     <tbody>
                         <?php
@@ -41,12 +43,28 @@ require_once 'nav.php';
                                         <td><?php echo $company->getEmail() ?></td>
                                         <td><?php echo $company->getPhoneNumber();
                                         } ?></td>
-
+                                        <!-- <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowAddview" name='edit' method='POST' class="bg-light-alpha p-5">
+                                        </form> -->
+                                        <form id="delete" action="<?php echo FRONT_ROOT ?>Company/Delete" name='edit' method='POST' class="bg-light-alpha p-5">
+                                            <td><button class="btn btn-dark" type= "submit" name="edit" form="edit" >Edit</button> <button class="btn btn-dark" type="submit" name="delete" form="delete" >Delete</button></td>
+                                        </form>
+                                        
+                                        <!-- <td><input type = "button" alt="asd"></td> -->
+                                        
+                                        
+                                        <!-- <input type="image" src="<?php echo IMG_PATH."Edit.php"?>" name="submit" alt="submit"/>; -->
                                     </tr>
                                 <?php }
                         } else {
+                                
                                 ?><tr><td>There is no companies</td></tr><?php
                                                             } ?>
+                                
+                                <!-- <input type="image" src="<?php echo ROOT.IMG_PATH."Edit.png" ?>" name="submit" alt="suasdbmit"/>;
+                                <button class="btn btn-dark btn-block btn-lg" type="submit">Login</button>
+                                <form  action="<?php echo FRONT_ROOT ?>Login/Login" method="post" class="login-form bg-dark-alpha p-5 text-white">
+                                    <button class="btn btn-dark btn-block btn-lg" type="submit">Login</button>
+                                </form> -->
                     </tbody>
                 </table>
             </form>
