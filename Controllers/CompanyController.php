@@ -25,38 +25,32 @@
             require_once(VIEWS_PATH."company-list.php");
         }
 
-        public function ShowAlterView($parameters)
+
+        public function ShowEditView($parameters)
         {
-            $company = $this->companyDAO->getCompanyById($parameters['companyId']);
-            require_once(VIEWS_PATH."company-alter.php");
+            $company = $this->companyDAO->getCompanyById($parameters['edit']);
+
+            require_once(VIEWS_PATH."company-edit.php");
         }
 
-        public function Alter($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active)
+
+        public function Edit($parameters)
         {
-           $parameters = array();
+            $companyId = $parameters['id'];
+            $name = $parameters['name'];
+            $yearFoundation = $parameters['yearFoundation'];
+            $city = $parameters['city'];
+            $description = $parameters['description'];
+            $logo = FRONT_ROOT.IMG_PATH.$parameters['logo']['name'];
+            $tmp_name = $parameters['logo']['tmp_name'];
+            $email = $parameters['email'];
+            $phoneNumber = $parameters['phoneNumber'];
 
-            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
+            $this->companyDAO->editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber);
 
-                $parameters = $_POST;
-
-                $idCompanyToAlter = $_POST["companyId"];
-                $name = $_POST["name"];
-                $yearFoundation = $_POST["yearFoundation"];
-                $city = $_POST["city"];
-                $description = $_POST["description"];
-                $logo = $_POST["logo"];
-                $email = $_POST["email"]; 
-                $phoneNumber = $_POST["phoneNumber"];
-                $active = $_POST["active"];
-
-
-                $this->companyDAO->alterCompany($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active);
-
-            }
-
-            require_once(VIEWS_PATH."company-info.php");
-
+            $this->ShowInfo($parameters);
         }
+
 
         public function Delete($parameters)
         { 
@@ -66,11 +60,12 @@
 
         }
 
+
         public function Add($parameters)
         {
             $tmp = ($parameters['logo']['tmp_name']);
             $target = IMG_PATH.$parameters['logo']['name'];
-            #die(var_dump($_FILES));
+
             $company = new Company();
             $company->setName($parameters['name']);
             $company->setYearFoundation($parameters['yearFoundation']);
@@ -87,41 +82,38 @@
             $this->ShowListView();
         }
         
+
         public function FilterByName($parameters){
 
             if ($_SERVER['REQUEST_METHOD'] == "POST") { 
 
-                if(empty($parameters["nameToFilter"])){//Si ingreso el input vacio apareceran todas las companias
+                if (empty($parameters["nameToFilter"])) 
+                { //Si ingreso el input vacio apareceran todas las companias
 
                     $this->ShowListView();
 
-                }else{
-
+                } else
+                {
                     $aCompanyWasFiltered  = $this->companyDAO->getCompaniesFilterByName($parameters["nameToFilter"]);//This modificate the $companyList if there is any filter ocasion
 
-                    if($aCompanyWasFiltered===false){
-
+                    if ($aCompanyWasFiltered == false)
+                    {
                         $msgErrorFilter = '<strong style="color:red; font-size:small ;"> Ninguna Compañia contiene el nombre ingresado </strong>';
 
                         $companyList = $this->companyDAO->GetAll(); //No llamo al metodo ShowListView porq no me aparecera el msg
 
                         require_once(VIEWS_PATH."company-list.php");
-    
-                    }else{
 
+                    } else
+                    {
                         $companyList = $this->companyDAO->getCompanyList();
 
                         require_once(VIEWS_PATH."company-list.php");
-
                     }
-
-                    
-
                 }
-
             }
-
         }
+
 
         public function ShowInfo($parameters)
         {

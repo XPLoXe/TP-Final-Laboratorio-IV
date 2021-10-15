@@ -12,6 +12,17 @@
         private string $email;
         private string $phoneNumber;
         private bool $active;
+
+        
+        public function getCompanyId(): int
+        {
+            return $this->companyId;
+        }
+
+        public function setCompanyId($companyId): void
+        {
+            $this->companyId = $companyId;
+        }
         
         public function getName(): string
         {
@@ -30,7 +41,7 @@
 
         public function setYearFoundation($yearFoundation): void
         {
-            $this->yearFoundation = $yearFoundation;
+            $this->yearFoundation = (int) $yearFoundation;
         }        
         
         public function getCity(): string
@@ -91,16 +102,6 @@
         public function setActive($active): void
         {
             $this->active = $active;
-        }
-
-        public function getCompanyId(): int
-        {
-            return $this->companyId;
-        }
-
-        public function setCompanyId($companyId): void
-        {
-            $this->companyId = $companyId;
         }
     }
 ?>

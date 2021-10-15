@@ -38,12 +38,6 @@
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Logo</label>
-                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control" required>
-                              </div>
-                         </div>
-                         <div class="col-lg-4">
-                              <div class="form-group">
                                    <label for="">Email</label>
                                    <input type="email" name="email" class="form-control" required>
                               </div>
@@ -52,6 +46,12 @@
                               <div class="form-group">
                                    <label for="">Phone Number</label>
                                    <input type="text" name="phoneNumber" class="form-control" required>
+                              </div>
+                         </div>
+                         <div class="col-lg-4">
+                              <div class="form-group">
+                                   <label for="">Logo</label>
+                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control" required>
                               </div>
                          </div>
                     </div>
