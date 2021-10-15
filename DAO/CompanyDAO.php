@@ -57,14 +57,12 @@
             return null;
         }
 
-        public function isNameinCompanyName($companyName,$name){
-
-            if(strripos($companyName,$name)===false){
+        public function isNameinCompanyName($companyName,$name)
+        {
+            if (stripos($companyName,$name) === false)
                 return false;
-            }else{
+            else
                 return true;
-            }
-
         }
 
         public function getCompaniesFilterByName($name)
@@ -73,24 +71,21 @@
 
             $filterCompanies = array();
 
-            foreach ($this->companyList as $company) {
-
+            foreach ($this->companyList as $company)
+            {
                 if ( $this->isNameinCompanyName($company->getName(),$name) && $company->isActive() )
                     array_push($filterCompanies, $company);
             }
 
-            if (!empty($filterCompanies)) {
-
+            if (!empty($filterCompanies)) 
+            {
                 $this->companyList = $filterCompanies;
+
                 return true;
 
-            }else{
+            } else
 
                 return false;
-
-            }
-
-            
         }
 
         public function deleteCompany($id)
@@ -103,45 +98,25 @@
             $this->SaveData();
         }
 
-        public function alterCompany($idCompanyToAlter, $name, $yearFoundation, $city, $description, $email, $phoneNumber, $active)
-        { // return a boolean
-
+        public function editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber): bool
+        {
             $this->RetrieveData();
 
             foreach ($this->companyList as $company) {
 
-                if ($company->getCompanyId() == $idCompanyToAlter) {
+                if ($company->getCompanyId() == $companyId) 
+                {
+                    $company->setName($name);
+                    $company->setYearFoundation($yearFoundation);
+                    $company->setCity($city);
+                    $company->setDescription($description);
+                    $company->setEmail($email);
+                    $company->setPhoneNumber($phoneNumber);
 
-                    if (!empty($name))
-                        $company->setName($name);
+                    if (!empty($tmp_name));
+                        $this->SaveImage($tmp_name, $logo);
 
-                    if (!empty($yearFoundation))
-                        $company->setYearFoundation($yearFoundation);
-
-                    if (!empty($city))
-                        $company->setCity($city);
-
-                    if (!empty($description))
-                        $company->setDescription($description);
-
-                    if (!empty($logo))
-                        $company->setLogo($logo);
-
-                    if (!empty($email))
-                        $company->setEmail($email);
-
-                    if (!empty($phoneNumber))
-                        $company->setPhoneNumber($phoneNumber);
-
-                    if (!empty($active))
-                        $company->setActive($active);
-
-
-                    $this->SaveData(); //i hope not have problems with the Id 
-                    $this->SaveData(); //i hope not have problems with the Id 
-                    $this->SaveData(); //i hope not have problems with the Id 
-                    $this->SaveData(); //i hope not have problems with the Id 
-                    $this->SaveData(); //i hope not have problems with the Id 
+                    $this->SaveData();
 
                     return true;
                 }
@@ -152,7 +127,6 @@
 
         public function getActiveCompanies()
         {
-
             $this->RetrieveData();
 
             $activeCompanies = array();
@@ -222,7 +196,6 @@
                 $valuesArray['email'] = $company->getEmail();
                 $valuesArray['phoneNumber'] = $company->getPhoneNumber();
                 $valuesArray['active'] = $company->isActive();
-
 
                 array_push($arrayToEncode, $valuesArray);
             }

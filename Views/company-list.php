@@ -1,4 +1,5 @@
 <?php
+use Utils\Utils as Utils;
 require_once 'nav.php';
 ?>
 
@@ -35,7 +36,7 @@ require_once 'nav.php';
                     if (!empty($companyList)) { ?>
                         <form id="info" action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='info' method='POST' class="bg-light-alpha p-5">
                         </form>
-                        <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowAlterView" name='alter' method='POST' class="bg-light-alpha p-5"></form>
+                        <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowEditView" name='edit' method='POST' class="bg-light-alpha p-5"></form>
                         <form id="delete" action="<?php echo FRONT_ROOT ?>Company/Delete" name='delete' method='POST' class="bg-light-alpha p-5">
                         </form> <?php
                         foreach ($companyList as $company) {
@@ -48,9 +49,9 @@ require_once 'nav.php';
                                     ?></td>
                                     <td><button class="btn btn-dark" type="submit" name="id" form="info" value='<?php echo $company->getCompanyId() ?>'>Details</button>
                                     <?php
-                                    if (Utils\Utils::isAdmin())
+                                    if (Utils::isAdmin())
                                     {
-                                    echo '<button class="btn btn-dark" type= "submit" name="alter" form="edit" value=' . $company->getCompanyId() . '>Edit</button>'; 
+                                    echo '<button class="btn btn-dark" type= "submit" name="edit" form="edit" value=' . $company->getCompanyId() . '>Edit</button> '; 
                                     echo '<button class="btn btn-dark" type="submit" name="delete" form="delete" value=' . $company->getCompanyId() . '>Delete</button>';
                                     } ?></td>
                                     </form>
