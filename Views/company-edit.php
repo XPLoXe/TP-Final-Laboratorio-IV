@@ -12,25 +12,25 @@
                     <div class="row">
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Name</label>
+                                   <label for="">Nombre</label>
                                    <input type="text" name="name" class="form-control" value="<?php echo $company->getName() ?>">
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Year of foundation</label>
+                                   <label for="">Año de fundación</label>
                                    <input type="number" name="yearFoundation" class="form-control" value="<?php echo $company->getYearFoundation() ?>">
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">City</label>
+                                   <label for="">Ciudad</label>
                                    <input type="text" name="city" class="form-control" value="<?php echo $company->getCity() ?>">
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Description</label>
+                                   <label for="">Descripción</label>
                                    <input type="text" name="description" class="form-control" value="<?php echo $company->getDescription() ?>">
                               </div>
                          </div>
@@ -42,15 +42,15 @@
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Phone Number</label>
+                                   <label for="">Teléfono</label>
                                    <input type="text" name="phoneNumber" class="form-control" value="<?php echo $company->getPhoneNumber() ?>">
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
                                    <label for="">Logo</label>
-                                   <img style="max-height: 50px" src=<?php echo $company->getLogo() ?> alt="image logo"></img>
-                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" value="" class="form-control">
+                                   <img style="max-height: 50px" src="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>"></img>
+                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control">
                               </div>
                          </div>
                     </div>

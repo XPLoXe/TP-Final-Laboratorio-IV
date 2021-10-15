@@ -7,7 +7,7 @@
 
 <!DOCTYPE html>
 <html>
-<title>Company-Info</title>
+<title>Detalles de Compañía</title>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,7 +20,7 @@
       <h1><b><?php echo $company->getName() ?></b></h1>
       <img src="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>" style="width:75%; max-height:75%" > 
       <br>
-      <br><h2 style="padding: 1%;"><b>Contact Info:</b></h2>
+      <br><h2 style="padding: 1%;"><b>Contacto</b></h2>
       <p>
         <img src="<?php echo FRONT_ROOT.IMG_PATH ?>tel.png">
         <?php echo $company->getPhoneNumber(). ""?>

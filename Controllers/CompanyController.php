@@ -50,7 +50,7 @@
             $name = $parameters['name'];
             $yearFoundation = $parameters['yearFoundation'];
             $city = $parameters['city'];
-            $description = $parameters['description'];
+            $description = $parameters['description'];           
             $logo = $parameters['logo']['name'];
             $tmp_name = $parameters['logo']['tmp_name'];
             $email = $parameters['email'];

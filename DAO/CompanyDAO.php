@@ -116,7 +116,7 @@
             $this->SaveData();
         }
 
-        public function editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber): bool
+        public function editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber): Company
         {
             $this->RetrieveData();
 
@@ -131,19 +131,22 @@
                     $company->setEmail($email);
                     $company->setPhoneNumber($phoneNumber);
 
-                    if (!empty($tmp_name));
+                    #die(var_dump($tmp_name));
+
+                    if (!empty($tmp_name))
                     {
+                        echo "No estoy vacío";
                         #die(var_dump($tmp_name, $logo));
                         $this->SaveImage($tmp_name, $logo);
                         $company->setLogo($logo);
                     }
                     $this->SaveData();
 
-                    return true;
+                    return $company;
                 }
             }
 
-            return false;
+            return null;
         }
 
         public function getActiveCompanies()

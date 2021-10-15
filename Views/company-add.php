@@ -12,25 +12,25 @@
                     <div class="row">                         
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Name</label>
+                                   <label for="">Nombre</label>
                                    <input type="text" name="name" class="form-control" required>
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Year of foundation</label>
+                                   <label for="">Año de fundación</label>
                                    <input type="number" name="yearFoundation" class="form-control" required>
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">City</label>
+                                   <label for="">Ciudad</label>
                                    <input type="text" name="city" class="form-control" required>
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Description</label>
+                                   <label for="">Descripción</label>
                                    <textarea id="bio" name="description" class="form-control" required></textarea>
                                    <!-- <input type="text" name="description" class="form-control" required> -->
                               </div>
@@ -43,7 +43,7 @@
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Phone Number</label>
+                                   <label for="">Teléfono</label>
                                    <input type="text" name="phoneNumber" class="form-control" required>
                               </div>
                          </div>
