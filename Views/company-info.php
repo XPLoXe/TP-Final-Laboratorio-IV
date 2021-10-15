@@ -18,7 +18,7 @@
     <div class="col">
     <div>
       <h1><b><?php echo $company->getName() ?></b></h1>
-      <img src="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>" style="width:75%; max-height:75%" > 
+      <img src="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>" style="width:500px; height:400px" > 
       <br>
       <br><h2 style="padding: 1%;"><b>Contacto</b></h2>
       <p>
