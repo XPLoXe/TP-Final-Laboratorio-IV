@@ -13,16 +13,39 @@
         {
             $this->RetrieveData();
 
-            array_push($this->companyList, $company);
+            if($this->checkIfCompanyExists($company->getName())){
 
-            $this->SaveData();
+                array_push($this->companyList, $company);
+
+                $this->SaveData();
+
+            }
+
         }
 
+        public function getCompanyList()
+        {
+            return $this->companyList;
+        }
 
+        public function checkIfCompanyExists($companyName){
+
+            $this->RetrieveData();
+
+            foreach($this->companyList as $company){
+
+                if( strcasecmp ($company->getName(), $companyName ) === 0 )
+                    return false;
+            }
+
+            return true;
+
+        }
+        
         public function GetAll()
         {
             $this->RetrieveData();
-
+            
             return $this->companyList;
         }
 
@@ -53,96 +76,69 @@
             return null;
         }
 
+        public function isNameinCompanyName($companyName,$name)
+        {
+            if (stripos($companyName,$name) === false)
+                return false;
+            else
+                return true;
+        }
+
         public function getCompaniesFilterByName($name)
         {
             $this->RetrieveData();
 
             $filterCompanies = array();
 
-            foreach ($this->companyList as $company) {
-
-                if (array_search($name, $company->getName()) && $company->isActive())
+            foreach ($this->companyList as $company)
+            {
+                if ( $this->isNameinCompanyName($company->getName(),$name) && $company->isActive() )
                     array_push($filterCompanies, $company);
             }
 
-            if (!empty($filterCompanies)) {
-                $this->companyList = $filterCompanies;
-                $this->companyList = $filterCompanies;
-                $this->companyList = $filterCompanies;
-                $this->companyList = $filterCompanies;
+            if (!empty($filterCompanies)) 
+            {
                 $this->companyList = $filterCompanies;
 
                 return true;
-                /*Si tiene algun dato el arreglo con las companias filtradas, quiere decir q tuvimos exito al encontrar companias
-                    que contengan el string ingresado por usuario
-                    Me da un toque de miedo modificar el $this->companyList pero todavia no veo un escenario donde pierda datos*/
-            }
 
-            return false;
-            /*Si ingresamos un 1 en el input, y no hay ninguna empresa q contenga un 1 como nombre, nos arrojara un false
-                y con este return podemos mostrar un mensaje diciendo q ninguna compania contiene el string ingresado*/
+            } else
+
+                return false;
         }
 
-        public function deleteCompany($companyToDelete)
-        { // return a boolean
+        public function deleteCompany($id)
+        {
+            $this->RetrieveData();
 
+            $company = $this->getCompanyById($id);
+            $company->setActive(false);
+
+            $this->SaveData();
+        }
+
+        public function editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber): bool
+        {
             $this->RetrieveData();
 
             foreach ($this->companyList as $company) {
 
-                if ($company->getCompanyId() == $companyToDelete->getCompanyId()) {
+                if ($company->getCompanyId() == $companyId) 
+                {
+                    $company->setName($name);
+                    $company->setYearFoundation($yearFoundation);
+                    $company->setCity($city);
+                    $company->setDescription($description);
+                    $company->setEmail($email);
+                    $company->setPhoneNumber($phoneNumber);
 
-                    $companyToDelete->setActive(false);
-
-                    $this->SaveData();
-
-                    return true; //With this i can stop to iterate and we can check that the company was altered
-
-                }
-            }
-
-            return false;
-        }
-
-        public function alterCompany($idCompanyToAlter, $name, $yearFoundation, $city, $description, $email, $phoneNumber, $active)
-        { // return a boolean
-
-            $this->RetrieveData();
-
-            foreach ($this->companyList as $company) {
-
-                if ($company->getCompanyId() == $idCompanyToAlter) {
-
-                    if (!empty($name))
-                        $company->setName($name);
-
-                    if (!empty($yearFoundation))
-                        $company->setYearFoundation($yearFoundation);
-
-                    if (!empty($city))
-                        $company->setCity($city);
-
-                    if (!empty($description))
-                        $company->setDescription($description);
-
-                    if (!empty($logo))
+                    if (!empty($tmp_name));
+                    {
+                        #die(var_dump($tmp_name, $logo));
+                        $this->SaveImage($tmp_name, $logo);
                         $company->setLogo($logo);
-
-                    if (!empty($email))
-                        $company->setEmail($email);
-
-                    if (!empty($phoneNumber))
-                        $company->setPhoneNumber($phoneNumber);
-
-                    if (!empty($active))
-                        $company->setActive($active);
-
-
-                    $this->SaveData(); //i hope not have problems with the Id 
-                    $this->SaveData(); //i hope not have problems with the Id 
-                    $this->SaveData(); //i hope not have problems with the Id 
-                    $this->SaveData(); //i hope not have problems with the Id 
-                    $this->SaveData(); //i hope not have problems with the Id 
+                    }
+                    $this->SaveData();
 
                     return true;
                 }
@@ -153,7 +149,6 @@
 
         public function getActiveCompanies()
         {
-
             $this->RetrieveData();
 
             $activeCompanies = array();
@@ -166,29 +161,6 @@
             }
 
             return $activeCompanies;
-        }
-
-        public function getNewCompanyId()
-        {
-
-            $newCompanyId = 0;
-
-            $this->RetrieveData();
-
-            if (!empty($this->companyList)) {
-
-
-                foreach ($this->companyList as $company) {
-
-                    if ($company->getCompanyId() > $newCompanyId)
-                        $newCompanyId = $company->getCompanyId();
-                }
-
-                return $newCompanyId++;
-            } else {
-
-                return $newCompanyId;
-            }
         }
 
         private function RetrieveData()
@@ -222,8 +194,13 @@
 
         public function SaveImage($tmp, $target)
         {
-            move_uploaded_file($tmp, $target);
+            move_uploaded_file($tmp, IMG_PATH.$target);
         }
+
+        public function getCompanyPositionInArray($company)
+        {
+            return array_search($company,$this->companyList); //TODO: Rewrite this to avoid edge case where a company is deleted
+        }                                                     // and every id is now offset from array index
 
         private function SaveData()
         {
@@ -231,22 +208,20 @@
 
             foreach ($this->companyList as $company) {
 
-                $valuesArray["companyId"] = $this->getNewCompanyId();
-
-                $valuesArray["name"] = $company->getName();
-                $valuesArray["yearFoundation"] = $company->getYearFoundation();
-                $valuesArray["city"] = $company->getCity();
-                $valuesArray["description"] = $company->getDescription();
-                $valuesArray["logo"] = $company->getLogo(); //Check this, because we use a picture
-                $valuesArray["email"] = $company->getEmail();
-                $valuesArray["phoneNumber"] = $company->getPhoneNumber();
-                $valuesArray["active"] = $company->isActive();
-
+                $valuesArray['companyId'] = $this->getCompanyPositionInArray($company);
+                $valuesArray['name'] = $company->getName();
+                $valuesArray['yearFoundation'] = $company->getYearFoundation();
+                $valuesArray['city'] = $company->getCity();
+                $valuesArray['description'] = $company->getDescription();
+                $valuesArray['logo'] = $company->getLogo();
+                $valuesArray['email'] = $company->getEmail();
+                $valuesArray['phoneNumber'] = $company->getPhoneNumber();
+                $valuesArray['active'] = $company->isActive();
 
                 array_push($arrayToEncode, $valuesArray);
             }
 
             $jsonContent = json_encode($arrayToEncode, JSON_PRETTY_PRINT);
             file_put_contents(JSON_PATH . 'companies.json', $jsonContent);
-        }
+        }    
     }

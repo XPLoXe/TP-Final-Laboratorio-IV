@@ -4,6 +4,8 @@
     use DAO\CompanyDAO as CompanyDAO;
     use Models\Company as Company;
 
+    use Utils\Utils as Utils;
+
     class CompanyController
     {
         private $companyDAO;
@@ -15,21 +17,68 @@
 
         public function ShowAddView()
         {
+            Utils::checkAdmin();
+
             require_once(VIEWS_PATH."company-add.php");
         }
 
         public function ShowListView()
         {
-            $companyList = $this->companyDAO->GetAll();
+            Utils::checkUserLoggedIn();
+
+            $companyList = $this->companyDAO->GetAll(true);
 
             require_once(VIEWS_PATH."company-list.php");
         }
 
+
+        public function ShowEditView($parameters)
+        {
+            Utils::checkAdmin();
+            
+            $company = $this->companyDAO->getCompanyById($parameters['edit']);
+
+            require_once(VIEWS_PATH."company-edit.php");
+        }
+
+
+        public function Edit($parameters)
+        {
+            Utils::checkAdmin();
+            
+            $companyId = $parameters['id'];
+            $name = $parameters['name'];
+            $yearFoundation = $parameters['yearFoundation'];
+            $city = $parameters['city'];
+            $description = $parameters['description'];
+            $logo = $parameters['logo']['name'];
+            $tmp_name = $parameters['logo']['tmp_name'];
+            $email = $parameters['email'];
+            $phoneNumber = $parameters['phoneNumber'];
+
+            $this->companyDAO->editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber);
+
+            $this->ShowInfo($parameters);
+        }
+
+
+        public function Delete($parameters)
+        {
+            Utils::checkAdmin();
+
+            $this->companyDAO->deleteCompany($parameters['delete']);
+
+            $this->ShowListView();
+        }
+
+
         public function Add($parameters)
         {
+            Utils::checkAdmin();
+
             $tmp = ($parameters['logo']['tmp_name']);
-            $target = IMG_PATH.$parameters['logo']['name'];
-            #die(var_dump($_FILES));
+            $target = $parameters['logo']['name'];
+
             $company = new Company();
             $company->setName($parameters['name']);
             $company->setYearFoundation($parameters['yearFoundation']);
@@ -45,94 +94,47 @@
 
             $this->ShowListView();
         }
-
-        public function Alter($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active){
-
-           $parameters = array();
-
-            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
-
-                $parameters = $_POST;
-
-                $idCompanyToAlter = $_POST["companyId"];
-                $name = $_POST["name"];
-                $yearFoundation = $_POST["yearFoundation"];
-                $city = $_POST["city"];
-                $description = $_POST["description"];
-                $logo = $_POST["logo"];
-                $email = $_POST["email"]; 
-                $phoneNumber = $_POST["phoneNumber"];
-                $active = $_POST["active"];
-
-
-                $this->companyDAO->alterCompany($idCompanyToAlter, $name, $yearFoundation, $city, $description, $logo, $email, $phoneNumber, $active);
-
-            }
-
-            require_once(VIEWS_PATH."company-info.php");
-
-        }
-
-        public function Delete(Company $companyToDelete){ //When we delete a company we put the active atribute in false   
-         
-            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
-
-                $parameters = $_POST;
-
-                $companyToDelete = $_POST["companyInfo"];
-
-                $this->companyDAO->deleteCompany($companyToDelete);
-            }
-
-                $this->ShowListView();
-
-        }
-
         
-        public function FilterByName($name){
 
-            $parameters = array();
+        public function FilterByName($parameters)
+        {
+            Utils::checkUserLoggedIn();
 
-            if ($_SERVER['REQUEST_METHOD'] == "POST") { //Maybe this is GET
+            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
 
-                $parameters = $_POST;
-
-                $name = $_POST["nameToFilter"];
-
-                $aCompanyWasFiltered  = $this->companyDAO->getCompaniesFilterByName($name);//This modificate the $companyList if there is any filter ocasion
-
-                if(!$aCompanyWasFiltered){
-
-                    $msgErrorFilter = '<strong style="color:red; font-size:large;">None of the Companies contains the input</strong>';
+                if (empty($parameters["nameToFilter"])) 
+                { //Si ingreso el input vacio apareceran todas las companias
 
                     $this->ShowListView();
 
-                }else{
+                } else
+                {
+                    $aCompanyWasFiltered  = $this->companyDAO->getCompaniesFilterByName($parameters["nameToFilter"]);//This modificate the $companyList if there is any filter ocasion
 
-                    require_once(VIEWS_PATH."company-list.php");
+                    if ($aCompanyWasFiltered == false)
+                    {
+                        $msgErrorFilter = '<strong style="color:red; font-size:small ;"> Ninguna Compañia contiene el nombre ingresado </strong>';
 
+                        $companyList = $this->companyDAO->GetAll(); //No llamo al metodo ShowListView porq no me aparecera el msg
+
+                        require_once(VIEWS_PATH."company-list.php");
+
+                    } else
+                    {
+                        $companyList = $this->companyDAO->getCompanyList();
+
+                        require_once(VIEWS_PATH."company-list.php");
+                    }
                 }
-
             }
-
         }
 
-        public function ShowInfo($companyId)
+
+        public function ShowInfo($parameters)
         {
+            Utils::checkUserLoggedIn();
 
-            $parameters = array();
-
-            if ($_SERVER['REQUEST_METHOD'] == "POST") {
-
-                $parameters = $_POST;
-
-                $companyInfo = $this->companyDAO->getCompanyById($_POST["companyId"]);
-
-                require_once(VIEWS_PATH."company-info.php");
-
-                //Seria imposible q no exista el id de la compania pasado por parametro
-
-            }
-
+            $company = $this->companyDAO->getCompanyById($parameters['id']);
+            require_once(VIEWS_PATH."company-info.php");
         }
     }

@@ -12,6 +12,7 @@
         public function Login()
         {
             $parameters = array();
+            
             if ($_SERVER['REQUEST_METHOD'] == "POST") 
             {
                 $parameters = $_POST;
@@ -19,6 +20,7 @@
                 $password = $_POST["password"];
 
                 if (($email == "admin@admin.com") && ($password == "12345")) {
+                    $_SESSION["loggedUser"] = "admin";
                     $_SESSION["isAdmin"] = true;
                     //require_once(VIEWS_PATH."home.php"); //admin page redirect
                     require_once(VIEWS_PATH."home.php"); //Lo hago para debuggear nomas

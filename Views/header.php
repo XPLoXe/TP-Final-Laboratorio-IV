@@ -8,7 +8,8 @@
      <!-- Bootstrap CSS -->
      <link rel="stylesheet" type="text/css" href="<?php echo CSS_PATH ?>bootstrap.min.css">
      <link rel="stylesheet" type="text/css" href="<?php echo CSS_PATH ?>estilos.css">
+     <link rel="shortcut icon" type="image/x-icon" href="<?php echo FRONT_ROOT.'favicon.png' ?>"/>
 
-     <title>Framework Example</title>
+     <title>Bolsa de Trabajo</title>
 </head>
 <body>
