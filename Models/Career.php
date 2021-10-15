@@ -5,6 +5,7 @@
     {
         private int $careerId;
         private string $description;
+        private string $name;
         private bool $active;
 
         public function getCareerId(): int
@@ -25,6 +26,16 @@
         public function setDescription($description): void
         {
             $this->description = $description;
+        }
+
+        public function getName(): string
+        {
+            return $this->name;
+        }
+
+        public function setName($name): void
+        {
+            $this->name = $name;
         }
 
         public function isActive(): bool
