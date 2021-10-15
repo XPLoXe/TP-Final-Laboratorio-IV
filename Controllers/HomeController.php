@@ -7,9 +7,10 @@
         {
             public function Index($message = "")
             {
-                Utils::checkUserLoggedIn();
-
-                require_once(VIEWS_PATH."login.php");
+                if (Utils::isUserLoggedIn())
+                    require_once(VIEWS_PATH."home.php");
+                else
+                    require_once(VIEWS_PATH."login.php");
             }        
         }
 ?>
