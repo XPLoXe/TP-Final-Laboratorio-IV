@@ -13,14 +13,33 @@
         {
             $this->RetrieveData();
 
-            array_push($this->companyList, $company);
+            if($this->checkIfCompanyExists($company->getName())){
 
-            $this->SaveData();
+                array_push($this->companyList, $company);
+
+                $this->SaveData();
+
+            }
+
         }
 
         public function getCompanyList()
         {
             return $this->companyList;
+        }
+
+        public function checkIfCompanyExists($companyName){
+
+            $this->RetrieveData();
+
+            foreach($this->companyList as $company){
+
+                if( strcasecmp ($company->getName(), $companyName ) === 0 )
+                    return false;
+            }
+
+            return true;
+
         }
         
         public function GetAll()
@@ -141,7 +160,6 @@
             return $activeCompanies;
         }
 
-       
         private function RetrieveData()
         {
             $this->companyList = array();

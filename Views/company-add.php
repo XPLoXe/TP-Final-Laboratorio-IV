@@ -1,7 +1,9 @@
 <?php
-   
-    require_once('nav.php');
-
+  if (!isset($_SESSION["loggedUser"])) 
+  {
+    header("location: ../index.php");
+  }
+  require_once('nav.php');
 ?>
 <main class="py-5">
      <section id="listado" class="mb-5">
@@ -30,7 +32,8 @@
                          <div class="col-lg-4">
                               <div class="form-group">
                                    <label for="">Description</label>
-                                   <input type="text" name="description" class="form-control" required>
+                                   <textarea id="bio" name="description" class="form-control" required></textarea>
+                                   <!-- <input type="text" name="description" class="form-control" required> -->
                               </div>
                          </div>
                          <div class="col-lg-4">
