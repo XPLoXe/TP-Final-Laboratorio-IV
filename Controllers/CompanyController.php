@@ -4,6 +4,8 @@
     use DAO\CompanyDAO as CompanyDAO;
     use Models\Company as Company;
 
+    use Utils\Utils as Utils;
+
     class CompanyController
     {
         private $companyDAO;
@@ -15,11 +17,15 @@
 
         public function ShowAddView()
         {
+            Utils::checkAdmin();
+
             require_once(VIEWS_PATH."company-add.php");
         }
 
         public function ShowListView()
         {
+            Utils::checkUserLoggedIn();
+
             $companyList = $this->companyDAO->GetAll(true);
 
             require_once(VIEWS_PATH."company-list.php");
@@ -28,6 +34,8 @@
 
         public function ShowEditView($parameters)
         {
+            Utils::checkAdmin();
+            
             $company = $this->companyDAO->getCompanyById($parameters['edit']);
 
             require_once(VIEWS_PATH."company-edit.php");
@@ -36,12 +44,14 @@
 
         public function Edit($parameters)
         {
+            Utils::checkAdmin();
+            
             $companyId = $parameters['id'];
             $name = $parameters['name'];
             $yearFoundation = $parameters['yearFoundation'];
             $city = $parameters['city'];
             $description = $parameters['description'];
-            $logo = FRONT_ROOT.IMG_PATH.$parameters['logo']['name'];
+            $logo = $parameters['logo']['name'];
             $tmp_name = $parameters['logo']['tmp_name'];
             $email = $parameters['email'];
             $phoneNumber = $parameters['phoneNumber'];
@@ -53,18 +63,21 @@
 
 
         public function Delete($parameters)
-        { 
+        {
+            Utils::checkAdmin();
+
             $this->companyDAO->deleteCompany($parameters['delete']);
 
             $this->ShowListView();
-
         }
 
 
         public function Add($parameters)
         {
+            Utils::checkAdmin();
+
             $tmp = ($parameters['logo']['tmp_name']);
-            $target = IMG_PATH.$parameters['logo']['name'];
+            $target = $parameters['logo']['name'];
 
             $company = new Company();
             $company->setName($parameters['name']);
@@ -83,7 +96,9 @@
         }
         
 
-        public function FilterByName($parameters){
+        public function FilterByName($parameters)
+        {
+            Utils::checkUserLoggedIn();
 
             if ($_SERVER['REQUEST_METHOD'] == "POST") { 
 
@@ -117,6 +132,8 @@
 
         public function ShowInfo($parameters)
         {
+            Utils::checkUserLoggedIn();
+
             $company = $this->companyDAO->getCompanyById($parameters['id']);
             require_once(VIEWS_PATH."company-info.php");
         }

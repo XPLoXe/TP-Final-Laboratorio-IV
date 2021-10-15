@@ -1,9 +1,7 @@
 <?php
-  if (!isset($_SESSION["loggedUser"])) 
-  {
-    header("location: ../index.php");
-  }
-  require_once('nav.php');
+    use Utils\Utils as Utils;
+
+    require_once('nav.php');
 ?>
 
 <main class="py-5">
@@ -28,13 +26,12 @@
 
                 function confirmDelete(){
 
-                    var response = confirm('Estas seguro que desea borrar la compañia ?');
+                    var response = confirm('¿Está seguro de que desea borrar la compañia ?');
                     
-                    if( response == true)
+                    if (response == true)
                         return true;
                     else
                         return false;
-                    
                 }
             </script>
 
@@ -68,7 +65,7 @@
                                     <?php
                                     if (Utils::isAdmin())
                                     {
-                                    echo '<button class="btn btn-dark" type= "submit" name="alter" form="edit" value=' . $company->getCompanyId() . '>Edit</button> '; 
+                                    echo '<button class="btn btn-dark" type= "submit" name="edit" form="edit" value=' . $company->getCompanyId() . '>Edit</button> '; 
                                     echo '<button class="btn btn-dark" type="submit" onclick="return confirmDelete()" name="delete" form="delete" value=' . $company->getCompanyId() . '>Delete</button>';
                                     } ?></td>
                                     </form>

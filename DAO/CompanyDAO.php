@@ -133,8 +133,11 @@
                     $company->setPhoneNumber($phoneNumber);
 
                     if (!empty($tmp_name));
+                    {
+                        #die(var_dump($tmp_name, $logo));
                         $this->SaveImage($tmp_name, $logo);
-
+                        $company->setLogo($logo);
+                    }
                     $this->SaveData();
 
                     return true;
@@ -191,7 +194,7 @@
 
         public function SaveImage($tmp, $target)
         {
-            move_uploaded_file($tmp, $target);
+            move_uploaded_file($tmp, IMG_PATH.$target);
         }
 
         public function getCompanyPositionInArray($company)

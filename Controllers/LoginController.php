@@ -12,6 +12,7 @@
         public function Login()
         {
             $parameters = array();
+            
             if ($_SERVER['REQUEST_METHOD'] == "POST") 
             {
                 $parameters = $_POST;
