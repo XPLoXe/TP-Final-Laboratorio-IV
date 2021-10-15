@@ -1,9 +1,8 @@
 <?php
-  if (!isset($_SESSION["loggedUser"])) 
-  {
-    header("location: ../index.php");
-  }
-  require_once('nav.php');
+    if (!isset($_SESSION["loggedUser"]))
+        header("location: ../index.php");
+
+    require_once('nav.php');
 ?>
 <main class="py-5">
      <section id="listado" class="mb-5">

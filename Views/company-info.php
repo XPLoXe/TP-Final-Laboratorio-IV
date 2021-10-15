@@ -1,10 +1,8 @@
 <?php
+    if (!isset($_SESSION["loggedUser"])) 
+        header("location: ../index.php");
 
-  if (!isset($_SESSION["loggedUser"])) 
-  {
-    header("location: ../index.php");
-  }
-  require_once('nav.php');
+    require_once('nav.php');
 ?>
 
 <!DOCTYPE html>

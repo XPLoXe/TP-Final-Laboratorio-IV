@@ -10,6 +10,7 @@
         private string $description;
         private bool $active;
 
+        
         public function getJobPositionId(): int
         {
             return $this->jobPositionId;

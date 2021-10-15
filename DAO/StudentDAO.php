@@ -11,7 +11,7 @@ class StudentDAO implements IStudentDAO
     public function GetAll()
     {
         $this->RetrieveData();
-
+        
         return $this->studentList;
     }
 

@@ -13,16 +13,15 @@
         {
             $this->RetrieveData();
 
-            if($this->checkIfCompanyExists($company->getName())){
-
+            if ($this->checkIfCompanyExists($company->getName()))
+            {
                 array_push($this->companyList, $company);
 
                 $this->SaveData();
-
             }
-
         }
 
+        
         public function getCompanyList()
         {
             return $this->companyList;
