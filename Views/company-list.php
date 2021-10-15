@@ -9,7 +9,7 @@
 
 <main class="py-5">
     <section id="listado" class="mb-5">
-        <div class="container">
+        <div class="container" style="max-width:1280px">    
             <h2 class="mb-4">Compañías</h2>
             <form action="<?php echo FRONT_ROOT ?>Company/FilterByName" method="post" class="bg-light-alpha p-5">
                 <div class="row">
@@ -63,7 +63,7 @@
                                     <td><?php echo $company->getName() ?></td>
                                     <td><?php echo $company->getCity() ?></td>
                                     <td><?php echo $company->getPhoneNumber(); ?></td>
-                                    <td><?php echo $company->getEmail() ?></td>
+                                    <td style="max-width:300px" ><?php echo $company->getEmail() ?></td>
                                     <td><button class="btn btn-dark" type="submit" name="id" form="info" value='<?php echo $company->getCompanyId() ?>'>Detalles</button>
                                         <?php
                                         if (Utils::isAdmin()) 
