@@ -1,9 +1,10 @@
 <?php
-  require_once('nav.php');
+
   if (!isset($_SESSION["loggedUser"])) 
   {
-    require_once('login.php');
+    header("location: ../index.php");
   }
+  require_once('nav.php');
 ?>
 
 <!DOCTYPE html>
