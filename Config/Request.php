@@ -33,21 +33,23 @@
 
                 if (!empty($_GET))
                 {                    
-                    foreach ($_GET as $key => $value)                    
-                        array_push($this->parameters, $value);
+                    foreach ($_GET as $key => $value)      
+                        $this->parameters[$key] = $value;
                 }
                 else
                     $this->parameters = $urlArray;
             }
-            else if ($_POST)
+            elseif ($_POST)
                 $this->parameters = $_POST;
             
             if ($_FILES)
             {
                 unset($this->parameters["button"]);
-
+                
                 foreach ($_FILES as $key => $file)
+                {
                     $this->parameters[$key] = $file;
+                }
             }
         }
 

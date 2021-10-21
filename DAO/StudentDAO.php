@@ -1,19 +1,67 @@
 <?php
 namespace DAO;
 
+use \Exception as Exception;
 use Interfaces\IStudentDAO as IStudentDAO;
 use Models\Student as Student;
+use DAO\Connection as Connection;
 
 class StudentDAO implements IStudentDAO
 {
-    private $studentList = array();
+    private $connection;
+    private $tableName = "students";
+
+    public function Add(Student $student)
+    {
+        try
+        {
+            $query = "INSERT INTO ".$this->tableName." (recordId, firstName, lastName) VALUES (:recordId, :firstName, :lastName);";
+            
+            $parameters["recordId"] = $student->getRecordId();
+            $parameters["firstName"] = $student->getFirstName();
+            $parameters["lastName"] = $student->getLastName();
+
+            $this->connection = Connection::GetInstance();
+
+            $this->connection->ExecuteNonQuery($query, $parameters);
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+    }
+
 
     public function GetAll()
     {
-        $this->RetrieveData();
-        
-        return $this->studentList;
+        try
+        {
+            $studentList = array();
+
+            $query = "SELECT * FROM ".$this->tableName;
+
+            $this->connection = Connection::GetInstance();
+
+            $resultSet = $this->connection->Execute($query);
+            
+            foreach ($resultSet as $row)
+            {                
+                $student = new Student();
+                $student->setRecordId($row["recordId"]);
+                $student->setFirstName($row["firstName"]);
+                $student->setLastName($row["lastName"]);
+
+                array_push($studentList, $student);
+            }
+
+            return $studentList;
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
     }
+
 
     private function getStudentsFromApi()
     {
@@ -25,24 +73,22 @@ class StudentDAO implements IStudentDAO
         $dataAPI = curl_exec($apiStudent);
 
         return $dataAPI;
-
     }
+
 
     public function getStudentByEmail($email)
     {
-
         $this->RetrieveData();
 
-        foreach ($this->studentList as $student) {
-
-            if ($student->getEmail() == $email) {
+        foreach ($this->studentList as $student) 
+        {
+            if ($student->getEmail() == $email)
                 return $student;
-            }
-
         }
 
         return null;
     }
+
 
     public function getActiveStudents()
     {
@@ -51,23 +97,22 @@ class StudentDAO implements IStudentDAO
 
         $activeStudents = array();
 
-        foreach ($this->studentList as $student) {
-
-            if ($student->isActive()) {
+        foreach ($this->studentList as $student) 
+        {
+            if ($student->isActive())
                 array_push($activeStudents, $student);
-            }
-
         }
 
         return $activeStudents;
     }
 
+
     public function getStudentById($id){
 
         $this->RetrieveData();
 
-        foreach ($this->studentList as $student) {
-
+        foreach ($this->studentList as $student) 
+        {
             if ($student->getStudentId() == $id) {
                 return $student;
             }
@@ -78,6 +123,7 @@ class StudentDAO implements IStudentDAO
 
     }
 
+
     private function RetrieveData()
     {
         $this->studentList = array();
@@ -86,8 +132,8 @@ class StudentDAO implements IStudentDAO
 
         $arrayToDecode = json_decode($dataAPI, true);
 
-        foreach ($arrayToDecode as $valuesArray) {
-
+        foreach ($arrayToDecode as $valuesArray) 
+        {
             $student = new Student();
 
             $student->setStudentId($valuesArray["studentId"]);
@@ -105,7 +151,5 @@ class StudentDAO implements IStudentDAO
 
             array_push($this->studentList, $student);
         }
-
     }
-
 }
