@@ -113,7 +113,7 @@
 
                     if ($aCompanyWasFiltered == false)
                     {
-                        $msgErrorFilter = '<strong style="color:red; font-size:small ;"> Ninguna Compañia contiene el nombre ingresado </strong>';
+                        $msgErrorFilter = '<strong style="color:red; font-size:small; text-align: center;"> Ninguna Compañia contiene el nombre ingresado </strong>';
 
                         $companyList = $this->companyDAO->GetAll(); //No llamo al metodo ShowListView porq no me aparecera el msg
 

@@ -15,11 +15,17 @@ class StudentDAO implements IStudentDAO
     {
         try
         {
-            $query = "INSERT INTO ".$this->tableName." (recordId, firstName, lastName) VALUES (:recordId, :firstName, :lastName);";
+            $query = "INSERT INTO ".$this->tableName." (studentId, firstName, lastName, dni, birthDate, email, phoneNumber, active, password) VALUES (:studentId, :firstName, :lastName, :dni, :birthDate, :email, :phoneNumber, :active, :password);";
             
-            $parameters["recordId"] = $student->getRecordId();
+            $parameters["studentId"] = $student->getRecordId();
             $parameters["firstName"] = $student->getFirstName();
             $parameters["lastName"] = $student->getLastName();
+            $parameters["dni"] = $student->getDni();
+            $parameters["birthDate"] = $student->getBirthDay();
+            $parameters["email"] = $student->getEmail();
+            $parameters["phoneNumber"] = $student->getPhoneNumber();
+            $parameters["active"] = $student->getActive();
+            $parameters["password"] = $student->getPassword(); // We have to see the name of the atribute password in the DB
 
             $this->connection = Connection::GetInstance();
 
@@ -47,9 +53,15 @@ class StudentDAO implements IStudentDAO
             foreach ($resultSet as $row)
             {                
                 $student = new Student();
-                $student->setRecordId($row["recordId"]);
+                $student->setRecordId($row["studentId"]);
                 $student->setFirstName($row["firstName"]);
                 $student->setLastName($row["lastName"]);
+                $student->setDni($row["dni"]);
+                $student->setBirthDay($row["birthDate"]);
+                $student->setEmail($row["email"]);
+                $student->setPhoneNumber($row["phoneNumber"]);
+                $student->setActive($row["active"]);
+                $student->setPassword($row["password"]); // We have to see the name of the atribute password in the DB
 
                 array_push($studentList, $student);
             }
