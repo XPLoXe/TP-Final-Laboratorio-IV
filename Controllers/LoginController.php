@@ -4,8 +4,8 @@
     use DAO\PasswordDAO;
     use DAO\StudentDAO;
     use Models\Student;
-
-    use Utils\Utils as Utils;
+use Models\UserRole;
+use Utils\Utils as Utils;
 
     class LoginController
     {
@@ -67,9 +67,17 @@
 
         public function Logout()
         {
-            $_SESSION = array(); //Clean every variable set in $_SESSION (session_destroy() does not clean them)
+            $_SESSION = array(); //Cleans every variable set in $_SESSION (session_destroy() does not clean them)
             session_destroy();
             require_once(VIEWS_PATH."login.php");
+        }
+
+
+        public function ShowSignupView()
+        {
+            $userRoleController = new UserRoleController();
+            $studentRoleId = $userRoleController->getIdByDescription(ROLE_STUDENT);
+            require_once(VIEWS_PATH."signup.php");
         }
     }
 ?>

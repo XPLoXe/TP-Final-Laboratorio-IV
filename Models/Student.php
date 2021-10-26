@@ -1,11 +1,10 @@
 <?php
     namespace Models;
 
-    use Models\Person as Person;
+    use Models\User as User;
 
-    class Student extends Person
+    class Student extends User
     {
-        private int $studentId;
         private int $careerId;
         private string $fileNumber;
         
