@@ -1,7 +1,7 @@
 <?php
     namespace Models;
 
-    use UserRole;
+    use Models\UserRole as UserRole;
     use DateTime;
 
     class User

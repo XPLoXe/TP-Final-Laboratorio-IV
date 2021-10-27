@@ -1,11 +1,9 @@
 <?php
     namespace Controllers;
 
-    use DAO\PasswordDAO;
-    use DAO\StudentDAO;
-    use Models\Student;
-use Models\UserRole;
-use Utils\Utils as Utils;
+    use DAO\UserDAO as UserDAO;
+    use Models\User as User;
+    use Utils\Utils as Utils;
 
     class LoginController
     {
@@ -22,28 +20,21 @@ use Utils\Utils as Utils;
                 if (($email == "admin@admin.com") && ($password == "12345")) {
                     $_SESSION["loggedUser"] = "admin";
                     $_SESSION["isAdmin"] = true;
-                    //require_once(VIEWS_PATH."home.php"); //admin page redirect
-                    require_once(VIEWS_PATH."home.php"); //Lo hago para debuggear nomas
+                    require_once(VIEWS_PATH."home.php");
                 } else
                 {
-                    //loading students
-                    $studentsDAO = new StudentDAO();
-                    $studentsList = array();
-                    $studentsList = $studentsDAO->GetAll();
-                    $student = new Student();
-                    $student = $studentsDAO->getStudentByEmail($email);
+                    //Load users
+                    $userDAO = new userDAO();
+                    $userList = array();
+                    $userList = $userDAO->GetAll();
+                    $user = new User();
+                    $user = $userDAO->getUserByEmail($email); //TODO: write method
 
-                    //loading passwords
-                    $passwordDAO = new PasswordDAO();
-                    $passwordList = array();
-                    $passwordList = $passwordDAO->GetAll();
-
-                    if (!is_null($student)) {
+                    if (!is_null($user)) {
                         
-                        if ($passwordDAO->CheckUser($student->getStudentID(), $password)) {
-                            $_SESSION["loggedUser"] = $student;
-                            $_SESSION["isAdmin"] = false;
-                            require_once(VIEWS_PATH."home.php"); //regular user redirect
+                        if (true) { // TODO: check user password
+                            $_SESSION["loggedUser"] = $user;
+                            require_once(VIEWS_PATH."home.php"); //Regular user redirect
                         }
                         else
                         {

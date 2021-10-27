@@ -8,6 +8,7 @@
         private string $name;
         private bool $active;
 
+        
         public function getCareerId(): int
         {
             return $this->careerId;

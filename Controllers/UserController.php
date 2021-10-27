@@ -3,13 +3,14 @@
 
     use DAO\UserDAO as UserDAO;
     use Models\User as User;
-    use Models\UserRole;
+    use Models\UserRole as UserRole;
     use Utils\Utils as Utils;
 
     class UserController
     {
         private $userDAO;
         private $userRoleController;
+
 
         public function __construct()
         {
@@ -36,23 +37,24 @@
         }
 
 
-        private function Add($email, $password, $userRole)
+        private function Add(string $email, string $password, int $userRoleId)
         {
-            $userRole = new UserRole();
-            $userRole->setId($userRole);
+            $userRole = new UserRole($userRoleId);
+            $userRole->setDescription($this->userRoleController->getDescriptionById($userRoleId));
 
             $user = new User();
             $user->setEmail($email);
             $user->setPassword($password);
             $user->setUserRole($userRole);
             $user->setActive(true);
+
             $this->userDAO->Add($user);
 
             // TODO: show something or redirect to login view
         }
     
 
-        public static function Verify($password, $password_confirmation)
+        public static function Verify(string $password, string $password_confirmation)
         {
             if (strcmp($password, $password_confirmation) == 0) // TODO: Handle when passwords don't match, show error message
                 return true;
@@ -62,7 +64,7 @@
         }
 
 
-        public function Register($parameters)
+        public function Register(array $parameters)
         {
             // TODO: Verify POST
             $email = $parameters['email'];

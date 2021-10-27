@@ -4,7 +4,7 @@ namespace DAO;
 use Exception as Exception;
 use Interfaces\IUserDAO as IUserDAO;
 use Models\User as User;
-use Connection;
+use DAO\Connection as Connection;
 
 class UserDAO implements IUserDAO
 {
@@ -15,12 +15,12 @@ class UserDAO implements IUserDAO
     {
         try
         {
-            $query = "INSERT INTO ".$this->tableName." (email, user_password, active) VALUES (:email, :password, :active);";
+            $query = "INSERT INTO ".$this->tableName." (email, user_password, user_role_id, active) VALUES (:email, :user_password, :user_role_id, :active);";
 
             $parameters["email"] = $user->getEmail();
-            $parameters["password"] = $user->getPassword();
+            $parameters["user_password"] = $user->getPassword();
+            $parameters["user_role_id"] = $user->getUserRole()->getUserRoleId();
             $parameters["active"] = $user->isActive();
-            $parameters["user_role"] = $user->getUserRole()->getUserRoleId();
 
             $this->connection = Connection::GetInstance();
 

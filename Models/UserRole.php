@@ -8,9 +8,10 @@
         private bool $active;
 
 
-        public function __construct(int $userRoleId = ROLE_STUDENT) // UserRole is Student by default
+        public function __construct(int $userRoleId)
         {
             $this->userRoleId = $userRoleId;
+            $this->active = true;
         }
 
 

@@ -2,7 +2,7 @@
     namespace DAO;
 
     use Interfaces\IUserRoleDAO as IUserRoleDAO;
-    use Connection;
+    use DAO\Connection;
     use Models\UserRole;
 
     class userRoleDAO implements IUserRoleDAO
@@ -17,17 +17,18 @@
         }
 
 
-        public function getIdByDescription(string $description): int // envio "Student"
+        public function getIdByDescription(string $description): int
         {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName." WHERE description = ".$description;
+                $query = "SELECT * FROM ".$this->tableName." WHERE description='".$description."'";
 
                 $this->connection = Connection::GetInstance();
 
-                $result = $this->connection->Execute($query); // Verify if it returns an array
-
-                return $result; // returns 2
+                $resultSet = $this->connection->Execute($query);
+                $result = (int) $resultSet[0]['user_role_id'];
+                
+                return $result;
             }
             catch (Exception $ex)
             {
