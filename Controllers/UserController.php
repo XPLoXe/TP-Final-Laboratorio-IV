@@ -16,6 +16,8 @@
         {
             $this->userDAO = new userDAO();
             $this->userRoleController = new UserRoleController();
+            
+            
         }
 
 
@@ -54,12 +56,24 @@
         }
     
 
-        public static function Verify(string $password, string $password_confirmation)
+        public static function Verify(string $password, string $password_confirmation, $email)
         {
+            $studentController = new StudentController();
             if (strcmp($password, $password_confirmation) == 0) // TODO: Handle when passwords don't match, show error message
-                return true;
+            {
+                if (!is_null($studentController->getStudentByEmail($email))) {
+                    return true;
+                }
+                else
+                    echo "<h4 class = 'text-center' style='color: red;'> El mail no existe </h4>";
+                    return false;
+            }
             else
+            {
+                echo "<h4 class = 'text-center' style='color: red;'> las contraseñas ingresadas no son las mismas </h4>";
                 return false;
+            }
+                
             // TODO: StudentDAO::getStudentByEmail() Verify if email exists in API, fetch name
         }
 
@@ -72,9 +86,13 @@
             $password_confirmation = $parameters['password_confirmation'];
             $user_role_id = $parameters['user_role_id'];
 
-            if (!$this->Verify($password, $password_confirmation))
-                // TOOD: Send $msg
-                header("location:signup.php");
+            
+
+            if (!$this->Verify($password, $password_confirmation, $email))
+            {
+                
+                require_once(VIEWS_PATH."signup.php");
+            }
             else
                 $this->Add($email, $password, $user_role_id);
         }

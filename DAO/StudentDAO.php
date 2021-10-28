@@ -17,14 +17,14 @@ class StudentDAO implements IStudentDAO
         {
             $query = "INSERT INTO ".$this->tableName." (studentId, firstName, lastName, dni, birthDate, email, phoneNumber, active, password) VALUES (:studentId, :firstName, :lastName, :dni, :birthDate, :email, :phoneNumber, :active, :password);";
             
-            $parameters["studentId"] = $student->getRecordId();
+            $parameters["studentId"] = $student->getFileNumber();
             $parameters["firstName"] = $student->getFirstName();
             $parameters["lastName"] = $student->getLastName();
             $parameters["dni"] = $student->getDni();
             $parameters["birthDate"] = $student->getBirthDay();
             $parameters["email"] = $student->getEmail();
             $parameters["phoneNumber"] = $student->getPhoneNumber();
-            $parameters["active"] = $student->getActive();
+            $parameters["active"] = $student->isActive();
             $parameters["password"] = $student->getPassword(); // We have to see the name of the atribute password in the DB
 
             $this->connection = Connection::GetInstance();
@@ -53,7 +53,7 @@ class StudentDAO implements IStudentDAO
             foreach ($resultSet as $row)
             {                
                 $student = new Student();
-                $student->setRecordId($row["studentId"]);
+                $student->setFileNumber($row["studentId"]);
                 $student->setFirstName($row["firstName"]);
                 $student->setLastName($row["lastName"]);
                 $student->setDni($row["dni"]);
@@ -136,7 +136,7 @@ class StudentDAO implements IStudentDAO
     }
 
 
-    private function RetrieveData() // TODO: check if active
+    private function RetrieveData()
     {
         $this->studentList = array();
 
@@ -146,22 +146,24 @@ class StudentDAO implements IStudentDAO
 
         foreach ($arrayToDecode as $valuesArray) 
         {
-            $student = new Student();
+            if ($valuesArray["active"]) {
+                $student = new Student();
+                $student->setStudentId($valuesArray["studentId"]);
+                $student->setCareerId($valuesArray["careerId"]);
 
-            $student->setStudentId($valuesArray["studentId"]);
-            $student->setCareerId($valuesArray["careerId"]);
+                $student->setFirstName($valuesArray["firstName"]);
+                $student->setLastName($valuesArray["lastName"]);
+                $student->setDni($valuesArray["dni"]);
+                $student->setFileNumber($valuesArray["fileNumber"]);
+                $student->setGender($valuesArray["gender"]);
+                $student->setBirthDate($valuesArray["birthDate"]);
+                $student->setEmail($valuesArray["email"]);
+                $student->setPhoneNumber($valuesArray["phoneNumber"]);
+                $student->setActive($valuesArray["active"]);
 
-            $student->setFirstName($valuesArray["firstName"]);
-            $student->setLastName($valuesArray["lastName"]);
-            $student->setDni($valuesArray["dni"]);
-            $student->setFileNumber($valuesArray["fileNumber"]);
-            $student->setGender($valuesArray["gender"]);
-            $student->setBirthDate($valuesArray["birthDate"]);
-            $student->setEmail($valuesArray["email"]);
-            $student->setPhoneNumber($valuesArray["phoneNumber"]);
-            $student->setActive($valuesArray["active"]);
-
-            array_push($this->studentList, $student);
+                array_push($this->studentList, $student);
+            }
+            
         }
     }
 }
