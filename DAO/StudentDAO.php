@@ -156,7 +156,7 @@ class StudentDAO implements IStudentDAO
                 $student->setDni($valuesArray["dni"]);
                 $student->setFileNumber($valuesArray["fileNumber"]);
                 $student->setGender($valuesArray["gender"]);
-                $student->setBirthDate($valuesArray["birthDate"]);
+                $student->setBirthDay($valuesArray["birthDate"]);
                 $student->setEmail($valuesArray["email"]);
                 $student->setPhoneNumber($valuesArray["phoneNumber"]);
                 $student->setActive($valuesArray["active"]);
