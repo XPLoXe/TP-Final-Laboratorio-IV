@@ -10,6 +10,7 @@
                 if (Utils::isUserLoggedIn())
                     require_once(VIEWS_PATH."home.php");
                 else
+                    $message = "";
                     require_once(VIEWS_PATH."login.php");
             }        
         }
