@@ -5,6 +5,7 @@ use Exception as Exception;
 use Interfaces\IUserDAO as IUserDAO;
 use Models\User as User;
 use DAO\Connection as Connection;
+use PDO;
 
 class UserDAO implements IUserDAO
 {
@@ -25,6 +26,40 @@ class UserDAO implements IUserDAO
             $this->connection = Connection::GetInstance();
 
             $this->connection->ExecuteNonQuery($query, $parameters);
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+    }
+
+    public function VerifyEmailDataBase($email)
+    {
+        
+        
+        try
+        {
+            $query = "SELECT email FROM ". $this->tableName . " WHERE email = '" . $email . "';";
+            $this->connection = Connection::GetInstance();
+            $PDO = new PDO("mysql:host=".DB_HOST."; dbname=".DB_NAME, DB_USER,DB_PASS);
+            $statement = $PDO->prepare($query);
+            $parameters = array(
+                'email' => $email
+            );
+            $statement->Execute($parameters);
+            $user_email = $statement->fetch();
+
+            /* $parameters = $this->connection->Execute($query); */
+            
+            die(var_dump($user_email["email"]));
+            if (strcmp($email, $parameters["email"]) == 0) 
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         catch (Exception $ex)
         {

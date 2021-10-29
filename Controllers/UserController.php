@@ -72,7 +72,7 @@
             
         }
 
-        public function VerifyEmail($email)
+        public function VerifyEmailAPI($email)
         {
             if (!is_null($this->studentController->getStudentByEmail($email))) 
             {
@@ -86,6 +86,16 @@
             }
         }
 
+        public function VerifyEmailDataBase($email)
+        {
+            if ($this->userDAO->VerifyEmailDataBase($email)) 
+            {
+                $this->text = "<h4 class = 'text-center' style='color: red;'> El email ya tiene una cuenta registrada </h4>";
+                return true;
+            } 
+            return false;
+        }
+
         public function Register(array $parameters)
         {
             $email = $parameters['email'];
@@ -93,13 +103,18 @@
             $password_confirmation = $parameters['password_confirmation'];
             $user_role_id = $parameters['user_role_id'];
 
-            if ($this->VerifyEmail($email))
+            if ($this->VerifyEmailAPI($email))
             {
                 if($this->VerifyPassword($password, $password_confirmation))
                 {
-                    $this->Add($email, $password, $user_role_id);
-                    $message = $this->text;
-                    require_once(VIEWS_PATH."login.php");
+                    if(!$this->VerifyEmailDataBase($email))
+                    {
+                        die;
+                        $this->Add($email, $password, $user_role_id);
+                        $message = $this->text;
+                        require_once(VIEWS_PATH."login.php");
+                    }
+                    
                 }
             }
             $message = $this->text;
