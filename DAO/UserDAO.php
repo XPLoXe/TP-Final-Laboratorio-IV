@@ -5,6 +5,7 @@ use Exception as Exception;
 use Interfaces\IUserDAO as IUserDAO;
 use Models\User as User;
 use DAO\Connection as Connection;
+use PDO;
 
 class UserDAO implements IUserDAO
 {
@@ -30,6 +31,30 @@ class UserDAO implements IUserDAO
         {
             throw $ex;
         }
+    }
+
+    public function VerifyEmailDataBase($email)
+    {
+        $data = array();
+        try
+        {
+            $query = "SELECT * FROM ". $this->tableName . " WHERE email = :email;";
+            $parameters['email'] = $email;
+            $this->connection = Connection::GetInstance();
+            $data = $this->connection->Execute($query, $parameters);
+            if (array_key_exists(0, $data))                         
+            {   
+                if (strcmp($email, $data[0]["email"]) == 0)     //return true if the email is already on data base
+                {
+                    return true;
+                }
+            }
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+        return false;
     }
 
 

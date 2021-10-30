@@ -31,6 +31,11 @@
             require_once(VIEWS_PATH."student-list.php");
         }
 
+        public function getStudentByEmail($email)
+        {
+            return $this->studentDAO->getStudentByEmail($email);
+        }
+
         public function Add($fileNumber, $firstName, $lastName)
         {
             Utils::checkAdmin();
