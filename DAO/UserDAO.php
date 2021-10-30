@@ -35,36 +35,26 @@ class UserDAO implements IUserDAO
 
     public function VerifyEmailDataBase($email)
     {
-        
-        
+        $data = array();
         try
         {
-            $query = "SELECT email FROM ". $this->tableName . " WHERE email = '" . $email . "';";
+            $query = "SELECT * FROM ". $this->tableName . " WHERE email = :email;";
+            $parameters['email'] = $email;
             $this->connection = Connection::GetInstance();
-            $PDO = new PDO("mysql:host=".DB_HOST."; dbname=".DB_NAME, DB_USER,DB_PASS);
-            $statement = $PDO->prepare($query);
-            $parameters = array(
-                'email' => $email
-            );
-            $statement->Execute($parameters);
-            $user_email = $statement->fetch();
-
-            /* $parameters = $this->connection->Execute($query); */
-            
-            die(var_dump($user_email["email"]));
-            if (strcmp($email, $parameters["email"]) == 0) 
-            {
-                return true;
-            }
-            else
-            {
-                return false;
+            $data = $this->connection->Execute($query, $parameters);
+            if (array_key_exists(0, $data))                         
+            {   
+                if (strcmp($email, $data[0]["email"]) == 0)     //return true if the email is already on data base
+                {
+                    return true;
+                }
             }
         }
         catch (Exception $ex)
         {
             throw $ex;
         }
+        return false;
     }
 
 

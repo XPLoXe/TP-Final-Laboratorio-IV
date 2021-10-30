@@ -107,9 +107,8 @@
             {
                 if($this->VerifyPassword($password, $password_confirmation))
                 {
-                    if(!$this->VerifyEmailDataBase($email))
-                    {
-                        die;
+                    if(!$this->VerifyEmailDataBase($email))     
+                    {   
                         $this->Add($email, $password, $user_role_id);
                         $message = $this->text;
                         require_once(VIEWS_PATH."login.php");
