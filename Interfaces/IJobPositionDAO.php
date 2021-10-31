@@ -8,4 +8,3 @@
         //function Add(JobPositiont $jobPosition);
         function GetAll();
     }
-?>

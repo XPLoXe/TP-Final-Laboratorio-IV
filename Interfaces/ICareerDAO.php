@@ -8,4 +8,3 @@
         //function Add(Career $career);
         function GetAll();
     }
-?>

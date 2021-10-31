@@ -70,4 +70,3 @@
             return $this->parameters;
         }
     }
-?>

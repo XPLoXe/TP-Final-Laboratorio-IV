@@ -9,4 +9,3 @@
         function Add(User $user);
         function GetAll();
     }
-?>

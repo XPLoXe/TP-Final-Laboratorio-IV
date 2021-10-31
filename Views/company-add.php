@@ -50,7 +50,7 @@
                          <div class="col-lg-4">
                               <div class="form-group">
                                    <label for="">Logo</label>
-                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control" required>
+                                   <input type="file" name="logo" accept="image/png" class="form-control" required>
                               </div>
                          </div>
                     </div>

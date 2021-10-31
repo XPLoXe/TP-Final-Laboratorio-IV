@@ -6,72 +6,17 @@ use Interfaces\IStudentDAO as IStudentDAO;
 use Models\Student as Student;
 use DAO\Connection as Connection;
 
-class StudentDAO implements IStudentDAO
+class StudentDAO
 {
     private $connection;
-    private $tableName = "students";
-
-    public function Add(Student $student)
-    {
-        try
-        {
-            $query = "INSERT INTO ".$this->tableName." (studentId, firstName, lastName, dni, birthDate, email, phoneNumber, active, password) VALUES (:studentId, :firstName, :lastName, :dni, :birthDate, :email, :phoneNumber, :active, :password);";
-            
-            $parameters["studentId"] = $student->getFileNumber();
-            $parameters["firstName"] = $student->getFirstName();
-            $parameters["lastName"] = $student->getLastName();
-            $parameters["dni"] = $student->getDni();
-            $parameters["birthDate"] = $student->getBirthDate();
-            $parameters["email"] = $student->getEmail();
-            $parameters["phoneNumber"] = $student->getPhoneNumber();
-            $parameters["active"] = $student->isActive();
-            $parameters["password"] = $student->getPassword(); // We have to see the name of the atribute password in the DB
-
-            $this->connection = Connection::GetInstance();
-
-            $this->connection->ExecuteNonQuery($query, $parameters);
-        }
-        catch (Exception $ex)
-        {
-            throw $ex;
-        }
-    }
+    private $tableName = "Students";
 
 
     public function GetAll()
     {
-        try
-        {
-            $studentList = array();
-
-            $query = "SELECT * FROM ".$this->tableName;
-
-            $this->connection = Connection::GetInstance();
-
-            $resultSet = $this->connection->Execute($query);
-            
-            foreach ($resultSet as $row)
-            {                
-                $student = new Student();
-                $student->setFileNumber($row["studentId"]);
-                $student->setFirstName($row["firstName"]);
-                $student->setLastName($row["lastName"]);
-                $student->setDni($row["dni"]);
-                $student->setBirthDate($row["birthDate"]);
-                $student->setEmail($row["email"]);
-                $student->setPhoneNumber($row["phoneNumber"]);
-                $student->setActive($row["active"]);
-                $student->setPassword($row["password"]); // We have to see the name of the atribute password in the DB
-
-                array_push($studentList, $student);
-            }
-
-            return $studentList;
-        }
-        catch (Exception $ex)
-        {
-            throw $ex;
-        }
+        $this->RetrieveData();
+        
+        return $this->studentList;
     }
 
 

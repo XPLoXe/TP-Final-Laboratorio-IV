@@ -8,7 +8,7 @@
         private int $yearFoundation;
         private string $city;
         private string $description;
-        private string $logo;
+        private string $logo; // base64 encode of the image
         private string $email;
         private string $phoneNumber;
         private bool $active;
@@ -34,7 +34,7 @@
             $this->name = $name;
         }
 
-        public function getYearFoundation(): int
+        public function getYearOfFoundation(): int
         {
             return $this->yearFoundation;
         }
@@ -69,7 +69,7 @@
             return $this->logo;
         }
 
-        public function setLogo($logo): void
+        public function setLogo(string $logo): void
         {
             $this->logo = $logo;
         }        
@@ -104,4 +104,3 @@
             $this->active = $active;
         }
     }
-?>
