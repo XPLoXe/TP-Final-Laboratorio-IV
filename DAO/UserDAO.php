@@ -5,6 +5,7 @@ use Exception as Exception;
 use Interfaces\IUserDAO as IUserDAO;
 use Models\User as User;
 use DAO\Connection as Connection;
+use Models\UserRole as UserRole;
 
 class UserDAO implements IUserDAO
 {
@@ -15,12 +16,11 @@ class UserDAO implements IUserDAO
     {
         try
         {
-            $query = "INSERT INTO ".$this->tableName." (email, user_password, user_role_id, active) VALUES (:email, :user_password, :user_role_id, :active);";
+            $query = "INSERT INTO ".$this->tableName." (email, user_password, user_role_id) VALUES (:email, :user_password, :user_role_id);";
 
             $parameters["email"] = $user->getEmail();
             $parameters["user_password"] = $user->getPassword();
             $parameters["user_role_id"] = $user->getUserRole()->getUserRoleId();
-            $parameters["active"] = $user->isActive();
 
             $this->connection = Connection::GetInstance();
 
@@ -73,13 +73,46 @@ class UserDAO implements IUserDAO
             {                
                 $user = new User();
                 $user->setEmail($row["email"]);
-                $user->setPassword($row["password"]);
+                $user->setPassword($row["user_password"]);
+                $user->setFirstName($row["first_name"]);
+                $user->setLastName($row["last_name"]);
+                $user->setUserRole(new UserRole($row["user_role_id"]));
+                $user->setApiUserId($row["api_user_id"]);
                 $user->setActive($row["active"]);
 
                 array_push($userList, $user);
             }
 
             return $userList;
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+    }
+
+    public function getUserByEmail(string $email): User
+    {
+        try
+        {
+            $userList = array();
+
+            $query = "SELECT * FROM ".$this->tableName.' WHERE email="'.$email.'"';
+
+            $this->connection = Connection::GetInstance();
+
+            $resultSet = $this->connection->Execute($query);
+                                 
+            $user = new User();
+            $user->setEmail($resultSet[0]["email"]);
+            $user->setPassword($resultSet[0]["user_password"]);
+            $user->setFirstName($resultSet[0]["first_name"]);
+            $user->setLastName($resultSet[0]["last_name"]);
+            $user->setUserRole(new UserRole($resultSet[0]["user_role_id"]));
+            $user->setApiUserId($resultSet[0]["api_user_id"]);
+            $user->setActive($resultSet[0]["active"]);
+
+            return $user;
         }
         catch (Exception $ex)
         {

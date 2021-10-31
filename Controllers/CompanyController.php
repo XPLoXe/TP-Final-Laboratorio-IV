@@ -10,9 +10,18 @@
     {
         private $companyDAO;
 
+
         public function __construct()
         {
             $this->companyDAO = new CompanyDAO();
+        }
+
+
+        public function GetAll()
+        {
+            $companyList = $this->companyDAO->GetAll();
+            
+            return $companyList;
         }
 
         public function ShowAddView()
@@ -21,6 +30,7 @@
 
             require_once(VIEWS_PATH."company-add.php");
         }
+
 
         public function ShowListView()
         {
