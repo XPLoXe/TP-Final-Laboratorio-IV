@@ -31,7 +31,7 @@
     </div>
     <div class="col" style="font-size: x-large; text-align:center; margin-top: 35px">
       <br>
-      <b>Fundada en:</b> <?php echo $company->getYearFoundation() ?> <br>
+      <b>Fundada en:</b> <?php echo $company->getYearOfFoundation() ?> <br>
       <b>Radicada en:</b> <?php echo $company->getCity() ?> <br> 
       <br>
       <p><strong><?php echo $company->getDescription() ?></strong></p>

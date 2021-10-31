@@ -14,4 +14,3 @@
                     require_once(VIEWS_PATH."login.php");
             }        
         }
-?>

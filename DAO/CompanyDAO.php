@@ -2,22 +2,36 @@
 
     namespace DAO;
 
-    use Interfaces\ICompanyDAO as ICompanyDAO;
+    use Exception;  
     use Models\Company as Company;
 
-    class CompanyDAO implements ICompanyDAO
+    class CompanyDAO
     {
         private $companyList = array();
+        private $tableName = "Companies";
 
-        public function Add(Company $company)
+        public function Add(Company $company, string $logo_tmp_path)
         {
-            $this->RetrieveData();
-
-            if ($this->checkIfCompanyExists($company->getName()))
+            try
             {
-                array_push($this->companyList, $company);
+                $query = "INSERT INTO ".$this->tableName." (name, year_of_foundation, city, description, logo, email, phone_number, active) VALUES (:name, :year_of_foundation, :city, :description, :logo, :email, :phone_number, :active);";
 
-                $this->SaveData();
+                $parameters["name"] = $company->getName();
+                $parameters["year_of_foundation"] = $company->getYearOfFoundation();
+                $parameters["city"] = $company->getCity();
+                $parameters["description"] = $company->getDescription();
+                $parameters["logo"] = base64_encode(file_get_contents($logo_tmp_path));
+                $parameters["email"] = $company->getEmail();
+                $parameters["phone_number"] = $company->getPhoneNumber();
+                $parameters["active"] = $company->isActive();
+                
+                $this->connection = Connection::GetInstance();
+    
+                $this->connection->ExecuteNonQuery($query, $parameters);
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
             }
         }
 
@@ -26,6 +40,7 @@
         {
             return $this->companyList;
         }
+
 
         public function checkIfCompanyExists($companyName){
 
@@ -38,15 +53,16 @@
             }
 
             return true;
-
         }
-        
+
+
         public function GetAll()
         {
             $this->RetrieveData();
             
             return $this->companyList;
         }
+
 
         public function getCompanyByEmail($email)
         {
@@ -62,18 +78,38 @@
             return null;
         }
 
+
         public function getCompanyById($id)
         {
             $this->RetrieveData();
 
-            foreach ($this->companyList as $company) {
-
+            foreach ($this->companyList as $company) 
+            {
                 if ($company->getCompanyId() == $id)
                     return $company;
             }
 
             return null;
         }
+
+        public function getCompanyIdByName(string $name): int
+        {
+            try
+            {    
+                $query = "SELECT company_id FROM ".$this->tableName.' WHERE name="'.$name.'"';
+    
+                $this->connection = Connection::GetInstance();
+    
+                $companyId = $this->connection->Execute($query)[0]['company_id'];
+    
+                return $companyId;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
 
         public function isNameinCompanyName($companyName,$name)
         {
@@ -82,6 +118,7 @@
             else
                 return true;
         }
+
 
         public function getCompaniesFilterByName($name)
         {
@@ -106,6 +143,7 @@
                 return false;
         }
 
+
         public function deleteCompany($id)
         {
             $this->RetrieveData();
@@ -115,6 +153,7 @@
 
             $this->SaveData();
         }
+
 
         public function editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber): Company
         {
@@ -131,12 +170,8 @@
                     $company->setEmail($email);
                     $company->setPhoneNumber($phoneNumber);
 
-                    #die(var_dump($tmp_name));
-
                     if (!empty($tmp_name))
                     {
-                        echo "No estoy vacío";
-                        #die(var_dump($tmp_name, $logo));
                         $this->SaveImage($tmp_name, $logo);
                         $company->setLogo($logo);
                     }
@@ -148,6 +183,7 @@
 
             return null;
         }
+
 
         public function getActiveCompanies()
         {
@@ -164,6 +200,7 @@
 
             return $activeCompanies;
         }
+
 
         private function RetrieveData()
         {
@@ -194,15 +231,32 @@
             }
         }
 
-        public function SaveImage($tmp, $target)
+
+        public function SaveCompanyLogo($tmp_img_path)
         {
-            move_uploaded_file($tmp, IMG_PATH.$target);
+            try
+            {
+                if (!is_dir($target_path))
+                {
+                    mkdir($target_path);
+                }
+                $logo_name = 'logo.'.$image_ext;
+                move_uploaded_file($tmp_img_path, $target_path.$logo_name);
+
+                //save logo to db
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
         }
+
 
         public function getCompanyPositionInArray($company)
         {
             return array_search($company,$this->companyList); //TODO: Rewrite this to avoid edge case where a company is deleted
         }                                                     // and every id is now offset from array index
+
 
         private function SaveData()
         {
@@ -212,7 +266,7 @@
 
                 $valuesArray['companyId'] = $this->getCompanyPositionInArray($company);
                 $valuesArray['name'] = $company->getName();
-                $valuesArray['yearFoundation'] = $company->getYearFoundation();
+                $valuesArray['yearFoundation'] = $company->getYearOfFoundation();
                 $valuesArray['city'] = $company->getCity();
                 $valuesArray['description'] = $company->getDescription();
                 $valuesArray['logo'] = $company->getLogo();

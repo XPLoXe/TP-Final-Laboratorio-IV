@@ -16,9 +16,3 @@ define("DB_NAME", "University");
 define("DB_USER", "root");
 define("DB_PASS", "");
 define("ROLE_STUDENT", "Student");
-
-?>
-
-
-
-
