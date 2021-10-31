@@ -44,5 +44,11 @@
 
             $this->ShowAddView();
         }
+
+        public function getIdCareerByStudentId($studentId){
+
+            return $studentDAO->getCareerIdByStudentId($studentId);
+
+        }
     }
 ?>

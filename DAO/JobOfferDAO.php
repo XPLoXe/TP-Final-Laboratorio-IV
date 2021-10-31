@@ -19,9 +19,9 @@
                 $parameters["job_position_id"] = $jobOffer->getJobPositionId();
                 $parameters["company_id"] = $jobOffer->getCompanyId();
                 $parameters["description"] = $jobOffer->getDescription();
-                $parameters["publication_date"] = $jobOffer->getJobPositionId();
-                $parameters["expiration_date"] = $jobOffer->getJobPositionId();
-                $parameters["active"] = true;
+                $parameters["publication_date"] = $jobOffer->getPublicationDate();//poner date() en controller
+                $parameters["expiration_date"] = $jobOffer->getExpirationDate();
+                $parameters["active"] = $jobOffer->isActive();//poner true en el controller
 
                 $this->connection = Connection::GetInstance();
 
@@ -67,6 +67,53 @@
             {
                 throw $ex;
             }
+        }
+
+        public function GetList()
+        {
+            try
+            {
+                $jobOfferList = array();
+
+                $query = "SELECT j.job_offer_id, cp.name, j.description, p.description, 
+                cr.description, j.expiration_date, j.active, u.api_user_id
+
+                FROM jobOffers j
+                INNER JOIN companies cp on j.company_id = cp.company_id
+                INNER JOIN users u on j.user_id = u.api_user_id
+
+                INNER JOIN jobPositions p on j.job_position_id = p.job_position_id
+                INNER JOIN careers cr on p.career_id = cr.id_career
+                
+                INNER JOIN careerJobPositions crxp on crxp.career_id = cr.career_id and crxp.job_position_id = p.job_position_id";
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query);
+
+                var_dump($resultSet);
+                
+                foreach ($resultSet as $row)
+                {                
+                    $jobOffer = new JobOffer();
+                    $jobOffer->setJobOfferId($row["id_jobOffer"]);
+                    $jobOffer->setCompany_name($row["company_name"]);
+                    $jobOffer->setJobOffer_description($row["jobOffer_description"]);
+                    $jobOffer->setJobPosition_description($row["jobPosition_description"]);
+                    $jobOffer->setCareer_description($row["career_description"]);
+                    $jobOffer->setLimitDate($row["limit_date"]);
+                    $jobOffer->setState($row["state"]);
+
+                    array_push($jobOfferList, $jobOffer);
+                }
+
+                return $jobOfferList;
+            }
+            catch(Exception $exception)
+            {
+                $response = $exception->getMessage();
+            }
+
         }
 
         public function getJobOfferByUserId($userId): JobOffer
@@ -182,7 +229,8 @@
             }
         }
 
-        public function getJobOfferByCareerId($careerId)
+        public function getJobOfferByCareerId($careerId)// no va xq joboffer no tiene careerId
+        //hay q hacer el inner join necesario
         {
 
             try

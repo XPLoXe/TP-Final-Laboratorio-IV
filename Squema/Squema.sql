@@ -33,7 +33,7 @@ CREATE TABLE Companies (
 );
 
 CREATE TABLE JobPositions (
-	job_position_id INT AUTO_INCREMENT,
+	job_position_id INT,
 	description VARCHAR(50) NOT NULL,
 	active BOOL NOT NULL,
 	PRIMARY KEY (job_position_id)
@@ -55,7 +55,7 @@ CREATE TABLE JobOffers (
 );
 
 CREATE TABLE Careers (
-	career_id INT AUTO_INCREMENT,
+	career_id INT,
 	description VARCHAR(100),
 	active BOOL NOT NULL,
 	PRIMARY KEY (career_id)

@@ -44,5 +44,10 @@
         {
             return $date->format('d-m-Y');
         }
+
+        public function updateDataBaseFromApi()
+        {
+            
+        }
     }
 ?>

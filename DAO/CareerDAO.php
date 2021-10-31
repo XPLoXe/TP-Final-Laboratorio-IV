@@ -2,17 +2,142 @@
 namespace DAO;
 
 use Interfaces\ICareerDAO as ICareerDAO;
+use DAO\Connection;
 use Models\Career as Career;
 
 class CareerDAO implements ICareerDAO
 {
     private $careerList = array();
+    private $connection;
+    private $tableName = "careers";
+
+    public function updateDatabaseFromAPI(){
+
+        $this->RetrieveData();
+
+        $DBcareerList = $this->GetAll();
+
+        if( !($this->careerList === $DBcareerList) ){
+
+            foreach($this->careerList as $career){
+
+                $flag=false;
+
+                if(!empty($DBcareerList)){
+                
+                    foreach($DBcareerList as $DBcareer){
+
+                        if( $DBcareer->getCareerId() == $career->getCareerId() ){
+
+                            $flag=true;
+                
+                            if( strcmp( $DBcareer->getDescription() , $career->getDescription() ) != 0 )
+                                $this->alterDescription( $DBcareer->getCareerId(), $career->getDescription() );//hacer esta
+
+                            if( $DBcareer->isActive() !=  $career->isActive() )
+                                $this->alterActive($DBcareer->getCareerId(),$jobPosition->getCareerId());//hacer esta
+
+                        }
+
+                        if($flag)
+                            break;
+
+                    }
+                }
+
+                if(!$flag)
+                    $this->Add($career);
+                    
+            }
+        }
+    }
+
+    public function alterDescription($careerId,$newDescription)
+    {
+        try
+        {
+            $query = "UPDATE ".$this->tableName." SET description='".$newDescription."'WHERE career_id='".$careerId."'";
+
+            $this->connection = Connection::GetInstance();
+
+            $this->connection->ExecuteNonQuery($query);
+            
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+    }
+
+    public function alterActive($careerId,$newActive)
+    {
+        try
+        {
+            $query = "UPDATE ".$this->tableName." SET active='".$newActive."'WHERE career_id='".$careerId."'";
+
+            $this->connection = Connection::GetInstance();
+
+            $this->connection->ExecuteNonQuery($query);
+            
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+    }
 
     public function GetAll()
     {
-        $this->RetrieveData();
+        try
+        {
+            $DBcareerList = array();
 
-        return $this->careerList;
+            $query = "SELECT * FROM ".$this->tableName;
+
+            $this->connection = Connection::GetInstance();
+
+            $resultSet = $this->connection->Execute($query);
+            
+            foreach ($resultSet as $row)
+            {                
+                $career = new Career();
+                $career->setCareerId($row["career_id"]);
+                $career->setDescription($row["description"]);
+                $career->setActive($row["active"]);
+
+                array_push($DBcareerList,  $career);
+            }
+
+            return $DBcareerList;
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+    
+    }
+
+    public function Add(Career $career)
+    {
+
+        try
+        {
+            $query = "INSERT INTO ".$this->tableName." (career_id, description, active) VALUES (:career_id, :description, :active);";
+
+            $parameters["career_id"] = $career->getCareerId();
+            $parameters["description"] = $career->getDescription();
+            $parameters["active"] = $career->isActive(); //No puede ir por defecto true
+ 
+            $this->connection = Connection::GetInstance();
+
+            $this->connection->ExecuteNonQuery($query, $parameters);
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+
+
     }
 
     private function getCareersFromApi()
@@ -28,54 +153,16 @@ class CareerDAO implements ICareerDAO
 
     }
 
-    public function getCareerByName($name)//?
+    public function getCareerByDescription($description)
     {
-
-        $this->RetrieveData();
-
-        foreach ($careerList as $career) {
-
-            if ($career->getName() == $name) {
-                return $career;
-            }
-
-        }
-
-        return null;
     }
 
     public function getActiveCareers()
     {
-
-        $this->RetrieveData();
-
-        $activeCareers = array();
-
-        foreach ($this->careerList as $career) {
-
-            if ($career->isActive()) {
-                array_push($activeCareers, $career);
-            }
-
-        }
-
-        return $activeCareers;
     }
 
-    public function getCareerById($id){
-
-        $this->RetrieveData();
-
-        foreach ($this->careerList as $career) {
-
-            if ($career->getCareerId() == $id) {
-                return $career;
-            }
-
-        }
-
-        return null;
-
+    public function getCareerById($careerId)
+    {
     }
 
     private function RetrieveData()
@@ -91,9 +178,7 @@ class CareerDAO implements ICareerDAO
             $career = new Career(); 
 
             $career->setCareerId($valuesArray["careerId"]);
-
             $career->setDescription($valuesArray["description"]);
-            $career->setName($valuesArray["name"]);
             $career->setActive($valuesArray["active"]);
            
             array_push($this->careerList, $career);

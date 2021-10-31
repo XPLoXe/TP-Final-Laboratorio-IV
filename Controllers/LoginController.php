@@ -5,6 +5,9 @@
     use Models\User as User;
     use Utils\Utils as Utils;
 
+    use DAO\JobPositionDAO as JobPositionDAO;
+    use DAO\CareerDAO as CareerDAO;
+
     class LoginController
     {
         public function Login()
@@ -18,6 +21,13 @@
                 $password = $_POST["password"];
 
                 if (($email == "admin@admin.com") && ($password == "12345")) {
+
+                    $careerDB = new CareerDAO();
+                    $careerDB->updateDatabaseFromAPI();
+
+                    $jobPositionDB = new JobPositionDAO();
+                    $jobPositionDB->updateDatabaseFromAPI();
+
                     $_SESSION["loggedUser"] = "admin";
                     $_SESSION["isAdmin"] = true;
                     require_once(VIEWS_PATH."home.php");

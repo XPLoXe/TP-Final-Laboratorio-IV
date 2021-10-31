@@ -135,6 +135,22 @@ class StudentDAO implements IStudentDAO
 
     }
 
+    public function getCareerIdByStudentId($studentId){
+
+        $this->RetrieveData();
+
+        foreach ($this->studentList as $student) 
+        {
+            if ($student->getStudentId() == $studentId) {
+                return $student->getCareerId();
+            }
+
+        }
+
+        return null;
+
+    }
+
 
     private function RetrieveData() // TODO: check if active
     {

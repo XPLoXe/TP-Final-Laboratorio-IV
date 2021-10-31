@@ -2,38 +2,67 @@
 namespace DAO;
 
 use Interfaces\IJobPositionDAO as IJobPositionDAO;
+use DAO\Connection;
 use Models\JobPosition as JobPosition;
 
 class JobPositionDAO implements IJobPositionDAO
 {
     private $jobPositionList = array();
     private $connection;
-    private $tableName = "JobPositions";
+    private $tableName = "jobpositions";
     
 
     public function updateDatabaseFromAPI(){
 
         $this->RetrieveData();
 
-        foreach($jobPositionList as $jobPosition){
+        //$DBjobPositionList = $this->GetAll();
 
-           $DBjobPosition = $this->getJobPositionById($jobPosition->getJobPositionId());
-           
-           if($DBjobPosition != NULL){
+        if( !($this->jobPositionList === $DBjobPositionList) ){
 
-                if( strcmp( $DBjobPosition["description"] , $jobPosition->getDescription() ) != 0 )
-                    $this->alterDescription($DBjobPosition["job_position_id"],$jobPosition->getDescription());
+            $DBjobPositionList = $this->setInactiveArrayJobPositions($DBjobPositionList);//Pongo todos los active en 0
 
-                if( $DBjobPosition["career_id"] != $jobPosition->getCareerId() )
-                    $this->alterCareerId($DBjobPosition["job_position_id"],$jobPosition->getCareerId());
+            foreach($this->jobPositionList as $jobPosition){
 
-           }else{
+                $flag=false;
+                
+                foreach($DBjobPositionList as $DBjobPosition){
 
-               $this->Add($jobPosition);
+                    if( $DBjobPosition->getJobPositionId() == $jobPosition->getJobPositionId() ){
 
-           }
-           
+                        $flag=true;
+
+                        $DBjobPosition->setActive(true);//como esta en la api el active tiene q ponerse en 1
+               
+                        if( strcmp( $DBjobPosition->getDescription() , $jobPosition->getDescription() ) != 0 )
+                            $this->alterDescription($DBjobPosition->getJobPositionId(),$jobPosition->getDescription());
+
+                        if( $DBjobPosition->getCareerId() != $jobPosition->getCareerId() )//Si esto sucede, debo modificar la tabla careerJobPosition
+                            $this->alterCareerId($DBjobPosition->getJobPositionId(), $DBjobPosition->getCareerId(),$jobPosition->getCareerId());
+        
+                    }
+
+                    if($flag)
+                        break;
+
+                }
+
+                if(!$flag)
+                    $this->Add($jobPosition);//modificar careerJobPosition
+                    
+            }
         }
+    }
+
+    public function setInactiveArrayJobPositions($DBjobPositionList)//Manera q tengo de saber si un registro de la API fue eliminado y actualizarlo en la BD
+    {
+        
+        foreach($DBjobPositionList as $DBjobPosition){
+
+            $DBjobPosition->setActive(false);
+        }
+
+        return $DBjobPositionList;
 
     }
 
@@ -74,11 +103,12 @@ class JobPositionDAO implements IJobPositionDAO
 
     }
 
-    public function alterCarrerId($jobPositionId,$newCareerId){
+    public function alterCarrerId($jobPositionId,$oldCareerId,$newCareerId){
 
         try
         {
-            $query = "UPDATE ".$this->tableName." SET career_id='".$newCareerId."'WHERE job_position_id='".$jobPositionId."'";
+            $query = "UPDATE careerjobpositions SET career_id='".$newCareerId."
+                    'WHERE job_position_id='".$jobPositionId."' AND career_id='".$oldCareerId."'";
 
             $this->connection = Connection::GetInstance();
 
@@ -92,15 +122,37 @@ class JobPositionDAO implements IJobPositionDAO
 
     }
 
+    public function insertCareerJobPosition($jobPositionId,$careerId){
+
+        try
+        {
+            $query = "INSERT INTO careerjobpositions (career_id,job_position_id) VALUES (:career_id, :job_position_id);";
+
+            $parameters["career_id"] = $careerId;
+            $parameters["job_position_id"] = $jobPositionId;
+ 
+            $this->connection = Connection::GetInstance();
+
+            $this->connection->ExecuteNonQuery($query, $parameters);
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+
+    }
+
     public function Add(JobPosition $jobPosition)
     {
         try
         {
-            $query = "INSERT INTO ".$this->tableName." (job_position_id, description, career_id) VALUES (:job_position_id, :description, :company_id);";
+            $query = "INSERT INTO ".$this->tableName." (job_position_id, description, active) VALUES (:job_position_id, :description, :active);";
 
-            $parameters["job_position_id"] = $jobOffer->getJobPositionId();
-            $parameters["description"] = $jobOffer->getDescription();
-            $parameters["career_id"] = $jobOffer->getCareerId();
+            $parameters["job_position_id"] = $jobPosition->getJobPositionId();
+            $parameters["description"] = $jobPosition->getDescription();
+            $parameters["active"] = true;
+
+            $this->insertCareerJobPosition($jobPosition->getJobPositionId(),$jobPosition->getCareerId());//Este metodo inserta en careerJobPositions
  
             $this->connection = Connection::GetInstance();
 
@@ -117,9 +169,18 @@ class JobPositionDAO implements IJobPositionDAO
     {
         try
         {
-            $jobPositionList = array();
+            $DBjobPositionList = array();
 
-            $query = "SELECT * FROM ".$this->tableName;
+            //$query = "SELECT * FROM ".$this->tableName;
+
+            $query ="SELECT j.job_position_id, j.description, j.active, 
+                            cr.career_id, cr.description, cr.active
+
+                    FROM jobpositions j
+
+                    INNER JOIN careerjobpositions crj on crj.job_position_id = j.job_position_id
+                    INNER JOIN careers cr on  cr.career_id = crj.career_id;";
+
 
             $this->connection = Connection::GetInstance();
 
@@ -127,15 +188,15 @@ class JobPositionDAO implements IJobPositionDAO
             
             foreach ($resultSet as $row)
             {                
-                $jobPosition = new JobOffer();
+                $jobPosition = new JobPosition();
                 $jobPosition->setJobPositionId($row["job_position_id"]);
                 $jobPosition->setDescription($row["description"]);
                 $jobPosition->setCareerId($row["career_id"]);
 
-                array_push($jobPositionList, $jobOffer);
+                array_push($DBjobPositionList,  $jobPosition);
             }
 
-            return $jobOfferList;
+            return $DBjobPositionList;
         }
         catch (Exception $ex)
         {
@@ -178,7 +239,7 @@ class JobPositionDAO implements IJobPositionDAO
     {
         $this->jobPositionList = array();
 
-        $dataAPI = $this->getStudentsFromApi();
+        $dataAPI = $this->getJobPositionFromApi();
 
         $arrayToDecode = json_decode($dataAPI, true);
 
