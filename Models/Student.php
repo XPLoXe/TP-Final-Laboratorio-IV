@@ -9,7 +9,7 @@
         private string $fileNumber;
         private $firstName;
         private $lastName;
-        private $birthDay;
+        private $birthDate;
         private $dni;
         private $gender;
         private $phoneNumber;
@@ -95,12 +95,12 @@
             $this->phoneNumber = $phoneNumber;
         }
 
-        public function getBirthDay()
+        public function getBirthDate()
         {
             return $this->birthDate;
         }
 
-        public function setBirthDay($birthDate)
+        public function setBirthDate($birthDate)
         {
             $this->birthDate = $birthDate;
         }

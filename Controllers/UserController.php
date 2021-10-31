@@ -10,14 +10,14 @@
     {
         private $userDAO;
         private $userRoleController;
-        private $text;
+        private $message;
         private $studentController;
 
 
         public function __construct()
         {
             $this->studentController = new StudentController();
-            $this->text = "";
+            $this->message = "";
             $this->userDAO = new userDAO();
             $this->userRoleController = new UserRoleController();
         }
@@ -66,7 +66,7 @@
             }
             else
             {
-                $this->text = "<h4 class = 'text-center' style='color: red;'> las contraseñas ingresadas no son las mismas </h4>";
+                $this->message = "<h4 class = 'text-center' style='color: red;'> las contraseñas ingresadas no son las mismas </h4>";
                 return false;
             }
             
@@ -76,12 +76,12 @@
         {
             if (!is_null($this->studentController->getStudentByEmail($email))) 
             {
-                $this->text = "<h4 class = 'text-center' style='color: green;'> Usuario registrado con éxito </h4>";
+                $this->message = "<h4 class = 'text-center' style='color: green;'> Usuario registrado con éxito </h4>";
                 return true;
             }
             else
             {
-                $this->text = "<h4 class = 'text-center' style='color: red;'> El mail no existe </h4>";
+                $this->message = "<h4 class = 'text-center' style='color: red;'> El mail no existe </h4>";
                 return false;
             }
         }
@@ -90,7 +90,7 @@
         {
             if ($this->userDAO->VerifyEmailDataBase($email)) 
             {
-                $this->text = "<h4 class = 'text-center' style='color: red;'> El email ya tiene una cuenta registrada </h4>";
+                $this->message = "<h4 class = 'text-center' style='color: red;'> El email ya tiene una cuenta registrada </h4>";
                 return true;
             } 
             return false;
@@ -110,13 +110,13 @@
                     if(!$this->VerifyEmailDataBase($email))     
                     {   
                         $this->Add($email, $password, $user_role_id);
-                        $message = $this->text;
+                        $message = $this->message;
                         require_once(VIEWS_PATH."login.php");
                     }
                     
                 }
             }
-            $message = $this->text;
+            $message = $this->message;
             require_once(VIEWS_PATH."signup.php");
         }
     }

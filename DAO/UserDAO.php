@@ -5,7 +5,6 @@ use Exception as Exception;
 use Interfaces\IUserDAO as IUserDAO;
 use Models\User as User;
 use DAO\Connection as Connection;
-use PDO;
 
 class UserDAO implements IUserDAO
 {
@@ -73,9 +72,9 @@ class UserDAO implements IUserDAO
             foreach ($resultSet as $row)
             {                
                 $user = new User();
-                $student->setEmail($row["email"]);
-                $student->setPassword($row["password"]);
-                $student->setActive($row["active"]);
+                $user->setEmail($row["email"]);
+                $user->setPassword($row["password"]);
+                $user->setActive($row["active"]);
 
                 array_push($userList, $user);
             }

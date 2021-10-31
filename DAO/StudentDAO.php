@@ -21,7 +21,7 @@ class StudentDAO implements IStudentDAO
             $parameters["firstName"] = $student->getFirstName();
             $parameters["lastName"] = $student->getLastName();
             $parameters["dni"] = $student->getDni();
-            $parameters["birthDate"] = $student->getBirthDay();
+            $parameters["birthDate"] = $student->getBirthDate();
             $parameters["email"] = $student->getEmail();
             $parameters["phoneNumber"] = $student->getPhoneNumber();
             $parameters["active"] = $student->isActive();
@@ -57,7 +57,7 @@ class StudentDAO implements IStudentDAO
                 $student->setFirstName($row["firstName"]);
                 $student->setLastName($row["lastName"]);
                 $student->setDni($row["dni"]);
-                $student->setBirthDay($row["birthDate"]);
+                $student->setBirthDate($row["birthDate"]);
                 $student->setEmail($row["email"]);
                 $student->setPhoneNumber($row["phoneNumber"]);
                 $student->setActive($row["active"]);
@@ -156,7 +156,7 @@ class StudentDAO implements IStudentDAO
                 $student->setDni($valuesArray["dni"]);
                 $student->setFileNumber($valuesArray["fileNumber"]);
                 $student->setGender($valuesArray["gender"]);
-                $student->setBirthDay($valuesArray["birthDate"]);
+                $student->setBirthDate($valuesArray["birthDate"]);
                 $student->setEmail($valuesArray["email"]);
                 $student->setPhoneNumber($valuesArray["phoneNumber"]);
                 $student->setActive($valuesArray["active"]);
