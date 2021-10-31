@@ -1,62 +1,71 @@
 <?php
     namespace Models;
 
-    use Models\UserRole as UserRole;
+    use UserRole;
     use DateTime;
 
     class User
     {
         private int $userId;
-        private UserRole $userRole;
         private string $email;
         private string $password;
+        private UserRole $userRole;
         private bool $active;
 
 
-        public function getUserId()
+        public function getUserId(): int
         {
             return $this->userId;
         }
     
-        public function setUserId($userId)
+
+        public function setUserId(int $userId): void
         {
             $this->userId = $userId;
         }
         
+
         public function getEmail(): string
         {
             return $this->email;
         }
+
 
         public function setEmail(string $email): void
         {
             $this->email = $email;
         }
 
-        public function getPassword()
+
+        public function getPassword(): string
         {
             return $this->password;
         }
+
     
-        public function setPassword($password)
+        public function setPassword(string $password): void
         {
             $this->password = $password;
         }
+
 
         public function getUserRole(): UserRole
         {
             return $this->userRole;
         }
+
     
-        public function setUserRole(UserRole $userRole)
+        public function setUserRole(UserRole $userRole): void
         {
             $this->userRole = $userRole;
         }
+
 
         public function isActive(): bool
         {
             return $this->active;
         }
+
 
         public function setActive(bool $active): void
         {
