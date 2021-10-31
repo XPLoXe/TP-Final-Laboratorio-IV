@@ -80,7 +80,6 @@
             return $this->description;
         }
 
-
         public function setDescription($description)
         {
             $this->description = $description;

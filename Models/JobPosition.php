@@ -31,8 +31,12 @@
             return $this->careerId;
         }
     
+<<<<<<< HEAD
 
         public function setCareerId(int $careerId): void
+=======
+        public function setCareerId($careerId): void
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
         {
             $this->careerId = $careerId;
         }
@@ -49,6 +53,7 @@
             $this->description = $description;
         }
 
+<<<<<<< HEAD
 
         public function isActive(): bool
         {
@@ -61,3 +66,7 @@
             $this->active = $active;
         }
     }
+=======
+    }
+?>
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484

@@ -14,6 +14,7 @@
         private UserRole $userRole;
         private int $apiUserId;
         private bool $active;
+        private int $api_user_id;
 
 
         public function getUserId(): int
@@ -108,5 +109,15 @@
         public function setActive(bool $active): void
         {
             $this->active = $active;
+        }
+
+        public function getApi_user_id()
+        {
+            return $this->api_user_id;
+        }
+
+        public function setApi_user_id($api_user_id)
+        {
+            $this->api_user_id = $api_user_id;
         }
     }

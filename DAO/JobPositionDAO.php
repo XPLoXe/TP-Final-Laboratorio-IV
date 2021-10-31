@@ -9,7 +9,11 @@ class JobPositionDAO implements IJobPositionDAO
 {
     private $jobPositionList = array();
     private $connection;
+<<<<<<< HEAD
     private $tableName = "JobPositions";
+=======
+    private $tableName = "jobpositions";
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
     
 
     public function updateDatabaseFromAPI(){
@@ -54,7 +58,10 @@ class JobPositionDAO implements IJobPositionDAO
         }
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
     public function setInactiveArrayJobPositions($DBjobPositionList)//Manera q tengo de saber si un registro de la API fue eliminado y actualizarlo en la BD
     {
         
@@ -67,7 +74,10 @@ class JobPositionDAO implements IJobPositionDAO
 
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
     public function getJobPositionById($jobPositionId){
 
         try
@@ -87,7 +97,10 @@ class JobPositionDAO implements IJobPositionDAO
 
     }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
     public function alterDescription($jobPositionId,$newDescription){
 
         try
@@ -103,10 +116,17 @@ class JobPositionDAO implements IJobPositionDAO
         {
             throw $ex;
         }
+<<<<<<< HEAD
     }
 
 
     public function alterCareerId($jobPositionId, $oldCareerId, $newCareerId){
+=======
+
+    }
+
+    public function alterCarrerId($jobPositionId,$oldCareerId,$newCareerId){
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
 
         try
         {
@@ -122,8 +142,13 @@ class JobPositionDAO implements IJobPositionDAO
         {
             throw $ex;
         }
+<<<<<<< HEAD
     }
 
+=======
+
+    }
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
 
     public function insertCareerJobPosition($jobPositionId,$careerId){
 
@@ -149,10 +174,18 @@ class JobPositionDAO implements IJobPositionDAO
     {
         try
         {
+<<<<<<< HEAD
             $query = "INSERT INTO ".$this->tableName." (job_position_id, description) VALUES (:job_position_id, :description);";
 
             $parameters["job_position_id"] = $jobPosition->getJobPositionId();
             $parameters["description"] = $jobPosition->getDescription();
+=======
+            $query = "INSERT INTO ".$this->tableName." (job_position_id, description, active) VALUES (:job_position_id, :description, :active);";
+
+            $parameters["job_position_id"] = $jobPosition->getJobPositionId();
+            $parameters["description"] = $jobPosition->getDescription();
+            $parameters["active"] = true;
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
 
             $this->insertCareerJobPosition($jobPosition->getJobPositionId(),$jobPosition->getCareerId());//Este metodo inserta en careerJobPositions
  
@@ -164,16 +197,36 @@ class JobPositionDAO implements IJobPositionDAO
         {
             throw $ex;
         }
+<<<<<<< HEAD
     }
 
+=======
+
+    }
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
 
     public function GetAll()
     {
         try
         {
+<<<<<<< HEAD
             $jobPositionList = array();
 
             $query = "SELECT * FROM ".$this->tableName." WHERE active=true";
+=======
+            $DBjobPositionList = array();
+
+            //$query = "SELECT * FROM ".$this->tableName;
+
+            $query ="SELECT j.job_position_id, j.description, j.active, 
+                            cr.career_id, cr.description, cr.active
+
+                    FROM jobpositions j
+
+                    INNER JOIN careerjobpositions crj on crj.job_position_id = j.job_position_id
+                    INNER JOIN careers cr on  cr.career_id = crj.career_id;";
+
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
 
             $this->connection = Connection::GetInstance();
 
@@ -183,6 +236,7 @@ class JobPositionDAO implements IJobPositionDAO
             {                
                 $jobPosition = new JobPosition();
                 $jobPosition->setJobPositionId($row["job_position_id"]);
+<<<<<<< HEAD
                 $jobPosition->setCareerId($row["career_id"]);
                 $jobPosition->setDescription($row["description"]);
                 $jobPosition->setActive($row["active"]);
@@ -191,6 +245,15 @@ class JobPositionDAO implements IJobPositionDAO
             }
 
             return $jobPositionList;
+=======
+                $jobPosition->setDescription($row["description"]);
+                $jobPosition->setCareerId($row["career_id"]);
+
+                array_push($DBjobPositionList,  $jobPosition);
+            }
+
+            return $DBjobPositionList;
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
         }
         catch (Exception $ex)
         {

@@ -102,7 +102,6 @@
 
         }
 
-
         public function getJobOfferByJobPositionId($jobPositionId)
         {
             try
@@ -160,7 +159,6 @@
             }
         }
 
-
         public function getJobOfferById($jobOfferId)
         {
             try
@@ -179,7 +177,6 @@
             }
         }
 
-
         public function getJobOfferByCompanyId($companyId)
         {
             try
@@ -197,7 +194,6 @@
                 throw $ex;
             }
         }
-
 
         public function getJobOfferByCareerId($careerId)// no va xq joboffer no tiene careerId
         //hay q hacer el inner join necesario

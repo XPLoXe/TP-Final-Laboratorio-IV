@@ -20,8 +20,19 @@
                 $email = $_POST["email"];
                 $password = $_POST["password"];
 
+<<<<<<< HEAD
                 if (($email == "admin@admin.com") && ($password == "12345")) 
                 {
+=======
+                if (($email == "admin@admin.com") && ($password == "12345")) {
+
+                    $careerDB = new CareerDAO();
+                    $careerDB->updateDatabaseFromAPI();
+
+                    $jobPositionDB = new JobPositionDAO();
+                    $jobPositionDB->updateDatabaseFromAPI();
+
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
                     $_SESSION["loggedUser"] = "admin";
                     $_SESSION["isAdmin"] = true;
                     require_once(VIEWS_PATH."home.php");
