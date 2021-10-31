@@ -10,10 +10,14 @@
     {
         private $userDAO;
         private $userRoleController;
+        private $message;
+        private $studentController;
 
 
         public function __construct()
         {
+            $this->studentController = new StudentController();
+            $this->message = "";
             $this->userDAO = new userDAO();
             $this->userRoleController = new UserRoleController();
         }
@@ -54,28 +58,65 @@
         }
     
 
-        public static function Verify(string $password, string $password_confirmation)
+        public function VerifyPassword(string $password, string $password_confirmation)
         {
-            if (strcmp($password, $password_confirmation) == 0) // TODO: Handle when passwords don't match, show error message
+            if (strcmp($password, $password_confirmation) == 0)
+            {
                 return true;
+            }
             else
+            {
+                $this->message = "<h4 class = 'text-center' style='color: red;'> las contraseñas ingresadas no son las mismas </h4>";
                 return false;
-            // TODO: StudentDAO::getStudentByEmail() Verify if email exists in API, fetch name
+            }
+            
         }
 
+        public function VerifyEmailAPI($email)
+        {
+            if (!is_null($this->studentController->getStudentByEmail($email))) 
+            {
+                $this->message = "<h4 class = 'text-center' style='color: green;'> Usuario registrado con éxito </h4>";
+                return true;
+            }
+            else
+            {
+                $this->message = "<h4 class = 'text-center' style='color: red;'> El mail no existe </h4>";
+                return false;
+            }
+        }
+
+        public function VerifyEmailDataBase($email)
+        {
+            if ($this->userDAO->VerifyEmailDataBase($email)) 
+            {
+                $this->message = "<h4 class = 'text-center' style='color: red;'> El email ya tiene una cuenta registrada </h4>";
+                return true;
+            } 
+            return false;
+        }
 
         public function Register(array $parameters)
         {
-            // TODO: Verify POST
             $email = $parameters['email'];
             $password = $parameters['password'];
             $password_confirmation = $parameters['password_confirmation'];
             $user_role_id = $parameters['user_role_id'];
 
-            if (!$this->Verify($password, $password_confirmation))
-                // TOOD: Send $msg
-                header("location:signup.php");
-            else
-                $this->Add($email, $password, $user_role_id);
+            if ($this->VerifyEmailAPI($email))
+            {
+                if($this->VerifyPassword($password, $password_confirmation))
+                {
+                    if(!$this->VerifyEmailDataBase($email))     
+                    {   
+                        $this->Add($email, $password, $user_role_id);
+                        $message = $this->message;
+                        require_once(VIEWS_PATH."login.php");
+                    }
+                    
+                }
+            }
+            $message = $this->message;
+            require_once(VIEWS_PATH."signup.php");
         }
     }

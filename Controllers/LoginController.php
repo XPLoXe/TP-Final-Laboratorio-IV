@@ -67,6 +67,7 @@
         public function ShowSignupView()
         {
             $userRoleController = new UserRoleController();
+            $message = "";
             $studentRoleId = $userRoleController->getIdByDescription(ROLE_STUDENT);
             require_once(VIEWS_PATH."signup.php");
         }

@@ -2,6 +2,7 @@
     <div class="content">
         <header class="text-center">
             <h2>TP Final <br> Bolsa de Trabajo</h2>
+            <?php echo $message ?>
         </header>
         <form action="<?php echo FRONT_ROOT ?>User/Register" method="post" class="login-form bg-dark-alpha p-5 text-white">
             <div class="form-group">

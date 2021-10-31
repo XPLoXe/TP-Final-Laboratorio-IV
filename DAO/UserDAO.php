@@ -32,6 +32,30 @@ class UserDAO implements IUserDAO
         }
     }
 
+    public function VerifyEmailDataBase($email)
+    {
+        $data = array();
+        try
+        {
+            $query = "SELECT * FROM ". $this->tableName . " WHERE email = :email;";
+            $parameters['email'] = $email;
+            $this->connection = Connection::GetInstance();
+            $data = $this->connection->Execute($query, $parameters);
+            if (array_key_exists(0, $data))                         
+            {   
+                if (strcmp($email, $data[0]["email"]) == 0)     //return true if the email is already on data base
+                {
+                    return true;
+                }
+            }
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+        return false;
+    }
+
 
     public function GetAll()
     {
@@ -48,9 +72,9 @@ class UserDAO implements IUserDAO
             foreach ($resultSet as $row)
             {                
                 $user = new User();
-                $student->setEmail($row["email"]);
-                $student->setPassword($row["password"]);
-                $student->setActive($row["active"]);
+                $user->setEmail($row["email"]);
+                $user->setPassword($row["password"]);
+                $user->setActive($row["active"]);
 
                 array_push($userList, $user);
             }
