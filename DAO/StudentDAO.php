@@ -12,7 +12,7 @@ class StudentDAO
     private $tableName = "Students";
 
 
-    public function GetAll()
+    public function GetAll(): array
     {
         $this->RetrieveData();
         
@@ -20,7 +20,7 @@ class StudentDAO
     }
 
 
-    private function getStudentsFromApi()
+    private function getStudentsFromApi(): string
     {
         $apiStudent = curl_init(API_URL . "Student");
 
@@ -33,7 +33,7 @@ class StudentDAO
     }
 
 
-    public function getStudentByEmail($email)
+    public function getStudentByEmail($email): Student
     {
         $this->RetrieveData();
 
@@ -47,7 +47,7 @@ class StudentDAO
     }
 
 
-    public function getActiveStudents()
+    public function getActiveStudents(): array
     {
 
         $this->RetrieveData();
@@ -64,8 +64,8 @@ class StudentDAO
     }
 
 
-    public function getStudentById($id){
-
+    public function getStudentById($id): Student
+    {
         $this->RetrieveData();
 
         foreach ($this->studentList as $student) 
@@ -77,38 +77,38 @@ class StudentDAO
         }
 
         return null;
-
     }
 
 
-    private function RetrieveData()
+    private function RetrieveData(): void // TODO: add $msg for situation where it can't retrieve students from API
     {
         $this->studentList = array();
 
         $dataAPI = $this->getStudentsFromApi();
 
-        $arrayToDecode = json_decode($dataAPI, true);
-
-        foreach ($arrayToDecode as $valuesArray) 
+        if ($arrayToDecode = json_decode($dataAPI, true))
         {
-            if ($valuesArray["active"]) {
-                $student = new Student();
-                $student->setStudentId($valuesArray["studentId"]);
-                $student->setCareerId($valuesArray["careerId"]);
+            foreach ($arrayToDecode as $valuesArray)
+            {
+                if ($valuesArray["active"]) {
+                    $student = new Student();
+                    $student->setStudentId($valuesArray["studentId"]);
+                    $student->setCareerId($valuesArray["careerId"]);
 
-                $student->setFirstName($valuesArray["firstName"]);
-                $student->setLastName($valuesArray["lastName"]);
-                $student->setDni($valuesArray["dni"]);
-                $student->setFileNumber($valuesArray["fileNumber"]);
-                $student->setGender($valuesArray["gender"]);
-                $student->setBirthDate($valuesArray["birthDate"]);
-                $student->setEmail($valuesArray["email"]);
-                $student->setPhoneNumber($valuesArray["phoneNumber"]);
-                $student->setActive($valuesArray["active"]);
+                    $student->setFirstName($valuesArray["firstName"]);
+                    $student->setLastName($valuesArray["lastName"]);
+                    $student->setDni($valuesArray["dni"]);
+                    $student->setFileNumber($valuesArray["fileNumber"]);
+                    $student->setGender($valuesArray["gender"]);
+                    $student->setBirthDate($valuesArray["birthDate"]);
+                    $student->setEmail($valuesArray["email"]);
+                    $student->setPhoneNumber($valuesArray["phoneNumber"]);
+                    $student->setActive($valuesArray["active"]);
 
-                array_push($this->studentList, $student);
+                    array_push($this->studentList, $student);
+                }
+                
             }
-            
         }
     }
 }
