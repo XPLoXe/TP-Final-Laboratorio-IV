@@ -59,7 +59,7 @@
                             if ($company->isActive()) 
                             { ?>
                                 <tr>
-                                    <td><img style="max-height: 50px" src=<?php echo FRONT_ROOT . IMG_PATH . $company->getLogo() ?> alt="image logo"></img></td>
+                                    <td><img src="data:image/png;base64, <?php echo $company->getLogo() ?>" alt="image logo" width=50px></img></td>
                                     <td><?php echo $company->getName() ?></td>
                                     <td><?php echo $company->getCity() ?></td>
                                     <td><?php echo $company->getPhoneNumber(); ?></td>

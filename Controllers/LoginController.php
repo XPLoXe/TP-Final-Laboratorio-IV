@@ -11,7 +11,7 @@
         {
             $parameters = array();
             
-            if ($_SERVER['REQUEST_METHOD'] == "POST") 
+            if ($_SERVER['REQUEST_METHOD'] == "POST")
             {
                 $parameters = $_POST;
                 $email = $_POST["email"];
@@ -23,18 +23,18 @@
                     require_once(VIEWS_PATH."home.php");
                 } else
                 {
-                    //Load users
+                    // Load users
                     $userDAO = new userDAO();
                     $userList = array();
                     $userList = $userDAO->GetAll();
                     $user = new User();
-                    $user = $userDAO->getUserByEmail($email); //TODO: write method
+                    $user = $userDAO->getUserByEmail($email); // TODO: write method
 
                     if (!is_null($user)) {
                         
                         if (true) { // TODO: check user password
                             $_SESSION["loggedUser"] = $user;
-                            require_once(VIEWS_PATH."home.php"); //Regular user redirect
+                            require_once(VIEWS_PATH."home.php"); // Regular user redirect
                         }
                         else
                         {
@@ -71,4 +71,3 @@
             require_once(VIEWS_PATH."signup.php");
         }
     }
-?>

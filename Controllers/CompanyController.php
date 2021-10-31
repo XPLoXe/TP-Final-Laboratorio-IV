@@ -76,21 +76,17 @@
         {
             Utils::checkAdmin();
 
-            $tmp = ($parameters['logo']['tmp_name']);
-            $target = $parameters['logo']['name'];
-
             $company = new Company();
             $company->setName($parameters['name']);
             $company->setYearFoundation($parameters['yearFoundation']);
             $company->setCity($parameters['city']);
             $company->setDescription($parameters['description']);
-            $company->setLogo($parameters['logo']['name']);
             $company->setEmail($parameters['email']);
             $company->setPhoneNumber($parameters['phoneNumber']);
             $company->setActive(true);
+            $logo_tmp_path = $parameters['logo']["tmp_name"];
 
-            $this->companyDAO->Add($company);
-            $this->companyDAO->SaveImage($tmp, $target);
+            $this->companyDAO->Add($company, $logo_tmp_path);
 
             $this->ShowListView();
         }
@@ -103,19 +99,19 @@
             if ($_SERVER['REQUEST_METHOD'] == "POST") { 
 
                 if (empty($parameters["nameToFilter"])) 
-                { //Si ingreso el input vacio apareceran todas las companias
+                {
 
                     $this->ShowListView();
 
                 } else
                 {
-                    $aCompanyWasFiltered  = $this->companyDAO->getCompaniesFilterByName($parameters["nameToFilter"]);//This modificate the $companyList if there is any filter ocasion
+                    $aCompanyWasFiltered  = $this->companyDAO->getCompaniesFilterByName($parameters["nameToFilter"]);
 
                     if ($aCompanyWasFiltered == false)
                     {
-                        $msgErrorFilter = '<strong style="color:red; font-size:small; text-align: center;"> Ninguna Compañia contiene el nombre ingresado </strong>';
+                        $msgErrorFilter = '<strong style="color:red; font-size:small; text-align: center;"> Ninguna Compañia contiene el nombre ingresado </strong>'; // TODO: move HTML code to view
 
-                        $companyList = $this->companyDAO->GetAll(); //No llamo al metodo ShowListView porq no me aparecera el msg
+                        $companyList = $this->companyDAO->GetAll();
 
                         require_once(VIEWS_PATH."company-list.php");
 

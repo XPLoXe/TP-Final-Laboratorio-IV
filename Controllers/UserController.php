@@ -79,4 +79,3 @@
                 $this->Add($email, $password, $user_role_id);
         }
     }
-?>

@@ -8,4 +8,3 @@
         public function CheckUser($id, $password);
 
     }
-?>
