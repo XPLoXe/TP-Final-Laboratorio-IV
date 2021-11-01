@@ -16,11 +16,11 @@
             <form action="<?php echo FRONT_ROOT ?>Login/Login" method="post" class="login-form bg-dark-alpha p-5 text-white">
                 <div class="form-group">
                     <label for="">Email</label>
-                    <input type="text" name="email" class="form-control form-control-lg" placeholder="Ingrese su e-mail">
+                    <input type="text" name="email" class="form-control form-control-lg" placeholder="Ingrese su e-mail" required>
                 </div>
                 <div class="form-group">
                     <label for="">Contraseña</label>
-                    <input type="password" name="password" class="form-control form-control-lg" placeholder="Ingrese su contraseña">
+                    <input type="password" name="password" class="form-control form-control-lg" placeholder="Ingrese su contraseña" required>
                 </div>
                 <button class="btn btn-dark btn-block btn-lg" type="submit">Iniciar Sesión</button>
                 <a class="btn btn-dark btn-block btn-lg" href="<?php echo FRONT_ROOT ?>Login/ShowSignupView">Registrarse</a>

@@ -5,6 +5,9 @@
     use Models\User as User;
     use Utils\Utils as Utils;
 
+    use DAO\JobPositionDAO as JobPositionDAO;
+    use DAO\CareerDAO as CareerDAO;
+
     class LoginController
     {
         public function Login()
@@ -17,7 +20,19 @@
                 $email = $_POST["email"];
                 $password = $_POST["password"];
 
+<<<<<<< HEAD
+                if (($email == "admin@admin.com") && ($password == "12345")) 
+                {
+=======
                 if (($email == "admin@admin.com") && ($password == "12345")) {
+
+                    $careerDB = new CareerDAO();
+                    $careerDB->updateDatabaseFromAPI();
+
+                    $jobPositionDB = new JobPositionDAO();
+                    $jobPositionDB->updateDatabaseFromAPI();
+
+>>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484
                     $_SESSION["loggedUser"] = "admin";
                     $_SESSION["isAdmin"] = true;
                     require_once(VIEWS_PATH."home.php");
@@ -32,19 +47,20 @@
 
                     if (!is_null($user)) {
                         
-                        if (true) { // TODO: check user password
+                        if (true)  // TODO: check user password
+                        {
                             $_SESSION["loggedUser"] = $user;
                             require_once(VIEWS_PATH."home.php"); // Regular user redirect
                         }
                         else
                         {
-                            echo "<script> if(confirm('Email or Password Incorrect, please try again'));</script>";
+                            echo "<script> if(confirm('Email or Password Incorrect, please try again'));</script>"; //TODO: move to view via $message
                             require_once(VIEWS_PATH."login.php");
                         }
                     }
                     else
                     {
-                        echo "<script> if(confirm('Email not found'));</script>";
+                        echo "<script> if(confirm('Email not found'));</script>"; //TODO: move to view via $message
                         require_once(VIEWS_PATH."login.php");
                     }
                 }
@@ -60,6 +76,7 @@
         {
             $_SESSION = array(); //Cleans every variable set in $_SESSION (session_destroy() does not clean them)
             session_destroy();
+            $message = "";
             require_once(VIEWS_PATH."login.php");
         }
 

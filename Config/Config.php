@@ -15,4 +15,6 @@ define("DB_HOST", "localhost");
 define("DB_NAME", "University");
 define("DB_USER", "root");
 define("DB_PASS", "");
+define("ROLE_ADMIN", "Administrator");
 define("ROLE_STUDENT", "Student");
+define("ROLE_COMPANY", "Company");

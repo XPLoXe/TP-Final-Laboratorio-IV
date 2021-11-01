@@ -14,7 +14,7 @@
         {
             try
             {
-                $query = "INSERT INTO ".$this->tableName." (name, year_of_foundation, city, description, logo, email, phone_number, active) VALUES (:name, :year_of_foundation, :city, :description, :logo, :email, :phone_number, :active);";
+                $query = "INSERT INTO ".$this->tableName." (name, year_of_foundation, city, description, logo, email, phone_number) VALUES (:name, :year_of_foundation, :city, :description, :logo, :email, :phone_number);";
 
                 $parameters["name"] = $company->getName();
                 $parameters["year_of_foundation"] = $company->getYearOfFoundation();
@@ -23,7 +23,6 @@
                 $parameters["logo"] = base64_encode(file_get_contents($logo_tmp_path));
                 $parameters["email"] = $company->getEmail();
                 $parameters["phone_number"] = $company->getPhoneNumber();
-                $parameters["active"] = $company->isActive();
                 
                 $this->connection = Connection::GetInstance();
     
@@ -212,21 +211,24 @@
 
                 $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
 
-                foreach ($arrayToDecode as $valuesArray) {
+                foreach ($arrayToDecode as $valuesArray)
+                {
+                    if ($valuesArray['active'] == true)
+                    {
+                        $company = new Company($valuesArray["companyId"]);
 
-                    $company = new Company();
+                        $company->setName($valuesArray["name"]);
+                        $company->setYearFoundation($valuesArray["yearFoundation"]);
+                        $company->setCity($valuesArray["city"]);
+                        $company->setDescription($valuesArray["description"]);
+                        $company->setLogo($valuesArray["logo"]);
+                        $company->setEmail($valuesArray["email"]);
+                        $company->setPhoneNumber($valuesArray["phoneNumber"]);
+                        $company->setActive($valuesArray["active"]);
+    
+                        array_push($this->companyList, $company);
+                    }
 
-                    $company->setCompanyId($valuesArray["companyId"]);
-                    $company->setName($valuesArray["name"]);
-                    $company->setYearFoundation($valuesArray["yearFoundation"]);
-                    $company->setCity($valuesArray["city"]);
-                    $company->setDescription($valuesArray["description"]);
-                    $company->setLogo($valuesArray["logo"]); //check this
-                    $company->setEmail($valuesArray["email"]);
-                    $company->setPhoneNumber($valuesArray["phoneNumber"]);
-                    $company->setActive($valuesArray["active"]);
-
-                    array_push($this->companyList, $company);
                 }
             }
         }

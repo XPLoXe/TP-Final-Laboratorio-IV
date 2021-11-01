@@ -49,8 +49,9 @@
             $user = new User();
             $user->setEmail($email);
             $user->setPassword($password);
+            $user->setFirstName($firstName);
+            $user->setLastName($lastName);
             $user->setUserRole($userRole);
-            $user->setActive(true);
 
             $this->userDAO->Add($user);
 

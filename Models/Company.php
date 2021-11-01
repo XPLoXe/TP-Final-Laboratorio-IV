@@ -13,6 +13,12 @@
         private string $phoneNumber;
         private bool $active;
 
+
+        public function __construct($companyId)
+        {
+            $this->companyId = $companyId;
+        }
+
         
         public function getCompanyId(): int
         {
