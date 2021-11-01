@@ -91,12 +91,12 @@
             $company->setYearFoundation($parameters['yearFoundation']);
             $company->setCity($parameters['city']);
             $company->setDescription($parameters['description']);
+            $company->setLogo(base64_encode(file_get_contents($parameters['logo']["tmp_name"])));
             $company->setEmail($parameters['email']);
             $company->setPhoneNumber($parameters['phoneNumber']);
             $company->setActive(true);
-            $logo_tmp_path = $parameters['logo']["tmp_name"];
 
-            $this->companyDAO->Add($company, $logo_tmp_path);
+            $this->companyDAO->Add($company);
 
             $this->ShowListView();
         }

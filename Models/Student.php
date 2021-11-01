@@ -1,7 +1,7 @@
 <?php
     namespace Models;
 
-    use User;
+    use Models\User as User;
     use DateTime;
 
     class Student extends User

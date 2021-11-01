@@ -8,6 +8,7 @@
     use Controllers\CompanyController as CompanyController;
     use Controllers\JobPositionController as JobPositionController;
     use Utils\Utils as Utils;
+    use DateTime;
 
     class JobOfferController
     {
@@ -104,12 +105,10 @@
             $jobOffer->setCompany(new Company($parameters["companyId"]));
             $jobOffer->setJobPosition(new JobPosition($parameters["jobPositionId"]));
             $jobOffer->setDescription($parameters["description"]);
-            $jobOffer->setPublicationDate($parameters["publicationDate"]);
-            $jobOffer->setExpirationDate($parameters["expirationDate"]);
+            $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
+            $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
             
             $this->jobOfferDAO->Add($jobOffer);
-            echo "Todo bien";
-            die();
             //$this->ShowListView();
         }
 

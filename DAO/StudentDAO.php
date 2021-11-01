@@ -1,10 +1,11 @@
 <?php
 namespace DAO;
 
-use \Exception as Exception;
+use Exception as Exception;
 use Interfaces\IStudentDAO as IStudentDAO;
 use Models\Student as Student;
 use DAO\Connection as Connection;
+use DateTime;
 
 class StudentDAO
 {
@@ -79,36 +80,18 @@ class StudentDAO
         return null;
     }
 
-    public function getCareerIdByStudentId($studentId){
 
+    public function getCareerIdByStudentId($studentId): int
+    {
         $this->RetrieveData();
 
         foreach ($this->studentList as $student) 
         {
-            if ($student->getStudentId() == $studentId) {
+            if ($student->getStudentId() == $studentId)
                 return $student->getCareerId();
-            }
-
         }
 
         return null;
-
-    }
-
-    public function getCareerIdByStudentId($studentId){
-
-        $this->RetrieveData();
-
-        foreach ($this->studentList as $student) 
-        {
-            if ($student->getStudentId() == $studentId) {
-                return $student->getCareerId();
-            }
-
-        }
-
-        return null;
-
     }
 
 
@@ -132,7 +115,7 @@ class StudentDAO
                     $student->setDni($valuesArray["dni"]);
                     $student->setFileNumber($valuesArray["fileNumber"]);
                     $student->setGender($valuesArray["gender"]);
-                    $student->setBirthDate($valuesArray["birthDate"]);
+                    $student->setBirthDate(new DateTime($valuesArray["birthDate"]));
                     $student->setEmail($valuesArray["email"]);
                     $student->setPhoneNumber($valuesArray["phoneNumber"]);
                     $student->setActive($valuesArray["active"]);

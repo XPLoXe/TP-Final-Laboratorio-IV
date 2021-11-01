@@ -10,8 +10,8 @@
         private User $applicant;
         private Company $company;
         private string $description;
-        private string $publicationDate;
-        private string $expirationDate;
+        private DateTime $publicationDate;
+        private DateTime $expirationDate;
         private bool $active;
 
 
@@ -86,25 +86,25 @@
         }
 
 
-        public function getPublicationDate(): string
+        public function getPublicationDate(): DateTime
         {
             return $this->publicationDate;
         }
 
 
-        public function setPublicationDate(string $publicationDate): void
+        public function setPublicationDate(DateTime $publicationDate): void
         {
             $this->publicationDate = $publicationDate;
         }
 
 
-        public function getExpirationDate(): string
+        public function getExpirationDate(): DateTime
         {
             return $this->expirationDate;
         }
 
 
-        public function setExpirationDate(string $expirationDate): void
+        public function setExpirationDate(DateTime $expirationDate): void
         {
             $this->expirationDate = $expirationDate;
         }

@@ -28,11 +28,7 @@ CREATE TABLE Companies (
 	year_of_foundation YEAR NOT NULL,
 	city VARCHAR(100) NOT NULL,
 	description NVARCHAR(1000) NOT NULL,
-<<<<<<< HEAD:Schema/Schema.sql
 	logo MEDIUMTEXT DEFAULT NULL,
-=======
-	logo_path VARCHAR(255) DEFAULT NULL,
->>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484:Squema/Squema.sql
 	email NVARCHAR(50) NOT NULL,
 	phone_number VARCHAR(20) NOT NULL,
 	active BOOL NOT NULL DEFAULT true,

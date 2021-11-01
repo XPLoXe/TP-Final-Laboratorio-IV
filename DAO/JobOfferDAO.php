@@ -23,8 +23,8 @@
                 $parameters["job_position_id"] = $jobOffer->getJobPositionId();
                 $parameters["company_id"] = $jobOffer->getCompanyId();
                 $parameters["description"] = $jobOffer->getDescription();
-                $parameters["publication_date"] = $jobOffer->getPublicationDate();
-                $parameters["expiration_date"] = $jobOffer->getExpirationDate();
+                $parameters["publication_date"] = $jobOffer->getPublicationDate()->format('Y-m-d');
+                $parameters["expiration_date"] = $jobOffer->getExpirationDate()->format('Y-m-d');
 
                 $this->connection = Connection::GetInstance();
 
@@ -138,7 +138,7 @@
             {
                 throw $ex;
             }
-        } 
+        }
 
 
         public function getJobOfferExpiresToday()

@@ -10,7 +10,7 @@
         private $companyList = array();
         private $tableName = "Companies";
 
-        public function Add(Company $company, string $logo_tmp_path)
+        public function Add(Company $company)
         {
             try
             {
@@ -20,7 +20,7 @@
                 $parameters["year_of_foundation"] = $company->getYearOfFoundation();
                 $parameters["city"] = $company->getCity();
                 $parameters["description"] = $company->getDescription();
-                $parameters["logo"] = base64_encode(file_get_contents($logo_tmp_path));
+                $parameters["logo"] = $company->getLogo();
                 $parameters["email"] = $company->getEmail();
                 $parameters["phone_number"] = $company->getPhoneNumber();
                 
