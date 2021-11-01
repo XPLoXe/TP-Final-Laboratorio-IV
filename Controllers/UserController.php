@@ -1,6 +1,7 @@
 <?php
     namespace Controllers;
 
+    use DAO\StudentDAO;
     use DAO\UserDAO as UserDAO;
     use Models\User as User;
     use Models\UserRole as UserRole;
@@ -45,17 +46,18 @@
         {
             $userRole = new UserRole($userRoleId);
             $userRole->setDescription($this->userRoleController->getDescriptionById($userRoleId));
+            
+            $student = $this->studentController->getStudentByEmail($email);
 
             $user = new User();
             $user->setEmail($email);
             $user->setPassword($password);
-            $user->setFirstName($firstName);
-            $user->setLastName($lastName);
+            $user->setFirstName($student->getFirstName());
+            $user->setLastName($student->getLastName());
             $user->setUserRole($userRole);
 
             $this->userDAO->Add($user);
 
-            // TODO: show something or redirect to login view
         }
     
         public function getUserByEmail($email)
@@ -116,6 +118,10 @@
                     {   
                         $this->Add($email, $password, $user_role_id);
                         $message = $this->message;
+                        if(Utils::isAdmin())
+                        {
+                            require_once(VIEWS_PATH."home.php");
+                        }
                         require_once(VIEWS_PATH."login.php");
                     }
                     
