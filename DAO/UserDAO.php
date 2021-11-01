@@ -16,11 +16,15 @@ class UserDAO implements IUserDAO
     {
         try
         {
-            $query = "INSERT INTO ".$this->tableName." (email, user_password, user_role_id) VALUES (:email, :user_password, :user_role_id);";
+            $query = "INSERT INTO ".$this->tableName." (email, user_password, user_role_id, api_user_id, first_name, last_name) 
+            VALUES (:email, :user_password, :user_role_id, :api_user_id, :first_name, :last_name);";
 
             $parameters["email"] = $user->getEmail();
             $parameters["user_password"] = $user->getPassword();
             $parameters["user_role_id"] = $user->getUserRole()->getUserRoleId();
+            $parameters["api_user_id"] = $user->getApiUserId();
+            $parameters["first_name"] = $user->getFirstName();
+            $parameters["last_name"] = $user->getLastName();
 
             $this->connection = Connection::GetInstance();
 

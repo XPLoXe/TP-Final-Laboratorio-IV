@@ -3,6 +3,7 @@
 
     use DAO\StudentDAO;
     use DAO\UserDAO as UserDAO;
+    use Models\Student;
     use Models\User as User;
     use Models\UserRole as UserRole;
     use Utils\Utils as Utils;
@@ -47,6 +48,7 @@
             $userRole = new UserRole($userRoleId);
             $userRole->setDescription($this->userRoleController->getDescriptionById($userRoleId));
             
+            $student = new Student();
             $student = $this->studentController->getStudentByEmail($email);
 
             $user = new User();
@@ -55,6 +57,7 @@
             $user->setFirstName($student->getFirstName());
             $user->setLastName($student->getLastName());
             $user->setUserRole($userRole);
+            $user->setApiUserId($student->getStudentId());
 
             $this->userDAO->Add($user);
 
