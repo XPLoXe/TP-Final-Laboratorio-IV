@@ -18,7 +18,7 @@
                 <input type="password" name="password_confirmation" class="form-control form-control-lg">
             </div>
             <input type="hidden" name="user_role_id" value="<?php echo $studentRoleId ?>"></input>
-            <button class="btn btn-dark btn-block btn-lg" type="submit">Enviar</button>
+            <button class="btn btn-dark btn-block btn-lg" type="submit">Registrar</button>
         </form>
     </div>
 </main>

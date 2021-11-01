@@ -58,6 +58,10 @@
             // TODO: show something or redirect to login view
         }
     
+        public function getUserByEmail($email)
+        {
+            return $this->userDAO->getUserByEmail($email);
+        }
 
         public function VerifyPassword(string $password, string $password_confirmation)
         {

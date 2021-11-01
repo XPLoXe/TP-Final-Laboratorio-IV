@@ -8,7 +8,16 @@
     {
         public static function isAdmin(): bool
         {
-            return isset($_SESSION['isAdmin']) ? $_SESSION['isAdmin'] : false;
+            if (isset($_SESSION['loggedUser']))
+            {
+                if($_SESSION['loggedUser']->getUserRole()->getUserRoleId() == 1)
+                {
+                    return true;
+                }
+            }
+
+            /* return isset($_SESSION['isAdmin']) ? $_SESSION['isAdmin'] : false; */ //previous version
+            return false;
         }
 
         
