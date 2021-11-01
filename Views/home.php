@@ -14,6 +14,7 @@
                <div class="content">
                     <header class="text-center">
                          <h1>Bienvenido <?php echo Utils::getLoggedUserFullName() ?> <br> Bolsa de Trabajo</h1>
+                         <?php echo $message ?>
                     </header>
                </div>
           </main>
