@@ -9,18 +9,19 @@
 
 <main class="py-5">
     <section id="listado" class="mb-5">
-        <div class="container" style="max-width:1360px">
+        <div class="container bg-light-alpha p-5" style="max-width:1470px">
+           
             <h2 class="mb-4">Compañías</h2>
-            <form action="<?php echo FRONT_ROOT ?>Company/FilterByName" method="post" class="bg-light-alpha p-5">
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <input type="text" name="nameToFilter" class="form-control" placeholder="Ingrese nombre de la compañia">
-                        </div>
+
+            <div class="mb-4">
+                <form action="<?php echo FRONT_ROOT ?>Company/FilterByName" method="post" class="bg-light-alpha p-4">
+                    <div class="input-group input-group-lg col-md-6 mx-auto">
+                        <input type="text"  name="nameToFilter" class="form-control mx-3" placeholder="Ingrese nombre de la compañia">
+                        <button type="submit" name="button" class="btn btn-dark d-block ">Filtrar</button>
                     </div>
-                </div>
-                <button type="submit" name="button" class="btn btn-dark d-block">Filtrar</button>
-            </form>
+                </form>
+            </div>
+
             <?php if (isset($msgErrorFilter)) echo $msgErrorFilter;  ?>
             <script type="text/javascript">
                 function confirmDelete() {
@@ -58,12 +59,12 @@
                         {
                             if ($company->isActive()) 
                             { ?>
-                                <tr>
+                                <tr class="p-4">
                                     <td><img src="data:image/png;base64, <?php echo $company->getLogo() ?>" alt="image logo" width=50px></img></td>
                                     <td><?php echo $company->getName() ?></td>
                                     <td><?php echo $company->getCity() ?></td>
                                     <td><?php echo $company->getPhoneNumber(); ?></td>
-                                    <td style="max-width:200px" ><?php echo $company->getEmail() ?></td>
+                                    <td style="max-width:300px" ><?php echo $company->getEmail() ?></td>
                                     <td><button class="btn btn-dark" type="submit" name="id" form="info" value='<?php echo $company->getCompanyId() ?>'>Detalles</button>
                                         <?php
                                         if (Utils::isAdmin()) 
