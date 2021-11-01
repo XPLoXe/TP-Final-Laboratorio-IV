@@ -10,6 +10,8 @@
 
     class LoginController
     {
+        private $message;
+
         public function Login()
         {
             $parameters = array();
@@ -20,39 +22,41 @@
                 $email = $_POST["email"];
                 $password = $_POST["password"];
 
-                if (($email == "admin@admin.com") && ($password == "12345")) 
-                {
-                    $_SESSION["loggedUser"] = "admin";
-                    $_SESSION["isAdmin"] = true;
-                    require_once(VIEWS_PATH."home.php");
-                } else
-                {
-                    // Load users
-                    $userDAO = new userDAO();
-                    $userList = array();
-                    $userList = $userDAO->GetAll();
-                    $user = new User();
-                    $user = $userDAO->getUserByEmail($email); // TODO: write method
+                // Load users
+                $userDAO = new userDAO();
+                $user = new User();
+                if ($userDAO->VerifyEmailDataBase($email)) {
+                    $user = $userDAO->getUserByEmail($email);
+                    if (($email == "admin@admin.com") && ($password == "12345")) 
+                    {
 
-                    if (!is_null($user)) {
-                        
-                        if (true)  // TODO: check user password
+                        $_SESSION["loggedUser"] = $user; 
+                        $message = "";
+                        require_once(VIEWS_PATH."home.php");
+                    } else
+                    {
+                            
+                        if ($password == $user->getPassword()) 
                         {
                             $_SESSION["loggedUser"] = $user;
-                            require_once(VIEWS_PATH."home.php"); // Regular user redirect
+                            require_once(VIEWS_PATH."home.php");
                         }
                         else
                         {
-                            echo "<script> if(confirm('Email or Password Incorrect, please try again'));</script>"; //TODO: move to view via $message
+                            $this->message = "<h4 class = 'text-center' style='color: red;'> Contraseña incorrecta </h4>";
+                            $message = $this->message;
                             require_once(VIEWS_PATH."login.php");
                         }
                     }
-                    else
-                    {
-                        echo "<script> if(confirm('Email not found'));</script>"; //TODO: move to view via $message
-                        require_once(VIEWS_PATH."login.php");
-                    }
                 }
+                else
+                {
+                    $this->message = "<h4 class = 'text-center' style='color: red;'> El Email ingresado no existe </h4>";
+                    $message = $this->message;
+                    require_once(VIEWS_PATH."login.php");
+                }
+                
+                
             } else
             {
                 header("location:login.php");
