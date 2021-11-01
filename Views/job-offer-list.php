@@ -22,9 +22,17 @@
                 </form>
             </div>
 
-            
+            <?php 
+            if (isset($msgErrorFilter)) echo $msgErrorFilter;  
 
-            <?php if (isset($msgErrorFilter)) echo $msgErrorFilter;  ?>
+            function daysBetweenDates($initialDay,$finalDay)
+            {
+                $days = (strtotime($initialDay)-strtotime($finalDay))/86400;
+                $days = abs($days);
+                $days = floor($days);
+                return $days;
+            }
+            ?>
             <script>
                 function confirmDelete() {
 
@@ -38,7 +46,6 @@
             </script>
 
             <?php 
-                
                 if (!empty($jobOfferList)) 
                 { ?>
                     <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowEditView" name='edit' method='POST' ></form>
@@ -63,7 +70,7 @@
                                                 <h3 class="my-auto ml-auto mb-3"><?php echo $jobOffer->getJobPosition()->getDescription() ?></h3> 
                                             </div>
                                             <div class="col align-self-end text-right">
-                                                <h6 ><?php echo "Publicado hace X días" ?></h3>
+                                                <h6 ><?php echo 'Publicado hace '.daysBetweenDates($jobOffer->getPublicationDate()->format('Y-m-d'),date('Y-m-d')).' días' ?></h3>
                                                 <h6 ><?php echo 'Vence el día '.$jobOffer->getExpirationDate()->format('d-m-Y').''?></h3>
                                             </div>  
                                         </div>    
