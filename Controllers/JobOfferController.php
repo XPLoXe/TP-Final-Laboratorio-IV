@@ -36,32 +36,25 @@
         {
             Utils::checkUserLoggedIn();
 
-            //Debo actualizar la base de datos con la api: JobPosition, Career, CareerJobPosition
-            //y con esto actualizado, actualizar tmb la base de datos de las JobOffer
+            // Update offers with data from API (JobPositions and Careers)
 
-            if (Utils::isAdmin())
-                $jobOfferList = $this->getActiveJobOfferList();
+            // $studentController = new StudentController();
 
-            if (Utils::isUserLoggedIn())
-            { //modificar el jobOfferList para q aparezcan los de su carrera
-                $studentController = new StudentController();
+            // $careerId = $studentController->getCareerIdByStudentId($_SESSION['loggedUser']['api_user_id']);
 
-                $careerId = $studentController->getCareerIdByStudentId($_SESSION['loggedUser']['api_user_id']);
+            $jobOfferList = $this->GetAll();
 
-                $jobOfferList = $this->jobOfferDAO->getJobOfferByCareerId($careerId);//no va xq joboffer no tiene careerId
-            }
-            //necesito ir a la controladora de JobPosition y Company para q me tire los datos necesarios de la $jobOfferList
             require_once(VIEWS_PATH."job-offer-list.php");
         }
 
 
         public function ShowEditView($parameters)
         {
-            // Utils::checkAdmin();
+            Utils::checkAdmin();
             
-            // $company = $this->companyDAO->getCompanyById($parameters['edit']);
+            $jobOffer = $this->jobOfferDAO->getJobOfferById($parameters['jobOfferId']);
 
-            // require_once(VIEWS_PATH."company-edit.php");
+            require_once(VIEWS_PATH."job-offer-edit.php");
         }
 
 
@@ -113,19 +106,19 @@
         }
 
         
-        public function getActiveJobOfferList(): array
+        public function GetAll(): array
         {
             $jobPositionController = new JobPositionController;
-            $userController = new UserController;
             $companyController = new CompanyController;
 
             $jobOffers = $this->jobOfferDAO->GetAll(); // Array of JobOffer objects (incomplete)
+            $jobPositions = $jobPositionController->GetAll();
+            $companies = $companyController->GetAll();
 
             foreach ($jobOffers as $jobOffer)
             {
-                $jobOffer->setJobPosition($jobPositionController->getJobPositionById($jobOffer->getJobPositionId())); //Sets JobPosition object as attribute of JobOffer
-                $jobOffer->setApplicant($userController->getUserById($jobOffer->getApplicant()->getUserId()));
-                $jobOffer->setCompany($companyController->getCompanyById($jobOffer->getCompanyId()));
+                $jobOffer->setJobPosition($jobPositions[$jobOffer->getJobPositionId()]);
+                $jobOffer->setCompany($companies[$jobOffer->getCompanyId()]);
             }
 
             return $jobOffers;

@@ -34,12 +34,6 @@
             }
         }
 
-        
-        public function getCompanyList()
-        {
-            return $this->companyList;
-        }
-
 
         public function checkIfCompanyExists($companyName){
 
@@ -57,9 +51,41 @@
 
         public function GetAll()
         {
-            $this->RetrieveData();
-            
-            return $this->companyList;
+            try
+            {
+                $companyList = array();
+
+                $query =   "SELECT * FROM ".$this->tableName.";";
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query);
+                
+                foreach ($resultSet as $row)
+                {
+                    if ($row["active"] == 1)
+                    {
+                        $company = new Company($row["company_id"]);
+
+                        $company->setName($row["name"]);
+                        $company->setYearOfFoundation($row["year_of_foundation"]);
+                        $company->setCity($row["city"]);
+                        $company->setDescription($row["description"]);
+                        $company->setLogo($row["logo"]);
+                        $company->setEmail($row["email"]);
+                        $company->setPhoneNumber($row["phone_number"]);
+                        $company->setActive($row["active"]);
+
+                        $companyList[$company->getCompanyId()] = $company;
+                    }
+                }
+
+                return $companyList;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
         }
 
 
@@ -163,7 +189,7 @@
                 if ($company->getCompanyId() == $companyId) 
                 {
                     $company->setName($name);
-                    $company->setYearFoundation($yearFoundation);
+                    $company->setYearOfFoundation($yearFoundation);
                     $company->setCity($city);
                     $company->setDescription($description);
                     $company->setEmail($email);
@@ -198,39 +224,6 @@
             }
 
             return $activeCompanies;
-        }
-
-
-        private function RetrieveData()
-        {
-            $this->companyList = array();
-
-            if (file_exists('Data/companies.json')) {
-
-                $jsonContent = file_get_contents('Data/companies.json');
-
-                $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
-
-                foreach ($arrayToDecode as $valuesArray)
-                {
-                    if ($valuesArray['active'] == true)
-                    {
-                        $company = new Company($valuesArray["companyId"]);
-
-                        $company->setName($valuesArray["name"]);
-                        $company->setYearFoundation($valuesArray["yearFoundation"]);
-                        $company->setCity($valuesArray["city"]);
-                        $company->setDescription($valuesArray["description"]);
-                        $company->setLogo($valuesArray["logo"]);
-                        $company->setEmail($valuesArray["email"]);
-                        $company->setPhoneNumber($valuesArray["phoneNumber"]);
-                        $company->setActive($valuesArray["active"]);
-    
-                        array_push($this->companyList, $company);
-                    }
-
-                }
-            }
         }
 
 

@@ -88,7 +88,7 @@
 
             $company = new Company();
             $company->setName($parameters['name']);
-            $company->setYearFoundation($parameters['yearFoundation']);
+            $company->setYearOfFoundation($parameters['yearFoundation']);
             $company->setCity($parameters['city']);
             $company->setDescription($parameters['description']);
             $company->setLogo(base64_encode(file_get_contents($parameters['logo']["tmp_name"])));

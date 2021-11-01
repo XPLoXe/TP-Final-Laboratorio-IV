@@ -1,11 +1,12 @@
 <?php
     namespace DAO;
 
-    use Interfaces\IJobOfferDAO as IJobOfferDAO;
-    use DAO\Connection;
-    use Models\JobOffer;
-    use Models\JobPosition;
-    use Utils\Utils;
+    use DAO\Connection as Connection;
+    use Models\JobOffer as JobOffer;
+    use Models\JobPosition as JobPosition;
+    use Models\User as User;
+    use Models\Company as Company;
+    use Utils\Utils as Utils;
     use DateTime;
 
     class JobOfferDAO
@@ -43,7 +44,7 @@
             {
                 $jobOfferList = array();
 
-                $query =   "SELECT * FROM ".$this->tableName.";";
+                $query =   "SELECT * FROM ".$this->tableName." WHERE user_id IS NULL;";
 
                 $this->connection = Connection::GetInstance();
 
@@ -58,18 +59,16 @@
                             $jobOffer = new JobOffer();
                             $company = new Company($row["company_id"]);
                             $jobPosition = new JobPosition($row["job_position_id"]);
-                            $applicant = new User($row["user_id"]);
     
                             $jobOffer->setJobOfferId($row["job_offer_id"]);
                             $jobOffer->setJobPosition($jobPosition);
-                            $jobOffer->setApplicant($applicant);
                             $jobOffer->setCompany($company);
-                            $jobOffer->setDescription($row["job_offer_description"]);
-                            $jobOffer->setPublicationDate($row["publication_date"]);
-                            $jobOffer->setExpirationDate($row["expiration_date"]);
+                            $jobOffer->setDescription($row["description"]);
+                            $jobOffer->setPublicationDate(new DateTime($row["publication_date"]));
+                            $jobOffer->setExpirationDate(new DateTime($row["expiration_date"]));
                             $jobOffer->setActive($row["active"]);
     
-                            array_push($jobOfferList, $jobOffer);
+                            $jobOfferList[$jobOffer->getJobOfferId()] = $jobOffer;
                         }
                     }
                 }

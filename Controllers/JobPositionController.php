@@ -25,6 +25,7 @@
             return $jobPositionList;
         }
 
+        
         public function getJobPositionById(int $jobPositionId): JobPosition
         {
             $jobPositionList = $this->jobPositionDAO->GetAll();

@@ -5,7 +5,7 @@
     {
         private int $companyId;
         private string $name;
-        private int $yearFoundation;
+        private int $yearOfFoundation;
         private string $city;
         private string $description;
         private string $logo; // base64 encode of the image
@@ -46,13 +46,13 @@
 
         public function getYearOfFoundation(): int
         {
-            return $this->yearFoundation;
+            return $this->yearOfFoundation;
         }
 
 
-        public function setYearFoundation($yearFoundation): void
+        public function setYearOfFoundation($yearOfFoundation): void
         {
-            $this->yearFoundation = (int) $yearFoundation;
+            $this->yearOfFoundation = (int) $yearOfFoundation;
         }        
 
         

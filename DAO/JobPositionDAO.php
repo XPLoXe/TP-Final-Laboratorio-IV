@@ -183,7 +183,7 @@ class JobPositionDAO implements IJobPositionDAO
                 $jobPosition->setDescription($row["description"]);
                 $jobPosition->setActive($row["active"]);
 
-                array_push($jobPositionList, $jobPosition);
+                $jobPositionList[$jobPosition->getJobPositionId()] = $jobPosition;
             }
 
             return $jobPositionList;
