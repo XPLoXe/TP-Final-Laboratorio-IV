@@ -105,23 +105,21 @@ class StudentDAO
         {
             foreach ($arrayToDecode as $valuesArray)
             {
-                if ($valuesArray["active"]) {
-                    $student = new Student();
-                    $student->setStudentId($valuesArray["studentId"]);
-                    $student->setCareerId($valuesArray["careerId"]);
+                $student = new Student();
+                $student->setStudentId($valuesArray["studentId"]);
+                $student->setCareerId($valuesArray["careerId"]);
 
-                    $student->setFirstName($valuesArray["firstName"]);
-                    $student->setLastName($valuesArray["lastName"]);
-                    $student->setDni($valuesArray["dni"]);
-                    $student->setFileNumber($valuesArray["fileNumber"]);
-                    $student->setGender($valuesArray["gender"]);
-                    $student->setBirthDate(new DateTime($valuesArray["birthDate"]));
-                    $student->setEmail($valuesArray["email"]);
-                    $student->setPhoneNumber($valuesArray["phoneNumber"]);
-                    $student->setActive($valuesArray["active"]);
+                $student->setFirstName($valuesArray["firstName"]);
+                $student->setLastName($valuesArray["lastName"]);
+                $student->setDni($valuesArray["dni"]);
+                $student->setFileNumber($valuesArray["fileNumber"]);
+                $student->setGender($valuesArray["gender"]);
+                $student->setBirthDate(new DateTime($valuesArray["birthDate"]));
+                $student->setEmail($valuesArray["email"]);
+                $student->setPhoneNumber($valuesArray["phoneNumber"]);
+                $student->setActive($valuesArray["active"]);
 
-                    array_push($this->studentList, $student);
-                }
+                array_push($this->studentList, $student);
                 
             }
         }

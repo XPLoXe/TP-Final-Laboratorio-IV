@@ -4,9 +4,7 @@
     use DAO\UserDAO as UserDAO;
     use Models\User as User;
     use Utils\Utils as Utils;
-
-    use DAO\JobPositionDAO as JobPositionDAO;
-    use DAO\CareerDAO as CareerDAO;
+    use Controllers\StudentController as StudentController;
 
     class LoginController
     {
@@ -21,33 +19,48 @@
                 $parameters = $_POST;
                 $email = $_POST["email"];
                 $password = $_POST["password"];
+                $message = ""; //needs to be set in order to avoid Views errors in login.php when logging out
 
                 // Load users
-                $userDAO = new userDAO();
+                $userController = new UserController;
                 $user = new User();
-                if ($userDAO->VerifyEmailDataBase($email)) {
-                    $user = $userDAO->getUserByEmail($email);
-                    if (($email == "admin@admin.com") && ($password == "12345")) 
-                    {
+                $StudentController = new StudentController();
+                
+                if ($userController->VerifyEmailDataBase($email)) {
 
-                        $_SESSION["loggedUser"] = $user; 
-                        $message = "";
-                        require_once(VIEWS_PATH."home.php");
-                    } else
-                    {
-                            
-                        if ($password == $user->getPassword()) 
+                    $user = $userController->getUserByEmail($email);
+                    
+                    if ($password == $user->getPassword()) {
+                        
+                        if ($user->getUserRole()->getUserRoleId() == 1) 
+                        //admin check (can't use Utils because $_SESSION isn't supposed to be set)
+                        //This check is necessary since Admin isn't in the API
                         {
-                            $_SESSION["loggedUser"] = $user;
+                            $_SESSION["loggedUser"] = $user;   
                             require_once(VIEWS_PATH."home.php");
-                        }
-                        else
+                        } else
                         {
-                            $this->message = "<h4 class = 'text-center' style='color: red;'> Contraseña incorrecta </h4>";
-                            $message = $this->message;
-                            require_once(VIEWS_PATH."login.php");
+                            if ($StudentController->getStudentByEmail($email)->isActive())  //checks if user is active in the API 
+                            {
+                                $_SESSION["loggedUser"] = $user;
+                                require_once(VIEWS_PATH."home.php");
+                            }
+                            else
+                            {
+                                $this->message = "<h4 class = 'text-center' style='color: red;'> El Usuario ha sido dado de baja </h4>
+                                                    <p class = 'text-center' style='color: red;'> Para más información contactarse con la universidad </p> ";
+                                $message = $this->message;
+                                require_once(VIEWS_PATH."login.php");
+                            }
+                            
                         }
+                    }else
+                    {
+                        $this->message = "<h4 class = 'text-center' style='color: red;'> Contraseña incorrecta </h4>";
+                        $message = $this->message;
+                        require_once(VIEWS_PATH."login.php");
                     }
+
                 }
                 else
                 {
@@ -55,6 +68,7 @@
                     $message = $this->message;
                     require_once(VIEWS_PATH."login.php");
                 }
+                
                 
                 
             } else
