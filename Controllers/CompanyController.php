@@ -110,9 +110,7 @@
 
                 if (empty($parameters["nameToFilter"])) 
                 {
-
                     $this->ShowListView();
-
                 } else
                 {
                     $aCompanyWasFiltered  = $this->companyDAO->getCompaniesFilterByName($parameters["nameToFilter"]);

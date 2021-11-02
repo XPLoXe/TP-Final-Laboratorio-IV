@@ -3,7 +3,7 @@
 
     use DAO\StudentDAO;
     use DAO\UserDAO as UserDAO;
-    use Models\Student;
+    use Models\Student as Student;
     use Models\User as User;
     use Models\UserRole as UserRole;
     use Utils\Utils as Utils;
@@ -20,7 +20,7 @@
         {
             $this->studentController = new StudentController();
             $this->message = "";
-            $this->userDAO = new userDAO();
+            $this->userDAO = new UserDAO();
             $this->userRoleController = new UserRoleController();
         }
 
@@ -60,13 +60,14 @@
             $user->setAssociatedId($student->getStudentId());
 
             $this->userDAO->Add($user);
-
         }
+
     
         public function getUserByEmail($email)
         {
             return $this->userDAO->getUserByEmail($email);
         }
+
 
         public function VerifyPassword(string $password, string $password_confirmation)
         {
@@ -82,9 +83,10 @@
             
         }
 
+
         public function VerifyEmailAPI($email)
         {
-            if (!is_null($this->studentController->getStudentByEmail($email))) 
+            if (!is_null($this->studentController->getStudentByEmail($email)))
             {
                 $this->message = "<h4 class = 'text-center' style='color: green;'> Usuario registrado con éxito </h4>";
                 return true;
@@ -96,6 +98,7 @@
             }
         }
 
+
         public function VerifyEmailDataBase($email)
         {
             if ($this->userDAO->VerifyEmailDataBase($email)) 
@@ -105,6 +108,7 @@
             } 
             return false;
         }
+
 
         public function Register(array $parameters)
         {

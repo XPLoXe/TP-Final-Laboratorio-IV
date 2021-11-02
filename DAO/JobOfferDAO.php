@@ -38,13 +38,32 @@
         }
 
 
+        public function Delete(int $jobOfferId)
+        {
+            try
+            {
+                $query =   "UPDATE ".$this->tableName." SET active = false WHERE job_offer_id = :job_offer_id;";
+
+                $parameters['job_offer_id'] = $jobOfferId;
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->ExecuteNonQuery($query, $parameters);
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
         public function GetAll()
         {
             try
             {
                 $jobOfferList = array();
 
-                $query =   "SELECT * FROM ".$this->tableName." WHERE user_id IS NULL;";
+                $query =   "SELECT * FROM ".$this->tableName." WHERE user_id IS NULL AND expiration_date > CURDATE();";
 
                 $this->connection = Connection::GetInstance();
 

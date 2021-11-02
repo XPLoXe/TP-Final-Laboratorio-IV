@@ -4,6 +4,7 @@ namespace DAO;
 use Exception as Exception;
 use Interfaces\IUserDAO as IUserDAO;
 use Models\User as User;
+use DAO\UserRoleDAO as UserRoleDAO;
 use DAO\Connection as Connection;
 use Models\UserRole as UserRole;
 
@@ -11,7 +12,15 @@ class UserDAO implements IUserDAO
 {
     private $connection;
     private $tableName = "Users";
+    private $userRoleDAO;
 
+
+    public function __construct()
+    {
+        $this->userRoleDAO = new UserRoleDAO;
+    }
+
+    
     public function Add(User $user)
     {
         try
@@ -21,7 +30,7 @@ class UserDAO implements IUserDAO
 
             $parameters["email"] = $user->getEmail();
             $parameters["user_password"] = $user->getPassword();
-            $parameters["user_role_id"] = $user->getUserRole()->getUserRoleId();
+            $parameters["user_role_id"] = $user->getUserRoleId();
             $parameters["associated_id"] = $user->getAssociatedId();
             $parameters["first_name"] = $user->getFirstName();
             $parameters["last_name"] = $user->getLastName();
@@ -38,7 +47,6 @@ class UserDAO implements IUserDAO
 
     public function VerifyEmailDataBase($email)
     {
-        $data = array();
         try
         {
             $query = "SELECT * FROM ". $this->tableName . " WHERE email = :email;";
@@ -80,7 +88,7 @@ class UserDAO implements IUserDAO
                 $user->setPassword($row["user_password"]);
                 $user->setFirstName($row["first_name"]);
                 $user->setLastName($row["last_name"]);
-                $user->setUserRole(new UserRole($row["user_role_id"]));
+                $user->setUserRole($userRoleDAO->getUserRoleById($row["user_role_id"]));
                 $user->setAssociatedId($row["associated_id"]);
                 $user->setActive($row["active"]);
 
@@ -112,7 +120,7 @@ class UserDAO implements IUserDAO
             $user->setPassword($resultSet[0]["user_password"]);
             $user->setFirstName($resultSet[0]["first_name"]);
             $user->setLastName($resultSet[0]["last_name"]);
-            $user->setUserRole(new UserRole($resultSet[0]["user_role_id"]));
+            $user->setUserRole($this->userRoleDAO->getUserRoleById($resultSet[0]["user_role_id"]));
             if (!is_null($resultSet[0]["associated_id"]))
                 $user->setAssociatedId($resultSet[0]["associated_id"]);
             $user->setActive($resultSet[0]["active"]);

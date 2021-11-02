@@ -37,6 +37,31 @@
         }
 
 
+        public function getUserRoleById(int $userRoleId): UserRole
+        {
+            try
+            {
+                $query = "SELECT * FROM ".$this->tableName.' WHERE user_role_id = :user_role_id;';
+
+                $parameters['user_role_id'] = $userRoleId;
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query, $parameters);
+                
+                $userRole = new UserRole($userRoleId);
+                $userRole->setDescription($resultSet[0]['description']);
+                $userRole->setActive($resultSet[0]['active']);
+
+                return $userRole;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
         public function getDescriptionById($userRoleId): string
         {
             try

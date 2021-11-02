@@ -14,10 +14,12 @@
     {
         private $jobOfferDAO;
 
+
         public function __construct()
         {
             $this->jobOfferDAO = new JobOfferDAO();
         }
+
 
         public function ShowAddView()
         {
@@ -82,7 +84,7 @@
         {
             Utils::checkAdmin();
 
-            //$this->jobOfferDAO->deleteJobOffer($parameters['delete']);
+            $this->jobOfferDAO->Delete($parameters['jobOfferId']);
 
             $this->ShowListView();
         }
@@ -102,7 +104,8 @@
             $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
             
             $this->jobOfferDAO->Add($jobOffer);
-            //$this->ShowListView();
+
+            $this->ShowListView();
         }
 
         
