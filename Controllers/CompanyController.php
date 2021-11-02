@@ -36,7 +36,7 @@
         {
             Utils::checkUserLoggedIn();
 
-            $companyList = $this->companyDAO->GetAll(true);
+            $companyList = $this->companyDAO->GetAll();
 
             require_once(VIEWS_PATH."company-list.php");
         }
@@ -113,22 +113,17 @@
                     $this->ShowListView();
                 } else
                 {
-                    $aCompanyWasFiltered  = $this->companyDAO->getCompaniesFilterByName($parameters["nameToFilter"]);
+                    $companyList  = $this->companyDAO->getCompaniesFilterByName($parameters["nameToFilter"]);
 
-                    if ($aCompanyWasFiltered == false)
+                    if (empty($companyList))
                     {
-                        $msgErrorFilter = '<strong style="color:red; font-size:small; text-align: center;"> Ninguna Compañia contiene el nombre ingresado </strong>'; // TODO: move HTML code to view
+                        $msgErrorFilter = '<strong style="color:red; font-size:small;"> Ninguna Compañia contiene el nombre ingresado </strong>'; // TODO: move HTML code to view
 
                         $companyList = $this->companyDAO->GetAll();
+                    } 
 
-                        require_once(VIEWS_PATH."company-list.php");
+                    require_once(VIEWS_PATH."company-list.php");
 
-                    } else
-                    {
-                        $companyList = $this->companyDAO->getCompanyList();
-
-                        require_once(VIEWS_PATH."company-list.php");
-                    }
                 }
             }
         }

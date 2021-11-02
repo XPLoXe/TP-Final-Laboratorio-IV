@@ -14,19 +14,23 @@
         {
             try
             {
-                $query = "INSERT INTO ".$this->tableName." (name, year_of_foundation, city, description, logo, email, phone_number) VALUES (:name, :year_of_foundation, :city, :description, :logo, :email, :phone_number);";
+                if(!$this->isCompanyInBD($parameters["name"], $parameters["email"])){
 
-                $parameters["name"] = $company->getName();
-                $parameters["year_of_foundation"] = $company->getYearOfFoundation();
-                $parameters["city"] = $company->getCity();
-                $parameters["description"] = $company->getDescription();
-                $parameters["logo"] = $company->getLogo();
-                $parameters["email"] = $company->getEmail();
-                $parameters["phone_number"] = $company->getPhoneNumber();
-                
-                $this->connection = Connection::GetInstance();
-    
-                $this->connection->ExecuteNonQuery($query, $parameters);
+                    $query = "INSERT INTO ".$this->tableName." (name, year_of_foundation, city, description, logo, email, phone_number) VALUES (:name, :year_of_foundation, :city, :description, :logo, :email, :phone_number);";
+
+                    $parameters["name"] = $company->getName();
+                    $parameters["year_of_foundation"] = $company->getYearOfFoundation();
+                    $parameters["city"] = $company->getCity();
+                    $parameters["description"] = $company->getDescription();
+                    $parameters["logo"] = $company->getLogo();
+                    $parameters["email"] = $company->getEmail();
+                    $parameters["phone_number"] = $company->getPhoneNumber();
+                    
+                    $this->connection = Connection::GetInstance();
+        
+                    $this->connection->ExecuteNonQuery($query, $parameters);
+
+                }
             }
             catch (Exception $ex)
             {
@@ -35,17 +39,26 @@
         }
 
 
-        public function checkIfCompanyExists($companyName){
+        public function isCompanyInBD($name,$email){
 
-            $this->RetrieveData();
+            try
+            {
+                $query = "SELECT * FROM ".$this->tableName." WHERE name='".$companyName."' AND email='".$email."'";
 
-            foreach($this->companyList as $company){
+                $this->connection = Connection::GetInstance();
 
-                if( strcasecmp ($company->getName(), $companyName ) === 0 )
+                $resultSet = $this->connection->Execute($query);
+                
+                if(!empty($resultSet))
+                    return true;
+                else
                     return false;
-            }
 
-            return true;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
         }
 
 
@@ -91,37 +104,57 @@
 
         public function getCompanyByEmail($email)
         {
-            $this->RetrieveData();
+            try
+            {
+                $query = "SELECT * FROM ".$this->tableName." WHERE email='".$email."'";
 
-            foreach ($this->companyList as $$company) {
+                $this->connection = Connection::GetInstance();
 
-                if ($email == $company->getEmail()) {
-                    return $company;
-                }
+                $resultSet = $this->connection->Execute($query);
+                
+                return $resultSet;
+                    
             }
-
-            return null;
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
         }
-
 
         public function getCompanyById($id)
         {
-            $this->RetrieveData();
-
-            foreach ($this->companyList as $company) 
+            try
             {
-                if ($company->getCompanyId() == $id)
-                    return $company;
-            }
+                $query = "SELECT * FROM ".$this->tableName." WHERE company_id='".$id."'";
 
-            return null;
+                $this->connection = Connection::GetInstance();
+
+                $row = $this->connection->Execute($query)[0];
+
+                $company = new Company($row["company_id"]);
+                $company->setName($row["name"]);
+                $company->setYearOfFoundation($row["year_of_foundation"]);
+                $company->setCity($row["city"]);
+                $company->setDescription($row["description"]);
+                $company->setLogo($row["logo"]);
+                $company->setEmail($row["email"]);
+                $company->setPhoneNumber($row["phone_number"]);
+                $company->setActive($row["active"]);
+               
+                return $company;
+                    
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
         }
 
         public function getCompanyIdByName(string $name): int
         {
             try
             {    
-                $query = "SELECT company_id FROM ".$this->tableName.' WHERE name="'.$name.'"';
+                $query = "SELECT company_id FROM ".$this->tableName." WHERE name='.$name.'";
     
                 $this->connection = Connection::GetInstance();
     
@@ -144,90 +177,92 @@
                 return true;
         }
 
-
         public function getCompaniesFilterByName($name)
         {
-            $this->RetrieveData();
+            try
+            {    
+                $query = "SELECT * FROM ".$this->tableName." WHERE name LIKE '%$name%'";
+    
+                $this->connection = Connection::GetInstance();
+    
+                $filterCompanies = $this->connection->Execute($query);
 
-            $filterCompanies = array();
+                $companyList = array();
 
-            foreach ($this->companyList as $company)
+                if(!empty($filterCompanies)){
+
+                    foreach ($filterCompanies as $row)
+                    {
+                        if ($row["active"] == 1)
+                        {
+                            $company = new Company($row["company_id"]);
+
+                            $company->setName($row["name"]);
+                            $company->setYearOfFoundation($row["year_of_foundation"]);
+                            $company->setCity($row["city"]);
+                            $company->setDescription($row["description"]);
+                            $company->setLogo($row["logo"]);
+                            $company->setEmail($row["email"]);
+                            $company->setPhoneNumber($row["phone_number"]);
+                            $company->setActive($row["active"]);
+
+                            array_push($companyList,$company);
+                        }
+                    }
+                }
+
+                return $companyList;
+    
+            }
+            catch (Exception $ex)
             {
-                if ( $this->isNameinCompanyName($company->getName(),$name) && $company->isActive() )
-                    array_push($filterCompanies, $company);
+                throw $ex;
             }
 
-            if (!empty($filterCompanies)) 
-            {
-                $this->companyList = $filterCompanies;
-
-                return true;
-
-            } else
-
-                return false;
         }
 
 
         public function deleteCompany($id)
         {
-            $this->RetrieveData();
+            try
+            {
+                $query = "UPDATE ".$this->tableName." SET active='false' WHERE company_id='".$id."'";
 
-            $company = $this->getCompanyById($id);
-            $company->setActive(false);
+                $this->connection = Connection::GetInstance();
 
-            $this->SaveData();
-        }
-
-
-        public function editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber): Company
-        {
-            $this->RetrieveData();
-
-            foreach ($this->companyList as $company) {
-
-                if ($company->getCompanyId() == $companyId) 
-                {
-                    $company->setName($name);
-                    $company->setYearOfFoundation($yearFoundation);
-                    $company->setCity($city);
-                    $company->setDescription($description);
-                    $company->setEmail($email);
-                    $company->setPhoneNumber($phoneNumber);
-
-                    if (!empty($tmp_name))
-                    {
-                        $this->SaveImage($tmp_name, $logo);
-                        $company->setLogo($logo);
-                    }
-                    $this->SaveData();
-
-                    return $company;
-                }
+                $this->connection->ExecuteNonQuery($query);
+                
             }
-
-            return null;
-        }
-
-
-        public function getActiveCompanies()
-        {
-            $this->RetrieveData();
-
-            $activeCompanies = array();
-
-            foreach ($this->companyList as $company) {
-
-                if ($company->isActive()) {
-                    array_push($activeCompanies, $company);
-                }
+            catch (Exception $ex)
+            {
+                throw $ex;
             }
-
-            return $activeCompanies;
         }
 
 
-        public function SaveCompanyLogo($tmp_img_path)
+        public function editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber)
+        {
+            try
+            {
+                $query = "UPDATE ".$this->tableName." 
+                        SET name='".$name."', year_of_foundation='".$yearFoundation."', 
+                            city= '".$city."', description='".$description."',
+                            logo='".$logo."', email='".$email."', phone_number='".$phoneNumber."'
+                            WHERE company_id='".$companyId."'";
+
+                $this->connection = Connection::GetInstance();
+
+                $this->connection->ExecuteNonQuery($query);
+                
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
+        public function SaveCompanyLogo($tmp_img_path)//Editar
         {
             try
             {
@@ -245,34 +280,5 @@
                 throw $ex;
             }
         }
-
-
-        public function getCompanyPositionInArray($company)
-        {
-            return array_search($company,$this->companyList); //TODO: Rewrite this to avoid edge case where a company is deleted
-        }                                                     // and every id is now offset from array index
-
-
-        private function SaveData()
-        {
-            $arrayToEncode = array();
-
-            foreach ($this->companyList as $company) {
-
-                $valuesArray['companyId'] = $this->getCompanyPositionInArray($company);
-                $valuesArray['name'] = $company->getName();
-                $valuesArray['yearFoundation'] = $company->getYearOfFoundation();
-                $valuesArray['city'] = $company->getCity();
-                $valuesArray['description'] = $company->getDescription();
-                $valuesArray['logo'] = $company->getLogo();
-                $valuesArray['email'] = $company->getEmail();
-                $valuesArray['phoneNumber'] = $company->getPhoneNumber();
-                $valuesArray['active'] = $company->isActive();
-
-                array_push($arrayToEncode, $valuesArray);
-            }
-
-            $jsonContent = json_encode($arrayToEncode, JSON_PRETTY_PRINT);
-            file_put_contents(JSON_PATH . 'companies.json', $jsonContent);
-        }    
+  
     }

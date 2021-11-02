@@ -9,7 +9,7 @@
 
 <main class="py-5">
     <section id="listado" class="mb-5">
-        <div class="container">
+        <div class="container" style="max-width:1360px">
             <h2 class="mb-4">Estudiantes</h2>
             <table class="table bg-light-alpha">
                 <thead>

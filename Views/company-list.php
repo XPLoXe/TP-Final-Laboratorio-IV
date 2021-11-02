@@ -43,7 +43,6 @@
                     <th>Teléfono</th>
                     <th>E-mail</th>
                     <th>Acciones</th>
-                    <!-- <th>Delete</th> -->
                 </thead>
                 <tbody>
                     <?php
@@ -56,25 +55,23 @@
                         </form>
                         <?php
                         foreach ($companyList as $company) 
-                        {
-                            if ($company->isActive()) 
-                            { ?>
-                                <tr class="p-4">
-                                    <td><img src="data:image/png;base64, <?php echo $company->getLogo() ?>" alt="image logo" width=50px></img></td>
-                                    <td><?php echo $company->getName() ?></td>
-                                    <td><?php echo $company->getCity() ?></td>
-                                    <td><?php echo $company->getPhoneNumber(); ?></td>
-                                    <td style="max-width:300px" ><?php echo $company->getEmail() ?></td>
-                                    <td><button class="btn btn-dark" type="submit" name="id" form="info" value='<?php echo $company->getCompanyId() ?>'>Detalles</button>
-                                        <?php
-                                        if (Utils::isAdmin()) 
-                                        {
-                                            echo '<button class="btn btn-dark" type= "submit" name="edit" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
-                                            echo '<button class="btn btn-dark" type="submit" onclick="return confirmDelete()" name="delete" form="delete" value=' . $company->getCompanyId() . '>Eliminar</button>';
-                                        } ?></td>
-                                    </form>
-                                </tr> <?php 
-                            }
+                        {?>
+                            <tr class="p-4">
+                                <td><img src="data:image/png;base64, <?php echo $company->getLogo() ?>" alt="image logo" width=50px></img></td>
+                                <td><?php echo $company->getName() ?></td>
+                                <td><?php echo $company->getCity() ?></td>
+                                <td><?php echo $company->getPhoneNumber(); ?></td>
+                                <td style="max-width:300px" ><?php echo $company->getEmail() ?></td>
+                                <td><button class="btn btn-dark" type="submit" name="id" form="info" value='<?php echo $company->getCompanyId() ?>'>Detalles</button>
+                                    <?php
+                                    if (Utils::isAdmin()) 
+                                    {
+                                        echo '<button class="btn btn-dark" type= "submit" name="edit" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
+                                        echo '<button class="btn btn-dark" type="submit" onclick="return confirmDelete()" name="delete" form="delete" value=' . $company->getCompanyId() . '>Eliminar</button>';
+                                    } ?></td>
+                                </form>
+                            </tr> 
+                        <?php 
                         } 
                     } else 
                     { ?>        <tr>
