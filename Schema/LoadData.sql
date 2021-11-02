@@ -16,7 +16,7 @@ CREATE TABLE Users (
 	user_role_id INT,
 	email NVARCHAR(50) NOT NULL,
 	user_password NVARCHAR(64) NOT NULL,
-	api_user_id INT,
+	associated_id INT,
 	first_name NVARCHAR(50),
 	last_name NVARCHAR(50),
 	active BOOL NOT NULL DEFAULT true,
@@ -105,7 +105,7 @@ INSERT INTO JobPositions (job_position_id, career_id, description, active) VALUE
  (21,7,'Environmental management specialist',true),
  (22,7,'Environmental management coordinator',true),
  (23,8,'Received technician',true);
-INSERT INTO Users (user_id, email, user_password, user_role_id, api_user_id, first_name, last_name) VALUES
+INSERT INTO Users (user_id, email, user_password, user_role_id, associated_id, first_name, last_name) VALUES
 (1, 'admin@admin.com', 12345, 1, null, 'Juan Carlos', 'Administradorio'),
 (2, 'ddouthwaite0@goo.gl', 123, 2, 1, 'Devlen', 'Douthwaite'),
 (3, 'wlorant1@sbwire.com', 123, 2, 2, 'Wyatan', 'Lorant'),

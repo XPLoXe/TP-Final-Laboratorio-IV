@@ -40,7 +40,7 @@
 
             // $studentController = new StudentController();
 
-            // $careerId = $studentController->getCareerIdByStudentId($_SESSION['loggedUser']['api_user_id']);
+            // $careerId = $studentController->getCareerIdByStudentId($_SESSION['loggedUser']['associatedId']);
 
             $jobOfferList = $this->GetAll();
 

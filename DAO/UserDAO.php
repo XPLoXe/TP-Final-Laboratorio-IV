@@ -16,13 +16,13 @@ class UserDAO implements IUserDAO
     {
         try
         {
-            $query = "INSERT INTO ".$this->tableName." (email, user_password, user_role_id, api_user_id, first_name, last_name) 
-            VALUES (:email, :user_password, :user_role_id, :api_user_id, :first_name, :last_name);";
+            $query = "INSERT INTO ".$this->tableName." (email, user_password, user_role_id, associated_id, first_name, last_name) 
+            VALUES (:email, :user_password, :user_role_id, :associated_id, :first_name, :last_name);";
 
             $parameters["email"] = $user->getEmail();
             $parameters["user_password"] = $user->getPassword();
             $parameters["user_role_id"] = $user->getUserRole()->getUserRoleId();
-            $parameters["api_user_id"] = $user->getApiUserId();
+            $parameters["associated_id"] = $user->getAssociatedId();
             $parameters["first_name"] = $user->getFirstName();
             $parameters["last_name"] = $user->getLastName();
 
@@ -74,14 +74,14 @@ class UserDAO implements IUserDAO
             $resultSet = $this->connection->Execute($query);
             
             foreach ($resultSet as $row)
-            {                
+            {
                 $user = new User();
                 $user->setEmail($row["email"]);
                 $user->setPassword($row["user_password"]);
                 $user->setFirstName($row["first_name"]);
                 $user->setLastName($row["last_name"]);
                 $user->setUserRole(new UserRole($row["user_role_id"]));
-                $user->setApiUserId($row["api_user_id"]);
+                $user->setAssociatedId($row["associated_id"]);
                 $user->setActive($row["active"]);
 
                 array_push($userList, $user);
@@ -106,14 +106,15 @@ class UserDAO implements IUserDAO
             $this->connection = Connection::GetInstance();
 
             $resultSet = $this->connection->Execute($query);
-                                 
+
             $user = new User();
             $user->setEmail($resultSet[0]["email"]);
             $user->setPassword($resultSet[0]["user_password"]);
             $user->setFirstName($resultSet[0]["first_name"]);
             $user->setLastName($resultSet[0]["last_name"]);
             $user->setUserRole(new UserRole($resultSet[0]["user_role_id"]));
-            $user->setApiUserId($resultSet[0]["api_user_id"]);
+            if (!is_null($resultSet[0]["associated_id"])
+                $user->setAssociatedId($resultSet[0]["associated_id"]);
             $user->setActive($resultSet[0]["active"]);
 
             return $user;

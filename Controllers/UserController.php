@@ -57,7 +57,7 @@
             $user->setFirstName($student->getFirstName());
             $user->setLastName($student->getLastName());
             $user->setUserRole($userRole);
-            $user->setApiUserId($student->getStudentId());
+            $user->setAssociatedId($student->getStudentId());
 
             $this->userDAO->Add($user);
 

@@ -14,7 +14,7 @@ CREATE TABLE Users (
 	user_role_id INT,
 	email NVARCHAR(50) NOT NULL,
 	user_password NVARCHAR(64) NOT NULL,
-	api_user_id INT,
+	associated_id INT,
 	first_name NVARCHAR(50),
 	last_name NVARCHAR(50),
 	active BOOL NOT NULL DEFAULT true,
@@ -55,42 +55,13 @@ CREATE TABLE JobOffers (
 	job_offer_id INT AUTO_INCREMENT,
 	company_id INT NOT NULL,
 	job_position_id INT,
-<<<<<<< HEAD:Schema/Schema.sql
 	user_id INT DEFAULT NULL,
-=======
-	company_id INT NOT NULL,
-	user_id INT,
->>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484:Squema/Squema.sql
 	description NVARCHAR(3000) NOT NULL,
 	publication_date DATE NOT NULL,
 	expiration_date DATE,
 	active BOOL NOT NULL DEFAULT true,
 	PRIMARY KEY (job_offer_id),
-<<<<<<< HEAD:Schema/Schema.sql
 	FOREIGN KEY (company_id) REFERENCES Companies (company_id),
 	FOREIGN KEY (job_position_id) REFERENCES JobPositions (job_position_id),
 	FOREIGN KEY (user_id) REFERENCES Users (user_id)
 );
-=======
-	FOREIGN KEY (user_id) REFERENCES Users (user_id),
-	FOREIGN KEY (job_position_id) REFERENCES JobPositions (job_position_id)
-	FOREIGN KEY (company_id) REFERENCES Companies(company_id);
-);
-
-CREATE TABLE Careers (
-	career_id INT,
-	description VARCHAR(100),
-	active BOOL NOT NULL,
-	PRIMARY KEY (career_id)
-);
-
-CREATE TABLE CareerJobPositions (
-	career_job_position_id INT AUTO_INCREMENT,
-	career_id INT NOT NULL,
-	job_position_id INT NOT NULL,
-	PRIMARY KEY (career_job_position_id),
-	FOREIGN KEY (career_id) REFERENCES Careers (career_id),
-	FOREIGN KEY (job_position_id) REFERENCES JobPositions (job_position_id)
-);
-
->>>>>>> e4fb5105b8f0e4cd415b8db4d6237521e635d484:Squema/Squema.sql
