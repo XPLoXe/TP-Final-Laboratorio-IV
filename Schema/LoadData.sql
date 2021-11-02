@@ -106,7 +106,7 @@ INSERT INTO JobPositions (job_position_id, career_id, description, active) VALUE
  (22,7,'Environmental management coordinator',true),
  (23,8,'Received technician',true);
 INSERT INTO Users (user_id, email, user_password, user_role_id, associated_id, first_name, last_name) VALUES
-(1, 'admin@admin.com', 12345, 1, null, 'Juan Carlos', 'Administradorio'),
+(1, 'admin@admin.com', 'admin99', 1, null, 'Juan Carlos', 'Administradorio'),
 (2, 'ddouthwaite0@goo.gl', 123, 2, 1, 'Devlen', 'Douthwaite'),
 (3, 'wlorant1@sbwire.com', 123, 2, 2, 'Wyatan', 'Lorant'),
 (4, 'aseemmonds2@upenn.edu', 321, 2, 3, 'Alanson', 'Seemmonds');
