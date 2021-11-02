@@ -109,7 +109,8 @@ INSERT INTO Users (user_id, email, user_password, user_role_id, associated_id, f
 (1, 'admin@admin.com', 'admin99', 1, null, 'Juan Carlos', 'Administradorio'),
 (2, 'ddouthwaite0@goo.gl', 123, 2, 1, 'Devlen', 'Douthwaite'),
 (3, 'wlorant1@sbwire.com', 123, 2, 2, 'Wyatan', 'Lorant'),
-(4, 'aseemmonds2@upenn.edu', 321, 2, 3, 'Alanson', 'Seemmonds');
+(4, 'aseemmonds2@upenn.edu', 321, 2, 3, 'Alanson', 'Seemmonds'),
+(5, 'fgorvetteg@list-manage.com', 54321, 2, 17, 'Frayda', 'Gorvette');
 INSERT INTO Companies (company_id, name, year_of_foundation, city, description, logo, email, phone_number) VALUES
 (1,'Efreint Dominios',1983,'Capital Federal','Efreint Dominios es una empresa de dominios donde las Empresas registran dominios para promocionarse o para relacionarse estrechamente con los usuarios, gracias al uso de plataformas especialmente creadas para ello.','Efreint.png','efreint@dom.com','0800-323-2413'),
 (2,'Ñ''s Club',2000,'Barcelona','Fundada en 2000, la historia de la música en Barcelona es sinónimo del nombre Ñ''s Club, un lugar de referencia nacional e internacional para la cultura y el entretenimiento. ubicado en un edificio singular vinculado al paisaje industrial de la ciudad, y con una fachada que es en sí misma icónica. En Ñ''s Club han tocado grandes y menos conocidos artistas y bandas, ya que sus sesiones de club pueden albergar grupos de cualquier tipo, pequeños conjuntos incluidos, pero todos con un denominador común: su calidad.','ñ.png','n@club.com','34 936 67 55 59'),
@@ -142,4 +143,10 @@ INSERT INTO Companies (company_id, name, year_of_foundation, city, description, 
 (29,'Mom''s Spaghetti',2020,'Mar del Plata','Si tuvieras una oportunidad para apoderarte de todo lo que siempre quisiste en un momento. ¿Lo capturarías o dejarías que se escapara? Así es, nuestros Spaghettis son imperdibles, como los hacía tu mamá, ¿cómo sabemos eso? es un secreto, ¿vas a dejar pasar esta oportunidad única?','mom.png','mom.spaghetti@gmail.com','2238492838'),
 (30,'Ortopedia Brown',2013,'Mar del Plata','Ortopedia Brown es la principal práctica ortopédica que atiende a marplatenses activos de todas las edades. Nuestro equipo de médicos capacitados en especialidades ofrece las últimas opciones de tratamiento quirúrgico y no quirúrgico para el espectro completo de subespecialidades ortopédicas: medicina deportiva, reemplazo total de articulaciones, columna, pie y tobillo, manos y extremidades superiores, cadera y rodilla, todo bajo un mismo techo.','ortopedia.png','ortopedia.brown@gmail.com','2237481927'),
 (31,'David Propiedades',2017,'Capital Federal','David Propiedades Promueve el Sistema a Corredores, propietarios y compradores de vivienda, tanto en el sector residencial como comercial en Argentina y en el mundo. Atraemos Profesionales y desarrollamos soporte en áreas centralizadas. Asistimos a nuestros afiliados en la gestión de su oficina. Proporcionamos herramientas y sistemas para la contratación de nuevos y experimentados profesionales de ventas que tienen el deseo de alcanzar los mismos estándares por los que nos esforzamos en la industria de bienes raíces tal y como indica nuestro eslogan "tasa tasa, compranos una casa"','david.png','david.propiedades@contact.us.com','011728392932');
-
+INSERT INTO JobOffers (job_offer_id, company_id, job_position_id, user_id, description, publication_date, expiration_date, active) VALUES
+(1, 5, 10, null, 'Buscamos persona con actitud proactiva y amplia disponibilidad horaria. Nivel avanzado de inglés requerido (excluyente). Valoramos experiencia previa.', '2021-10-15', '2021-10-29', 1),
+(2, 21, 18, null, 'Se busca jefe de administración con mínimo 10 años de experiencia comprobable, fluidez en español, inglés y árabe.', '2021-10-31', '2021-11-10', 0),
+(3, 27, 2, 5, 'Se busca ex-capitán de la marina. Preferentemente con parche en el ojo. Ahoy!', '2021-11-01', '2022-01-01', 1),
+(4, 7, 21, null, 'Buscamos joven capaz de realizar controles y pruebas de agroquímicos en campos florales. Mínimo 3 años de experiencia en puestos similares.', '2021-11-01', '2021-12-01', 1),
+(5, 7, 20, null, '10 años de experiencia en Java mínimo REQUISITO EXCLUYENTE. Se requiere fluidez en inglés.', '2021-11-02', '2021-11-16', 1),
+(6, 15, 8, null, 'No se requiere experiencia previa. Buen nivel de inglés preferentemente.', '2021-11-02', '2021-11-30', 1);
