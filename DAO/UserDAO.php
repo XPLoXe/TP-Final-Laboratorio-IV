@@ -113,7 +113,7 @@ class UserDAO implements IUserDAO
             $user->setFirstName($resultSet[0]["first_name"]);
             $user->setLastName($resultSet[0]["last_name"]);
             $user->setUserRole(new UserRole($resultSet[0]["user_role_id"]));
-            if (!is_null($resultSet[0]["associated_id"])
+            if (!is_null($resultSet[0]["associated_id"]))
                 $user->setAssociatedId($resultSet[0]["associated_id"]);
             $user->setActive($resultSet[0]["active"]);
 
