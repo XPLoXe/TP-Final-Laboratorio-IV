@@ -63,20 +63,24 @@
             {
                 $jobOfferList = $this->GetAll();
 
-                $jobPositionDAO = new JobPosition();
+                $jobPositionDAO = new JobPositionDAO();
 
                 $jobPositionDAO->updateDatabaseFromAPI();
 
                 foreach($jobOfferList as $jobOffer){
 
                     if( !$jobOffer->getCompany()->isActive() || 
-                            !$jobPositionDAO->isActiveById($jobOffer->getJobPositionId()) ||
-                                !empty($jobOffer->getUserId()) ){
+                            !$jobPositionDAO->isActiveById($jobOffer->getJobPositionId()) /*||
+                                !is_null($jobOffer->getUserId())*/ ){
 
                                     $this->setActiveById($jobOffer->getJobOfferId(),false);
                                 }
 
                 }
+                //Si una compania se puso inactiva y sus ofertas de trabajo estan inactivas, y la compania vuelve
+                //hay q activarlas de nuevo
+                //is_null($jobOffer->getUserId()) no me deja ingresar a esta variable, porq nunca fui inicializada
+                //
 
             }
             catch (Exception $ex)

@@ -46,8 +46,7 @@
 
             // $careerId = $studentController->getCareerIdByStudentId($_SESSION['loggedUser']['associatedId']);
 
-            $jobPositionDAO = new JobPositionDAO();
-            $jobPositionDAO->updateDatabaseFromAPI();
+            $this->jobOfferDAO->updateDatabase();
 
             $jobOfferList = $this->GetAll();
 
@@ -58,6 +57,8 @@
         public function ShowEditView($parameters)
         {
             Utils::checkAdmin();
+
+            $this->jobOfferDAO->updateDatabase();
             
             $jobOffer = $this->jobOfferDAO->getJobOfferById($parameters['jobOfferId']);
 

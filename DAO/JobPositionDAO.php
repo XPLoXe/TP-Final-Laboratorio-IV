@@ -119,13 +119,13 @@ class JobPositionDAO implements IJobPositionDAO
     {
         try
         {    
-            $query = "SELECT active FROM ".$this->tableName." WHERE job_position_id='.$jobPositionId.'";
+            $query = "SELECT active FROM ".$this->tableName." WHERE job_position_id='".$jobPositionId."'";
 
             //parameters["job_position_id"]=$jobPositionId;
 
             $this->connection = Connection::GetInstance();
-
-            $active = $this->connection->Execute($query)[0]['active'];
+            
+            $isActive = $this->connection->Execute($query)[0]["active"];
 
             return $isActive;
         }
