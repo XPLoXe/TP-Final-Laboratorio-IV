@@ -6,11 +6,17 @@
         private int $jobPositionId;
         private int $careerId;
         private string $description;
+        private int $active;
         
 
-        public function __construct($id)
+       /*  public function __construct($id)
         {
             $this->jobPositionId = $id;
+        } */
+
+        public function __construct()
+        {
+            
         }
 
 

@@ -1,6 +1,7 @@
 <?php
 namespace DAO;
 
+use Exception as Exception;
 use Interfaces\IJobPositionDAO as IJobPositionDAO;
 use DAO\Connection;
 use Models\JobPosition as JobPosition;
@@ -175,13 +176,13 @@ class JobPositionDAO implements IJobPositionDAO
             $this->connection = Connection::GetInstance();
 
             $resultSet = $this->connection->Execute($query);
-            
             foreach ($resultSet as $row)
             {                
-                $jobPosition = new JobPosition($row["job_position_id"]);
+                $jobPosition = new JobPosition();
                 $jobPosition->setCareerId($row["career_id"]);
                 $jobPosition->setDescription($row["description"]);
                 $jobPosition->setActive($row["active"]);
+                $jobPosition->setJobPositionId($row["job_position_id"]);
 
                 $jobPositionList[$jobPosition->getJobPositionId()] = $jobPosition;
             }
@@ -244,4 +245,47 @@ class JobPositionDAO implements IJobPositionDAO
             array_push($this->jobPositionList, $jobPosition);
         }
     }
+
+    public function getJobPositionByName($name)
+        {
+            try
+            {    
+                $query = "SELECT * FROM ".$this->tableName." WHERE description LIKE '%$name%'";
+    
+                $this->connection = Connection::GetInstance();
+    
+                $filterJobPosition = $this->connection->Execute($query);
+
+                $jobPositionList = array();
+
+                if(!empty($filterJobPosition)){
+
+                    foreach ($filterJobPosition as $row)
+                    {
+                        if ($row["active"] == 1)
+                        {
+                            $jobPosition = new JobPosition(); 
+
+                            /* echo "<pre>" , var_dump($row) , "</pre>"; */
+
+                            $jobPosition->setJobPositionId($row["job_position_id"]); 
+                            $jobPosition->setCareerId($row["career_id"]); 
+                            $jobPosition->setDescription($row["description"]); 
+
+                            array_push($jobPositionList, $jobPosition);
+                        }
+                    }
+                }
+
+                /* echo "<pre>" , var_dump($jobPositionList) , "</pre>"; */
+
+                return $jobPositionList;
+    
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+
+        }
 }

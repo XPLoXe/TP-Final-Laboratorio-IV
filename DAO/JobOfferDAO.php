@@ -78,8 +78,9 @@
                         {
                             $jobOffer = new JobOffer();
                             $company = new Company($row["company_id"]);
-                            $jobPosition = new JobPosition($row["job_position_id"]);
-    
+                            $jobPosition = new JobPosition();
+                            $jobPosition->setJobPositionId($row["job_position_id"]);
+                            
                             $jobOffer->setJobOfferId($row["job_offer_id"]);
                             $jobOffer->setJobPosition($jobPosition);
                             $jobOffer->setCompany($company);
@@ -102,7 +103,7 @@
         }
 
 
-        public function getJobOfferFilterByName($name)
+        /* public function getJobOfferFilterByName($name)
         {
             try
             {    
@@ -145,7 +146,7 @@
                 throw $ex;
             }
 
-        }
+        } */
 
 
 

@@ -13,11 +13,12 @@
     class JobOfferController
     {
         private $jobOfferDAO;
-
+        private $jobPositionController;
 
         public function __construct()
         {
             $this->jobOfferDAO = new JobOfferDAO();
+            $this->jobPositionController = new JobPositionController;
         }
 
 
@@ -43,9 +44,8 @@
             // $studentController = new StudentController();
 
             // $careerId = $studentController->getCareerIdByStudentId($_SESSION['loggedUser']['associatedId']);
-
+            
             $jobOfferList = $this->GetAll();
-
             require_once(VIEWS_PATH."job-offer-list.php");
         }
 
@@ -70,16 +70,33 @@
                     $this->ShowListView();
                 } else
                 {
-                    $jobOfferList  = $this->jobOfferDAO->getJobOfferFilterByName($parameters["nameToFilter"]);
+                    $jobPositionList  = $this->jobPositionController->getJobPositionByName($parameters["nameToFilter"]);
+                    $jobOfferList = $this->GetAll();
+                    $jobOfferFiltered = array();
 
-                    if (empty($jobOfferList))
+                    if (!empty($jobPositionList))
+                    {
+                        foreach ($jobPositionList as $jobPosition)
+                        {
+                            foreach ($jobOfferList as $jobOffer)
+                            {
+                                if ($jobPosition->getJobPositionId() == $jobOffer->getJobPositionId()) {
+                                    array_push($jobOfferFiltered, $jobOffer);
+                                }
+                            }
+                        }
+                    } 
+                    else
                     {
                         $msgErrorFilter = '<strong style="color:red; font-size:small;"> Ninguna Compañia contiene el nombre ingresado </strong>'; // TODO: move HTML code to view
 
                         $jobOfferList = $this->jobOfferDAO->GetAll();
-                    } 
+                    }
 
-                    require_once(VIEWS_PATH."company-list.php");
+                    $jobOfferList = array();
+                    $jobOfferList = $jobOfferFiltered;
+
+                    require_once(VIEWS_PATH."job-offer-list.php");
 
                 }
             }
@@ -123,8 +140,10 @@
             // Bind parameters to JobOffer object
             // Call DAO
             $jobOffer = new JobOffer;
+            $jobPosition = new JobPosition();
+            $jobPosition->setJobPositionId($parameters["jobPositionId"]);
             $jobOffer->setCompany(new Company($parameters["companyId"]));
-            $jobOffer->setJobPosition(new JobPosition($parameters["jobPositionId"]));
+            $jobOffer->setJobPosition($jobPosition);
             $jobOffer->setDescription($parameters["description"]);
             $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
             $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
@@ -139,10 +158,13 @@
         {
             $jobPositionController = new JobPositionController;
             $companyController = new CompanyController;
-
+            
             $jobOffers = $this->jobOfferDAO->GetAll(); // Array of JobOffer objects (incomplete)
+            
             $jobPositions = $jobPositionController->GetAll();
+            
             $companies = $companyController->GetAll();
+            
 
             foreach ($jobOffers as $jobOffer)
             {
