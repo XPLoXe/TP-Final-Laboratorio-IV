@@ -38,7 +38,6 @@
             }
         }
 
-
         public function isCompanyInBD($name,$email){
 
             try
@@ -60,7 +59,6 @@
                 throw $ex;
             }
         }
-
 
         public function GetAll()
         {
@@ -100,7 +98,6 @@
                 throw $ex;
             }
         }
-
 
         public function getCompanyByEmail($email)
         {
@@ -168,13 +165,25 @@
             }
         }
 
-
-        public function isNameinCompanyName($companyName,$name)
+        public function getActiveById(int $companyId)
         {
-            if (stripos($companyName,$name) === false)
-                return false;
-            else
-                return true;
+            try
+            {    
+                $query = "SELECT active FROM ".$this->tableName." WHERE company_id='. $companyId.'";
+
+                //parameters["company_id"]=$companyId;
+    
+                $this->connection = Connection::GetInstance();
+    
+                $active = $this->connection->Execute($query)[0]['active'];
+    
+                return $active;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+
         }
 
         public function getCompaniesFilterByName($name)
@@ -221,7 +230,6 @@
 
         }
 
-
         public function deleteCompany($id)
         {
             try
@@ -238,7 +246,6 @@
                 throw $ex;
             }
         }
-
 
         public function editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber)
         {
@@ -260,7 +267,6 @@
                 throw $ex;
             }
         }
-
 
         public function SaveCompanyLogo($tmp_img_path)//Editar
         {

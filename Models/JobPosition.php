@@ -49,15 +49,4 @@
             $this->description = $description;
         }
 
-
-        public function isActive(): bool
-        {
-            return $this->active;
-        }
-
-
-        public function setActive(bool $active): void
-        {
-            $this->active = $active;
-        }
     }
