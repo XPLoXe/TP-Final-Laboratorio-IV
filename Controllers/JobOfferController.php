@@ -59,6 +59,32 @@
             require_once(VIEWS_PATH."job-offer-edit.php");
         }
 
+        public function FilterByName($parameters)
+        {
+            Utils::checkUserLoggedIn();
+
+            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
+                
+                if (empty($parameters["nameToFilter"])) 
+                {   
+                    $this->ShowListView();
+                } else
+                {
+                    $jobOfferList  = $this->jobOfferDAO->getJobOfferFilterByName($parameters["nameToFilter"]);
+
+                    if (empty($jobOfferList))
+                    {
+                        $msgErrorFilter = '<strong style="color:red; font-size:small;"> Ninguna Compañia contiene el nombre ingresado </strong>'; // TODO: move HTML code to view
+
+                        $jobOfferList = $this->jobOfferDAO->GetAll();
+                    } 
+
+                    require_once(VIEWS_PATH."company-list.php");
+
+                }
+            }
+        }
+
 
         public function Edit($parameters)
         {

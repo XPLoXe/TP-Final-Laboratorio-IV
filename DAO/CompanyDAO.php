@@ -2,7 +2,7 @@
 
     namespace DAO;
 
-    use Exception;  
+    use Exception as Exception;
     use Models\Company as Company;
 
     class CompanyDAO
