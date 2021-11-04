@@ -3,6 +3,7 @@
 
     use DAO\StudentDAO;
     use DAO\UserDAO as UserDAO;
+    use DAO\userRoleDAO;
     use Models\Student as Student;
     use Models\User as User;
     use Models\UserRole as UserRole;
@@ -14,14 +15,16 @@
         private $userRoleController;
         private $message;
         private $studentController;
+        private $userRoleDAO;
 
 
         public function __construct()
         {
             $this->studentController = new StudentController();
+            $this->userRoleController = new UserRoleController();
             $this->message = "";
             $this->userDAO = new UserDAO();
-            $this->userRoleController = new UserRoleController();
+            $this->userRoleDAO = new userRoleDAO();
         }
 
 
@@ -45,9 +48,10 @@
 
         private function Add(string $email, string $password, int $userRoleId)
         {
-            $userRole = new UserRole($userRoleId);
-            $userRole->setDescription($this->userRoleController->getDescriptionById($userRoleId));
+
             
+            $userRole = $this->userRoleDAO->getUserRoleById($userRoleId);
+
             $student = new Student();
             $student = $this->studentController->getStudentByEmail($email);
 
