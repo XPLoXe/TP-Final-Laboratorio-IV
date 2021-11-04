@@ -88,7 +88,7 @@ class UserDAO implements IUserDAO
                 $user->setPassword($row["user_password"]);
                 $user->setFirstName($row["first_name"]);
                 $user->setLastName($row["last_name"]);
-                $user->setUserRole($userRoleDAO->getUserRoleById($row["user_role_id"]));
+                $user->setUserRole($this->userRoleDAO->getUserRoleById($row["user_role_id"]));
                 $user->setAssociatedId($row["associated_id"]);
                 $user->setActive($row["active"]);
 
