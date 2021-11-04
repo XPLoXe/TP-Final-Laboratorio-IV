@@ -52,7 +52,7 @@ require_once('nav.php');
             if (!empty($jobOfferList)) { ?>
                 <form id="edit" action="<?php echo FRONT_ROOT ?>JobOffer/ShowEditView" name='edit' method='POST'></form>
                 <form id="delete" action="<?php echo FRONT_ROOT ?>JobOffer/Delete" name='delete' method='POST'></form>
-                <form id="aplicate" action="<?php echo FRONT_ROOT ?>JobOffer/Apply" name='apply' method='POST'></form>
+                <form id="apply" action="<?php echo FRONT_ROOT ?>JobOffer/Apply" name='apply' method='POST'></form>
                 <?php
                 foreach ($jobOfferList as $jobOffer) {
                 ?>

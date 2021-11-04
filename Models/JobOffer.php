@@ -44,6 +44,12 @@
             return $this->jobPosition->getJobPositionId();
         }
 
+        
+        public function setJobPositionId(int $jobPositionId): void
+        {
+            $this->getJobPosition()->setJobPositionId($jobPositionId);
+        }
+
 
         public function getUserId(): int
         {
@@ -75,12 +81,18 @@
         }
 
 
+        public function setCompanyId(int $companyId): array
+        {
+            $this->getCompany()->setCompanyId($companyId);
+        }
+
+
         public function getDescription(): string
         {
             return $this->description;
         }
 
-        public function setDescription($description)
+        public function setDescription(string $description): void
         {
             $this->description = $description;
         }

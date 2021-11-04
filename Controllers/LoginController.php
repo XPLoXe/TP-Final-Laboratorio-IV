@@ -2,17 +2,19 @@
     namespace Controllers;
 
     use DAO\UserDAO as UserDAO;
+    use DAO\JobOfferDAO as JobOfferDAO;
     use Models\User as User;
     use Utils\Utils as Utils;
     use Controllers\StudentController as StudentController;
 
-    class LoginController
+class LoginController
     {
         private $message;
 
         public function Login()
         {
             $parameters = array();
+            $jobOfferDAO = new JobOfferDAO;
             
             if ($_SERVER['REQUEST_METHOD'] == "POST")
             {
@@ -32,16 +34,19 @@
                     
                     if ($password == $user->getPassword()) {
                         
-                        if ($user->getUserRole()->getUserRoleId() == 1) 
-                        //admin check (can't use Utils because $_SESSION isn't supposed to be set)
-                        //This check is necessary since Admin isn't in the API
+                        if ($user->getUserRole()->getDescription() == ROLE_ADMIN)
                         {
+                            $this->jobOfferDAO->updateDatabase();
+
                             $_SESSION["loggedUser"] = $user;   
                             require_once(VIEWS_PATH."home.php");
-                        } else
+                        } 
+                        else
                         {
                             if ($StudentController->getStudentByEmail($email)->isActive())  //checks if user is active in the API 
                             {
+                                $this->jobOfferDAO->updateDatabase();
+
                                 $_SESSION["loggedUser"] = $user;
                                 require_once(VIEWS_PATH."home.php");
                             }
@@ -54,7 +59,8 @@
                             }
                             
                         }
-                    }else
+                    }
+                    else
                     {
                         $this->message = "<h4 class = 'text-center' style='color: red;'> Contraseña incorrecta </h4>";
                         $message = $this->message;

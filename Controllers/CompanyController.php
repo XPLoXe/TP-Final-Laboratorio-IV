@@ -45,8 +45,8 @@
         public function ShowEditView($parameters)
         {
             Utils::checkAdmin();
-            
-            $company = $this->companyDAO->getCompanyById($parameters['edit']);
+
+            $company = $this->companyDAO->GetCompanyById($parameters['companyId']);
 
             require_once(VIEWS_PATH."company-edit.php");
         }
@@ -58,15 +58,14 @@
             
             $companyId = $parameters['id'];
             $name = $parameters['name'];
-            $yearFoundation = $parameters['yearFoundation'];
+            $yearOfFoundation = $parameters['yearOfFoundation'];
             $city = $parameters['city'];
             $description = $parameters['description'];           
-            $logo = $parameters['logo']['name'];
-            $tmp_name = $parameters['logo']['tmp_name'];
+            $logo_tmp_path = $parameters['logo']['tmp_name'];
             $email = $parameters['email'];
             $phoneNumber = $parameters['phoneNumber'];
 
-            $this->companyDAO->editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber);
+            $this->companyDAO->Edit($companyId, $name, $yearOfFoundation, $city, $description, $logo_tmp_path, $email, $phoneNumber);
 
             $this->ShowInfo($parameters);
         }
@@ -76,7 +75,7 @@
         {
             Utils::checkAdmin();
 
-            $this->companyDAO->deleteCompany($parameters['delete']);
+            $this->companyDAO->Delete($parameters['companyId']);
 
             $this->ShowListView();
         }
@@ -88,7 +87,7 @@
 
             $company = new Company();
             $company->setName($parameters['name']);
-            $company->setYearOfFoundation($parameters['yearFoundation']);
+            $company->setYearOfFoundation($parameters['yearOfFoundation']);
             $company->setCity($parameters['city']);
             $company->setDescription($parameters['description']);
             $company->setLogo(base64_encode(file_get_contents($parameters['logo']["tmp_name"])));
@@ -113,7 +112,7 @@
                     $this->ShowListView();
                 } else
                 {
-                    $companyList  = $this->companyDAO->getCompaniesFilterByName($parameters["nameToFilter"]);
+                    $companyList  = $this->companyDAO->GetCompaniesFilteredByName($parameters["nameToFilter"]);
 
                     if (empty($companyList))
                     {
@@ -133,7 +132,8 @@
         {
             Utils::checkUserLoggedIn();
 
-            $company = $this->companyDAO->getCompanyById($parameters['id']);
+            $company = $this->companyDAO->GetCompanyById($parameters['id']);
+
             require_once(VIEWS_PATH."company-info.php");
         }
     }

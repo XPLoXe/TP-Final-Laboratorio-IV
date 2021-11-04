@@ -14,7 +14,7 @@
         {
             try
             {
-                if(!$this->isCompanyInBD($parameters["name"], $parameters["email"])){
+                if (!$this->isCompanyInBD($parameters["name"], $parameters["email"])){
 
                     $query = "INSERT INTO ".$this->tableName." (name, year_of_foundation, city, description, logo, email, phone_number) VALUES (:name, :year_of_foundation, :city, :description, :logo, :email, :phone_number);";
 
@@ -29,7 +29,6 @@
                     $this->connection = Connection::GetInstance();
         
                     $this->connection->ExecuteNonQuery($query, $parameters);
-
                 }
             }
             catch (Exception $ex)
@@ -39,12 +38,67 @@
         }
 
 
-        public function isCompanyInBD($name,$email){
-
+        public function Delete($companyId)
+        {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName." WHERE name='".$companyName."' AND email='".$email."'";
+                $query = "UPDATE ".$this->tableName." SET active = false WHERE company_id = :company_id;";
 
+                $parameters['company_id'] = $companyId;
+
+                $this->connection = Connection::GetInstance();
+
+                $this->connection->ExecuteNonQuery($query, $parameters);
+                
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
+        public function Edit($companyId, $name, $yearOfFoundation, $city, $description, $logo_tmp_path, $email, $phoneNumber)
+        {
+            try
+            {
+                if ($logo_tmp_path !== '')
+                {
+                    $logo = 'logo = :logo,';
+                    $parameters['logo'] = base64_encode(file_get_contents($logo_tmp_path));
+                } else
+                    $logo = ' ';
+
+                $query = "UPDATE ".$this->tableName.' SET name = :name, year_of_foundation = :year_of_foundation, city = :city, description = :description,'. $logo .'email = :email, phone_number = :phone_number WHERE company_id = :company_id;';
+
+                $parameters['company_id'] = $companyId;
+                $parameters['name'] = $name;
+                $parameters['year_of_foundation'] = $yearOfFoundation;
+                $parameters['city'] = $city;
+                $parameters['description'] = $description;
+                $parameters['email'] = $email;
+                $parameters['phone_number'] = $phoneNumber;
+
+                $this->connection = Connection::GetInstance();
+
+                $this->connection->ExecuteNonQuery($query, $parameters);
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
+        public function isCompanyInBD($name, $email): bool
+        {
+            try
+            {
+                $query = "SELECT * FROM ".$this->tableName." WHERE name = :name AND email = :email;";
+
+                $parameters['name'] = $name;
+                $parameters['email'] = $email;
+ 
                 $this->connection = Connection::GetInstance();
 
                 $resultSet = $this->connection->Execute($query);
@@ -61,18 +115,19 @@
             }
         }
 
-
         public function GetAll()
         {
             try
             {
                 $companyList = array();
 
-                $query =   "SELECT * FROM ".$this->tableName.";";
+                $query = 'SELECT * FROM '.$this->tableName.' WHERE active = :active;';
+                
+                $parameters['active'] = true;
 
                 $this->connection = Connection::GetInstance();
 
-                $resultSet = $this->connection->Execute($query);
+                $resultSet = $this->connection->Execute($query, $parameters);
                 
                 foreach ($resultSet as $row)
                 {
@@ -101,12 +156,14 @@
             }
         }
 
-
         public function getCompanyByEmail($email)
         {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName." WHERE email='".$email."'";
+                $query = "SELECT * FROM ".$this->tableName.' WHERE email = :email. AND active = :active';
+
+                $parameters['email'] = $email;
+                $parameters['active'] = true;
 
                 $this->connection = Connection::GetInstance();
 
@@ -121,15 +178,18 @@
             }
         }
 
-        public function getCompanyById($id)
+        
+        public function GetCompanyById(int $companyId)
         {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName." WHERE company_id='".$id."'";
+                $query = "SELECT * FROM ".$this->tableName." WHERE company_id = :company_id;";
+
+                $parameters['company_id'] = $companyId;
 
                 $this->connection = Connection::GetInstance();
 
-                $row = $this->connection->Execute($query)[0];
+                $row = $this->connection->Execute($query, $parameters)[0];
 
                 $company = new Company($row["company_id"]);
                 $company->setName($row["name"]);
@@ -154,7 +214,9 @@
         {
             try
             {    
-                $query = "SELECT company_id FROM ".$this->tableName." WHERE name='.$name.'";
+                $query = "SELECT company_id FROM ".$this->tableName." WHERE name = :name;";
+
+                $parameters['name'] = $name;
     
                 $this->connection = Connection::GetInstance();
     
@@ -169,23 +231,39 @@
         }
 
 
-        public function isNameinCompanyName($companyName,$name)
-        {
-            if (stripos($companyName,$name) === false)
-                return false;
-            else
-                return true;
-        }
-
-        public function getCompaniesFilterByName($name)
+        public function getActiveById(int $companyId)
         {
             try
             {    
-                $query = "SELECT * FROM ".$this->tableName." WHERE name LIKE '%$name%'";
+                $query = "SELECT active FROM ".$this->tableName." WHERE company_id = :company_id";
+
+                $parameters["company_id"] = $companyId;
     
                 $this->connection = Connection::GetInstance();
     
-                $filterCompanies = $this->connection->Execute($query);
+                $active = $this->connection->Execute($query, $parameters)[0]['active'];
+    
+                return $active;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+
+        }
+
+
+        public function GetCompaniesFilteredByName(string $name)
+        {
+            try
+            {    
+                $query = "SELECT * FROM ".$this->tableName." WHERE name LIKE '%$name%' AND active = :active;";
+                // Can't use binded parameters because of the framework
+                $parameters['active'] = true;
+                
+                $this->connection = Connection::GetInstance();
+    
+                $filterCompanies = $this->connection->Execute($query, $parameters);
 
                 $companyList = array();
 
@@ -220,65 +298,4 @@
             }
 
         }
-
-
-        public function deleteCompany($id)
-        {
-            try
-            {
-                $query = "UPDATE ".$this->tableName." SET active='false' WHERE company_id='".$id."'";
-
-                $this->connection = Connection::GetInstance();
-
-                $this->connection->ExecuteNonQuery($query);
-                
-            }
-            catch (Exception $ex)
-            {
-                throw $ex;
-            }
-        }
-
-
-        public function editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber)
-        {
-            try
-            {
-                $query = "UPDATE ".$this->tableName." 
-                        SET name='".$name."', year_of_foundation='".$yearFoundation."', 
-                            city= '".$city."', description='".$description."',
-                            logo='".$logo."', email='".$email."', phone_number='".$phoneNumber."'
-                            WHERE company_id='".$companyId."'";
-
-                $this->connection = Connection::GetInstance();
-
-                $this->connection->ExecuteNonQuery($query);
-                
-            }
-            catch (Exception $ex)
-            {
-                throw $ex;
-            }
-        }
-
-
-        public function SaveCompanyLogo($tmp_img_path)//Editar
-        {
-            try
-            {
-                if (!is_dir($target_path))
-                {
-                    mkdir($target_path);
-                }
-                $logo_name = 'logo.'.$image_ext;
-                move_uploaded_file($tmp_img_path, $target_path.$logo_name);
-
-                //save logo to db
-            }
-            catch (Exception $ex)
-            {
-                throw $ex;
-            }
-        }
-  
     }

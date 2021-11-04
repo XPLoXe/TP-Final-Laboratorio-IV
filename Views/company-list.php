@@ -66,8 +66,8 @@
                                     <?php
                                     if (Utils::isAdmin()) 
                                     {
-                                        echo '<button class="btn btn-dark" type= "submit" name="edit" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
-                                        echo '<button class="btn btn-dark" type="submit" onclick="return confirmDelete()" name="delete" form="delete" value=' . $company->getCompanyId() . '>Eliminar</button>';
+                                        echo '<button class="btn btn-dark" type= "submit" name="companyId" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
+                                        echo '<button class="btn btn-dark" type="submit" onclick="return confirmDelete()" name="companyId" form="delete" value='.$company->getCompanyId().'>Eliminar</button>';
                                     } ?></td>
                                 </form>
                             </tr> 

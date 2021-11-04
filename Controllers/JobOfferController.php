@@ -10,6 +10,8 @@
     use Utils\Utils as Utils;
     use DateTime;
 
+    use DAO\JobPositionDAO as JobPositionDAO;
+
     class JobOfferController
     {
         private $jobOfferDAO;
@@ -22,41 +24,30 @@
         }
 
 
-        public function ShowAddView()
+        public function Add(array $parameters)
         {
             Utils::checkAdmin();
             
-            $companyController = new CompanyController;
-            $jobPositionController = new JobPositionController;
-
-            $companyList = $companyController->GetAll();
-            $jobPositionList = $jobPositionController->GetAll();
-
-            require_once(VIEWS_PATH."job-offer-add.php");
-        }
-
-        public function ShowListView()
-        {
-            Utils::checkUserLoggedIn();
-
-            // Update offers with data from API (JobPositions and Careers)
-
-            // $studentController = new StudentController();
-
-            // $careerId = $studentController->getCareerIdByStudentId($_SESSION['loggedUser']['associatedId']);
+            $jobOffer = new JobOffer;
+            $jobOffer->setCompanyId($parameters["companyId"]);
+            $jobOffer->setJobPositionId($parameters["jobPositionId"]);
+            $jobOffer->setDescription($parameters["description"]);
+            $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
+            $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
             
-            $jobOfferList = $this->GetAll();
-            require_once(VIEWS_PATH."job-offer-list.php");
+            $this->jobOfferDAO->Add($jobOffer);
+
+            $this->ShowListView();
         }
 
 
-        public function ShowEditView($parameters)
+        public function Delete(array $parameters)
         {
             Utils::checkAdmin();
-            
-            $jobOffer = $this->jobOfferDAO->getJobOfferById($parameters['jobOfferId']);
 
-            require_once(VIEWS_PATH."job-offer-edit.php");
+            $this->jobOfferDAO->Delete($parameters['jobOfferId']);
+
+            $this->ShowListView();
         }
 
         public function FilterByName($parameters)
@@ -103,13 +94,13 @@
         }
 
 
-        public function Edit($parameters)
+        public function Edit(array $parameters)
         {
             // Utils::checkAdmin();
             
             // $companyId = $parameters['id'];
             // $name = $parameters['name'];
-            // $yearFoundation = $parameters['yearFoundation'];
+            // $yearOfFoundation = $parameters['yearOfFoundation'];
             // $city = $parameters['city'];
             // $description = $parameters['description'];           
             // $logo = $parameters['logo']['name'];
@@ -117,60 +108,58 @@
             // $email = $parameters['email'];
             // $phoneNumber = $parameters['phoneNumber'];
 
-            // $this->companyDAO->editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber);
+            // $this->companyDAO->Edit($companyId, $name, $yearOfFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber);
 
             // $this->ShowInfo($parameters);
         }
 
 
-        public function Delete($parameters)
+        public function ShowAddView()
         {
             Utils::checkAdmin();
 
-            $this->jobOfferDAO->Delete($parameters['jobOfferId']);
+            $this->jobOfferDAO->updateDatabase();
+            
+            $companyController = new CompanyController;
+            $jobPositionController = new JobPositionController;
 
-            $this->ShowListView();
+            $companyList = $companyController->GetAll();
+            $jobPositionList = $jobPositionController->GetAll();
+
+            require_once(VIEWS_PATH."job-offer-add.php");
+        }
+
+        public function ShowListView()
+        {
+            Utils::checkUserLoggedIn();
+
+            $this->jobOfferDAO->updateDatabase();
+
+            // Update offers with data from API (JobPositions and Careers)
+
+            // $studentController = new StudentController();
+
+            // $careerId = $studentController->getCareerIdByStudentId($_SESSION['loggedUser']['associatedId']);
+
+            $jobOfferList = $this->GetAll();
+
+            require_once(VIEWS_PATH."job-offer-list.php");
         }
 
 
-        public function Add($parameters)
+        public function ShowEditView($parameters)
         {
             Utils::checkAdmin();
-
-            // Bind parameters to JobOffer object
-            // Call DAO
-            $jobOffer = new JobOffer;
-            $jobPosition = new JobPosition();
-            $jobPosition->setJobPositionId($parameters["jobPositionId"]);
-            $jobOffer->setCompany(new Company($parameters["companyId"]));
-            $jobOffer->setJobPosition($jobPosition);
-            $jobOffer->setDescription($parameters["description"]);
-            $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
-            $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
             
-            $this->jobOfferDAO->Add($jobOffer);
+            $jobOffer = $this->jobOfferDAO->getJobOfferById($parameters['jobOfferId']);
 
-            $this->ShowListView();
+            require_once(VIEWS_PATH."job-offer-edit.php");
         }
 
         
         public function GetAll(): array
         {
-            $jobPositionController = new JobPositionController;
-            $companyController = new CompanyController;
-            
-            $jobOffers = $this->jobOfferDAO->GetAll(); // Array of JobOffer objects (incomplete)
-            
-            $jobPositions = $jobPositionController->GetAll();
-            
-            $companies = $companyController->GetAll();
-            
-
-            foreach ($jobOffers as $jobOffer)
-            {
-                $jobOffer->setJobPosition($jobPositions[$jobOffer->getJobPositionId()]);
-                $jobOffer->setCompany($companies[$jobOffer->getCompanyId()]);
-            }
+            $jobOffers = $this->jobOfferDAO->GetAll();
 
             return $jobOffers;
         }

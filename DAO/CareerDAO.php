@@ -9,54 +9,52 @@ class CareerDAO implements ICareerDAO
 {
     private $careerList = array();
     private $connection;
-    private $tableName = "careers";
+    private $tableName = "Careers";
 
-    public function updateDatabaseFromAPI(){
+
+    public function updateDatabaseFromAPI()
+    {
 
         $this->RetrieveData();
 
         $DBcareerList = $this->GetAll();
 
-        if( !($this->careerList === $DBcareerList) ){
+        if( !($this->careerList == $DBcareerList) ){
 
             foreach($this->careerList as $career){
 
                 $flag=false;
-
-                if(!empty($DBcareerList)){
                 
-                    foreach($DBcareerList as $DBcareer){
+                foreach($DBcareerList as $DBcareer){
 
-                        if( $DBcareer->getCareerId() == $career->getCareerId() ){
+                    if( $DBcareer->getCareerId() == $career->getCareerId() ){
 
-                            $flag=true;
-                
-                            if( strcmp( $DBcareer->getDescription() , $career->getDescription() ) != 0 )
-                                $this->alterDescription( $DBcareer->getCareerId(), $career->getDescription() );//hacer esta
+                        $flag = true;
 
-                            if( $DBcareer->isActive() !=  $career->isActive() )
-                                $this->alterActive($DBcareer->getCareerId(),$jobPosition->getCareerId());//hacer esta
+                        if (strcmp($DBcareer->getDescription(), $career->getDescription()) != 0)
+                            $this->editDescription($DBcareer->getCareerId(), $career->getDescription());
 
-                        }
-
-                        if($flag)
-                            break;
-
+                        if ($DBcareer->isActive() != $career->isActive())
+                            $this->alterActive($DBcareer->getCareerId(), $career->isActive());
                     }
+                    if ($flag == true)
+                        break;
                 }
-
-                if(!$flag)
+                if ($flag == false)
                     $this->Add($career);
-                    
             }
         }
     }
 
-    public function alterDescription($careerId,$newDescription)
+
+    public function editDescription(int $careerId, string $newDescription)
     {
         try
         {
             $query = "UPDATE ".$this->tableName." SET description='".$newDescription."'WHERE career_id='".$careerId."'";
+
+            //$parameters["description"] = $newDescription;
+            //$parameters["careerId"] = $careerId;
 
             $this->connection = Connection::GetInstance();
 
@@ -69,11 +67,15 @@ class CareerDAO implements ICareerDAO
         }
     }
 
+
     public function alterActive($careerId,$newActive)
     {
         try
         {
             $query = "UPDATE ".$this->tableName." SET active='".$newActive."'WHERE career_id='".$careerId."'";
+
+            //$parameters["active"] = $newActive;
+            //$parameters["careerId"] = $careerId;
 
             $this->connection = Connection::GetInstance();
 
