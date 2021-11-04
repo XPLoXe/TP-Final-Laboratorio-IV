@@ -47,7 +47,10 @@
         
         public function setJobPositionId(int $jobPositionId): void
         {
-            $this->getJobPosition()->setJobPositionId($jobPositionId);
+            if (!isset($this->jobPosition))
+                $this->jobPosition = new JobPosition($jobPositionId);
+            else
+                $this->jobPosition->setJobPositionId($jobPositionId);
         }
 
 
@@ -81,9 +84,12 @@
         }
 
 
-        public function setCompanyId(int $companyId): array
+        public function setCompanyId(int $companyId) 
         {
-            $this->getCompany()->setCompanyId($companyId);
+            if (!isset($this->company))
+                $this->company = new Company($companyId);
+            else
+                $this->company->setCompanyId($companyId);
         }
 
 

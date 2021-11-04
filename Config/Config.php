@@ -18,3 +18,4 @@ define("DB_PASS", "");
 define("ROLE_ADMIN", "Administrator");
 define("ROLE_STUDENT", "Student");
 define("ROLE_COMPANY", "Company");
+define("UPDATE_FILE_PATH", ROOT . "last-update.log");

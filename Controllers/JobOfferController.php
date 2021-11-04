@@ -7,6 +7,7 @@
     use Models\Company as Company;
     use Controllers\CompanyController as CompanyController;
     use Controllers\JobPositionController as JobPositionController;
+    use DAO\CompanyDAO;
     use Utils\Utils as Utils;
     use DateTime;
 
@@ -15,11 +16,17 @@
     class JobOfferController
     {
         private $jobOfferDAO;
+        private $jobPositionController;
+        private $companyDAO;
+        private $jobPositionDAO;
 
 
         public function __construct()
         {
             $this->jobOfferDAO = new JobOfferDAO();
+            $this->companyDAO = new CompanyDAO();
+            $this->jobPositionDAO = new JobPositionDAO();
+            $this->jobPositionController = new JobPositionController;
         }
 
 
@@ -28,8 +35,11 @@
             Utils::checkAdmin();
             
             $jobOffer = new JobOffer;
-            $jobOffer->setCompanyId($parameters["companyId"]);
-            $jobOffer->setJobPositionId($parameters["jobPositionId"]);
+            $company = $this->companyDAO->GetCompanyById($parameters["companyId"]);
+            $jobPosition = $this->jobPositionDAO->getJobPositionById($parameters["jobPositionId"]);
+            
+            $jobOffer->setCompany($company);
+            $jobOffer->setJobPosition($jobPosition);
             $jobOffer->setDescription($parameters["description"]);
             $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
             $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
@@ -49,24 +59,64 @@
             $this->ShowListView();
         }
 
+        public function FilterByName($parameters)
+        {
+            Utils::checkUserLoggedIn();
+
+            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
+                
+                if (empty($parameters["nameToFilter"])) 
+                {   
+                    $this->ShowListView();
+                } else
+                {
+                    $jobPositionList  = $this->jobPositionController->getJobPositionByName($parameters["nameToFilter"]);
+                    $jobOfferList = $this->GetAll();
+                    $jobOfferFiltered = array();
+
+                    if (!empty($jobPositionList))
+                    {
+                        foreach ($jobPositionList as $jobPosition)
+                        {
+                            foreach ($jobOfferList as $jobOffer)
+                            {
+                                if ($jobPosition->getJobPositionId() == $jobOffer->getJobPositionId()) {
+                                    array_push($jobOfferFiltered, $jobOffer);
+                                }
+                            }
+                        }
+                    } 
+                    else
+                    {
+                        $msgErrorFilter = '<strong style="color:red; font-size:small;"> Ninguna Compañia contiene el nombre ingresado </strong>'; // TODO: move HTML code to view
+
+                        $jobOfferList = $this->jobOfferDAO->GetAll();
+                    }
+
+                    $jobOfferList = array();
+                    $jobOfferList = $jobOfferFiltered;
+
+                    require_once(VIEWS_PATH."job-offer-list.php");
+                }
+            }
+        }
+
 
         public function Edit(array $parameters)
         {
-            // Utils::checkAdmin();
+            Utils::checkAdmin();
+
+            $jobOffer = new JobOffer;
+
+            $jobOffer->setJobOfferId($parameters['jobOfferId']);
+            $jobOffer->setJobPositionId($parameters['jobPositionId']);
+            $jobOffer->setCompanyId($parameters['companyId']);      
+            $jobOffer->setExpirationDate(new DateTime($parameters['expirationDate']));
+            $jobOffer->setDescription($parameters['description']);
             
-            // $companyId = $parameters['id'];
-            // $name = $parameters['name'];
-            // $yearOfFoundation = $parameters['yearOfFoundation'];
-            // $city = $parameters['city'];
-            // $description = $parameters['description'];           
-            // $logo = $parameters['logo']['name'];
-            // $tmp_name = $parameters['logo']['tmp_name'];
-            // $email = $parameters['email'];
-            // $phoneNumber = $parameters['phoneNumber'];
+            $this->jobOfferDAO->Edit($jobOffer);
 
-            // $this->companyDAO->Edit($companyId, $name, $yearOfFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber);
-
-            // $this->ShowInfo($parameters);
+            //$this->ShowInfo($jobOffer);
         }
 
         public function Apply(array $parameters){
@@ -102,8 +152,6 @@
             $jobOfferList = $this->GetAll();
 
             require_once(VIEWS_PATH."job-offer-list.php");
-
-            //si esta buscando trabajo o isLokingForJob == true -> 
         }
 
 
@@ -112,6 +160,12 @@
             Utils::checkAdmin();
             
             $jobOffer = $this->jobOfferDAO->getJobOfferById($parameters['jobOfferId']);
+
+            $jobPositionList = $this->jobPositionDAO->GetAll();
+            array_unshift($jobPositionList, $jobOffer->getJobPosition());
+
+            $companyList = $this->companyDAO->GetAll();
+            array_unshift($companyList, $jobOffer->getCompany());
 
             require_once(VIEWS_PATH."job-offer-edit.php");
         }

@@ -38,5 +38,10 @@
 
             return null;
         }
+
+        public function getJobPositionByName(string $name) 
+        {
+            return $this->jobPositionDAO->getJobPositionByName($name);
+        }
     }
 ?>

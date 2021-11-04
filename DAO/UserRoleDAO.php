@@ -1,6 +1,7 @@
 <?php
     namespace DAO;
 
+    use Exception as Exception;
     use Interfaces\IUserRoleDAO as IUserRoleDAO;
     use DAO\Connection;
     use Models\UserRole;

@@ -1,6 +1,7 @@
 <?php
 namespace DAO;
 
+use Exception as Exception;
 use Interfaces\IJobPositionDAO as IJobPositionDAO;
 use DAO\Connection;
 use Models\JobPosition as JobPosition;
@@ -12,46 +13,42 @@ class JobPositionDAO implements IJobPositionDAO
     private $tableName = "JobPositions";
     
 
-    public function updateDatabaseFromAPI(){
+    public function updateDatabaseFromAPI()
+    {
+        $careerDAO = new CareerDAO;
+        $careerDAO->updateDatabaseFromAPI();
 
         $this->RetrieveData();
 
         $DBjobPositionList = $this->GetAll(true);
 
-        if( !($this->jobPositionList == $DBjobPositionList) ){
-
-            var_dump("Los arrays no son iguales");
-
+        if(!($this->jobPositionList == $DBjobPositionList) )
+        {
             $this->setInactiveJobPositionsDB();
 
-            foreach($this->jobPositionList as $jobPosition){
-
-                $flag=false;
+            foreach($this->jobPositionList as $jobPosition)
+            {
+                $flag = false;
                 
-                foreach($DBjobPositionList as $DBjobPosition){
-
-                    if( $DBjobPosition->getJobPositionId() == $jobPosition->getJobPositionId() ){
-
+                foreach($DBjobPositionList as $DBjobPosition)
+                {
+                    if ($DBjobPosition->getJobPositionId() == $jobPosition->getJobPositionId())
+                    {
                         $flag = true;
 
                         $this->setActiveTrue($DBjobPosition->getJobPositionId());
 
-                        if( strcmp( $DBjobPosition->getDescription() , $jobPosition->getDescription() ) != 0 )
+                        if (strcmp($DBjobPosition->getDescription(), $jobPosition->getDescription()) != 0)
                             $this->editDescription($DBjobPosition->getJobPositionId(),$jobPosition->getDescription());
 
-                        if( $DBjobPosition->getCareerId() != $jobPosition->getCareerId() )
+                        if ($DBjobPosition->getCareerId() != $jobPosition->getCareerId())
                             $this->alterCareerId($DBjobPosition->getJobPositionId(),$jobPosition->getCareerId());
-        
                     }
-
                     if ($flag == true)
                         break;
-
                 }
-
                 if ($flag == false)
                     $this->Add($jobPosition);
-                    
             }
         }
     }
@@ -213,7 +210,6 @@ class JobPositionDAO implements IJobPositionDAO
             $this->connection = Connection::GetInstance();
 
             $resultSet = $this->connection->Execute($query);
-            
             foreach ($resultSet as $row)
             {                
                 $jobPosition = new JobPosition($row["job_position_id"]);
@@ -282,4 +278,45 @@ class JobPositionDAO implements IJobPositionDAO
             array_push($this->jobPositionList, $jobPosition);
         }
     }
+
+    public function getJobPositionByName($name)
+        {
+            try
+            {    
+                $query = "SELECT * FROM ".$this->tableName." WHERE description LIKE '%$name%'";
+    
+                $this->connection = Connection::GetInstance();
+    
+                $filterJobPosition = $this->connection->Execute($query);
+
+                $jobPositionList = array();
+
+                if(!empty($filterJobPosition)){
+
+                    foreach ($filterJobPosition as $row)
+                    {
+                        if ($row["active"] == 1)
+                        {
+                             
+                            /* echo "<pre>" , var_dump($row) , "</pre>"; */
+                            $jobPosition = new JobPosition($row["job_position_id"]);
+                            $jobPosition->setCareerId($row["career_id"]); 
+                            $jobPosition->setDescription($row["description"]); 
+
+                            array_push($jobPositionList, $jobPosition);
+                        }
+                    }
+                }
+
+                /* echo "<pre>" , var_dump($jobPositionList) , "</pre>"; */
+
+                return $jobPositionList;
+    
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+
+        }
 }
