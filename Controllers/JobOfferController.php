@@ -105,21 +105,19 @@
 
         public function Edit(array $parameters)
         {
-            // Utils::checkAdmin();
+            Utils::checkAdmin();
+
+            $jobOffer = new JobOffer;
+
+            $jobOffer->setJobOfferId($parameters['jobOfferId']);
+            $jobOffer->setJobPositionId($parameters['jobPositionId']);
+            $jobOffer->setCompanyId($parameters['companyId']);      
+            $jobOffer->setExpirationDate(new DateTime($parameters['expirationDate']));
+            $jobOffer->setDescription($parameters['description']);
             
-            // $companyId = $parameters['id'];
-            // $name = $parameters['name'];
-            // $yearOfFoundation = $parameters['yearOfFoundation'];
-            // $city = $parameters['city'];
-            // $description = $parameters['description'];           
-            // $logo = $parameters['logo']['name'];
-            // $tmp_name = $parameters['logo']['tmp_name'];
-            // $email = $parameters['email'];
-            // $phoneNumber = $parameters['phoneNumber'];
+            $this->jobOfferDAO->Edit($jobOffer);
 
-            // $this->companyDAO->Edit($companyId, $name, $yearOfFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber);
-
-            // $this->ShowInfo($parameters);
+            //$this->ShowInfo($jobOffer);
         }
 
 
@@ -140,12 +138,6 @@
         {
             Utils::checkUserLoggedIn();
 
-            // Update offers with data from API (JobPositions and Careers)
-
-            // $studentController = new StudentController();
-
-            // $careerId = $studentController->getCareerIdByStudentId($_SESSION['loggedUser']['associatedId']);
-
             $jobOfferList = $this->GetAll();
 
             require_once(VIEWS_PATH."job-offer-list.php");
@@ -157,6 +149,12 @@
             Utils::checkAdmin();
             
             $jobOffer = $this->jobOfferDAO->getJobOfferById($parameters['jobOfferId']);
+
+            $jobPositionList = $this->jobPositionDAO->GetAll();
+            array_unshift($jobPositionList, $jobOffer->getJobPosition());
+
+            $companyList = $this->companyDAO->GetAll();
+            array_unshift($companyList, $jobOffer->getCompany());
 
             require_once(VIEWS_PATH."job-offer-edit.php");
         }
