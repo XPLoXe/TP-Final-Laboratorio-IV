@@ -21,6 +21,55 @@
         }
 
 
+        public function Add($parameters)
+        {
+            Utils::checkAdmin();
+
+            // Bind parameters to JobOffer object
+            // Call DAO
+            $jobOffer = new JobOffer;
+            $jobOffer->setCompany(new Company($parameters["companyId"]));
+            $jobOffer->setJobPosition(new JobPosition($parameters["jobPositionId"]));
+            $jobOffer->setDescription($parameters["description"]);
+            $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
+            $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
+            
+            $this->jobOfferDAO->Add($jobOffer);
+
+            $this->ShowListView();
+        }
+
+
+        public function Delete($parameters)
+        {
+            Utils::checkAdmin();
+
+            $this->jobOfferDAO->Delete($parameters['jobOfferId']);
+
+            $this->ShowListView();
+        }
+
+
+        public function Edit($parameters)
+        {
+            // Utils::checkAdmin();
+            
+            // $companyId = $parameters['id'];
+            // $name = $parameters['name'];
+            // $yearOfFoundation = $parameters['yearOfFoundation'];
+            // $city = $parameters['city'];
+            // $description = $parameters['description'];           
+            // $logo = $parameters['logo']['name'];
+            // $tmp_name = $parameters['logo']['tmp_name'];
+            // $email = $parameters['email'];
+            // $phoneNumber = $parameters['phoneNumber'];
+
+            // $this->companyDAO->Edit($companyId, $name, $yearOfFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber);
+
+            // $this->ShowInfo($parameters);
+        }
+
+
         public function ShowAddView()
         {
             Utils::checkAdmin();
@@ -57,55 +106,6 @@
             $jobOffer = $this->jobOfferDAO->getJobOfferById($parameters['jobOfferId']);
 
             require_once(VIEWS_PATH."job-offer-edit.php");
-        }
-
-
-        public function Edit($parameters)
-        {
-            // Utils::checkAdmin();
-            
-            // $companyId = $parameters['id'];
-            // $name = $parameters['name'];
-            // $yearFoundation = $parameters['yearFoundation'];
-            // $city = $parameters['city'];
-            // $description = $parameters['description'];           
-            // $logo = $parameters['logo']['name'];
-            // $tmp_name = $parameters['logo']['tmp_name'];
-            // $email = $parameters['email'];
-            // $phoneNumber = $parameters['phoneNumber'];
-
-            // $this->companyDAO->editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber);
-
-            // $this->ShowInfo($parameters);
-        }
-
-
-        public function Delete($parameters)
-        {
-            Utils::checkAdmin();
-
-            $this->jobOfferDAO->Delete($parameters['jobOfferId']);
-
-            $this->ShowListView();
-        }
-
-
-        public function Add($parameters)
-        {
-            Utils::checkAdmin();
-
-            // Bind parameters to JobOffer object
-            // Call DAO
-            $jobOffer = new JobOffer;
-            $jobOffer->setCompany(new Company($parameters["companyId"]));
-            $jobOffer->setJobPosition(new JobPosition($parameters["jobPositionId"]));
-            $jobOffer->setDescription($parameters["description"]);
-            $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
-            $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
-            
-            $this->jobOfferDAO->Add($jobOffer);
-
-            $this->ShowListView();
         }
 
         

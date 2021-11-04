@@ -19,7 +19,7 @@
                          <div class="col-lg-4">
                               <div class="form-group">
                                    <label for="">Año de fundación</label>
-                                   <input type="number" name="yearFoundation" class="form-control" value="<?php echo $company->getYearOfFoundation() ?>">
+                                   <input type="number" name="yearOfFoundation" class="form-control" value="<?php echo $company->getYearOfFoundation() ?>">
                               </div>
                          </div>
                          <div class="col-lg-4">
@@ -49,8 +49,8 @@
                          <div class="col-lg-4">
                               <div class="form-group">
                                    <label for="">Logo</label>
-                                   <img style="max-height: 50px" src="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>"></img>
-                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control">
+                                   <img style="max-height: 50px" src="data:image/png;base64, <?php echo $company->getLogo() ?>"></img>
+                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control" value="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>">
                               </div>
                          </div>
                     </div>

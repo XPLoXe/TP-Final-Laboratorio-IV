@@ -49,7 +49,6 @@ class JobPositionDAO implements IJobPositionDAO
 
                 if(!$flag)
                     $this->Add($jobPosition);//modificar careerJobPosition
-                    
             }
         }
     }
@@ -194,6 +193,7 @@ class JobPositionDAO implements IJobPositionDAO
         }
     }
 
+
     public function getIdByDescription($description)//lo uso cuando agrego una nueva job offer
     {
         try
@@ -210,8 +210,8 @@ class JobPositionDAO implements IJobPositionDAO
         {
             throw $ex;
         }
-
     }
+
 
     private function getJobPositionFromApi()
     {
@@ -224,6 +224,7 @@ class JobPositionDAO implements IJobPositionDAO
 
         return $dataAPI;
     }
+
 
     private function RetrieveData()
     {

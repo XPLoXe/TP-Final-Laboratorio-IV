@@ -17,7 +17,7 @@
             </div>
             <div class="row justify-content-center">
               <figure class="figure">
-                <img src="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>" class="figure-img img-fluid rounded" style="width:450px; height:350px">
+                <img src="data:image/png;base64, <?php echo $company->getLogo() ?>" class="figure-img img-fluid rounded" style="width:450px; height:350px">
               </figure>
             </div>
         </div>

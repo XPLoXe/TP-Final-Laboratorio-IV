@@ -52,6 +52,7 @@ class CareerDAO implements ICareerDAO
         }
     }
 
+
     public function alterDescription($careerId,$newDescription)
     {
         try
@@ -68,6 +69,7 @@ class CareerDAO implements ICareerDAO
             throw $ex;
         }
     }
+
 
     public function alterActive($careerId,$newActive)
     {
