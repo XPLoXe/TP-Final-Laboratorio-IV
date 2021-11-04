@@ -122,14 +122,18 @@
             if (file_exists(UPDATE_FILE_PATH))
             {
                 $lastUpdate = date(file_get_contents(UPDATE_FILE_PATH));
-                
-                if ($lastUpdate < date("Y-m-d")) // If last update was before today
+                $today = date("Y-m-d");
+
+                if ($lastUpdate < $today)
+                {
                     $this->updateDatabase();
+                    file_put_contents(UPDATE_FILE_PATH, $today);
+                }
             }
             else
             {
-                file_put_contents(UPDATE_FILE_PATH, date("Y-m-d"));
                 $this->updateDatabase();
+                file_put_contents(UPDATE_FILE_PATH, $today);
             }
         }
 
