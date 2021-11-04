@@ -96,11 +96,14 @@
                         FROM JobOffers jo
                         INNER JOIN Companies cp on jo.company_id = cp.company_id
                         INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
-                        INNER JOIN Careers cr on jp.career_id = cr.career_id;";
+                        INNER JOIN Careers cr on jp.career_id = cr.career_id
+                        WHERE jo.active = :active AND jo.expiration_date > curdate() AND user_id IS NULL ;";
+
+                        $parameters["active"] = 1;
 
                 $this->connection = Connection::GetInstance();
 
-                $resultSet = $this->connection->Execute($query);
+                $resultSet = $this->connection->Execute($query,$parameters);
 
                 $companyDAO = new CompanyDAO();
                 $jobPositionDAO = new JobPositionDAO();
@@ -272,15 +275,14 @@
         }
 
 
-        public function setUserId($jobOfferId,$user_id)//Apply
+        public function Apply($jobOfferId,$user_id)//Apply
         {
             try
             {
-                $query = "UPDATE ".$this->tableName." SET user_id=':user_id', active=':active' WHERE job_offer_id=':job_offer_id'";
+                $query = "UPDATE ".$this->tableName." SET user_id=:user_id WHERE job_offer_id=:job_offer_id";
 
                 $parameters["user_id"] = $user_id;
                 $parameters["job_offer_id"] = $jobOfferId;
-                $parameters["active"] = true;
 
                 $this->connection = Connection::GetInstance();
 
@@ -291,6 +293,31 @@
             {
                 throw $ex;
             }
+        }
+
+        public function isUserIdInOffer($userId)//para la botonera
+        {
+            try
+            {
+                $query = "SELECT 'user_id' FROM ".$this->tableName." WHERE user_id='".$userId."'";
+
+                //$parameters["user_id"] = $userId;
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query);
+
+                if(empty($resultSet))
+                    return true;//is not looking for job
+                else
+                    return false;
+                
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+
         }
 
 

@@ -69,12 +69,19 @@
             // $this->ShowInfo($parameters);
         }
 
+        public function Apply(array $parameters){
+
+            if(Utils::isStudent())
+                $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId());
+
+            $this->ShowListView();
+
+        }
+
 
         public function ShowAddView()
         {
             Utils::checkAdmin();
-
-            $this->jobOfferDAO->updateDatabase();
             
             $companyController = new CompanyController;
             $jobPositionController = new JobPositionController;
@@ -89,17 +96,14 @@
         {
             Utils::checkUserLoggedIn();
 
-            $this->jobOfferDAO->updateDatabase();
-
-            // Update offers with data from API (JobPositions and Careers)
-
-            // $studentController = new StudentController();
-
-            // $careerId = $studentController->getCareerIdByStudentId($_SESSION['loggedUser']['associatedId']);
+            if(Utils::isStudent())
+                $isLookingForJob = $this->jobOfferDAO->isUserIdInOffer($_SESSION["loggedUser"]->getUserId());
 
             $jobOfferList = $this->GetAll();
 
             require_once(VIEWS_PATH."job-offer-list.php");
+
+            //si esta buscando trabajo o isLokingForJob == true -> 
         }
 
 

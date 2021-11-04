@@ -88,7 +88,7 @@ require_once('nav.php');
                             <td>
                                 <div class="float-right">
                                     <?php
-                                    if (!Utils::isAdmin())
+                                    if (Utils::isStudent() && $isLookingForJob)
                                         echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="apply" value=' . $jobOffer->getJobOfferId() . '>Postularse</button>';
 
                                     if (Utils::isAdmin()) {
