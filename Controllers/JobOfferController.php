@@ -73,8 +73,6 @@
         public function ShowAddView()
         {
             Utils::checkAdmin();
-
-            $this->jobOfferDAO->updateDatabase();
             
             $companyController = new CompanyController;
             $jobPositionController = new JobPositionController;
@@ -88,8 +86,6 @@
         public function ShowListView()
         {
             Utils::checkUserLoggedIn();
-
-            $this->jobOfferDAO->updateDatabase();
 
             // Update offers with data from API (JobPositions and Careers)
 

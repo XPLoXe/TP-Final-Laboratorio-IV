@@ -13,7 +13,6 @@
 
     class JobOfferDAO
     {
-
         private $connection;
         private $tableName = "JobOffers";
 
@@ -59,7 +58,7 @@
         }
 
 
-        public function updateDatabase()
+        private function updateDatabase()
         {
             try
             {
@@ -68,8 +67,8 @@
                 $jobPositionDAO = new JobPositionDAO();
                 $jobPositionDAO->updateDatabaseFromAPI();
 
-                foreach($jobOfferList as $jobOffer){
-
+                foreach($jobOfferList as $jobOffer)
+                {
                     if (!$jobOffer->getCompany()->isActive() || 
                         !$jobPositionDAO->isActiveById($jobOffer->getJobPositionId()))
                     {
@@ -80,6 +79,23 @@
             catch (Exception $ex)
             {
                 throw $ex;
+            }
+        }
+
+
+        public function tryDatabaseUpdate()
+        {
+            if (file_exists(UPDATE_FILE_PATH))
+            {
+                $lastUpdate = date(file_get_contents(UPDATE_FILE_PATH));
+                
+                if ($lastUpdate < date("Y-m-d")) // If last update was before today
+                    $this->updateDatabase();
+            }
+            else
+            {
+                file_put_contents(UPDATE_FILE_PATH, date("Y-m-d"));
+                $this->updateDatabase();
             }
         }
 

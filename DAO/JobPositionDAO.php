@@ -12,46 +12,42 @@ class JobPositionDAO implements IJobPositionDAO
     private $tableName = "JobPositions";
     
 
-    public function updateDatabaseFromAPI(){
+    public function updateDatabaseFromAPI()
+    {
+        $careerDAO = new CareerDAO;
+        $careerDAO->updateDatabaseFromAPI();
 
         $this->RetrieveData();
 
         $DBjobPositionList = $this->GetAll(true);
 
-        if( !($this->jobPositionList == $DBjobPositionList) ){
-
-            var_dump("Los arrays no son iguales");
-
+        if(!($this->jobPositionList == $DBjobPositionList) )
+        {
             $this->setInactiveJobPositionsDB();
 
-            foreach($this->jobPositionList as $jobPosition){
-
-                $flag=false;
+            foreach($this->jobPositionList as $jobPosition)
+            {
+                $flag = false;
                 
-                foreach($DBjobPositionList as $DBjobPosition){
-
-                    if( $DBjobPosition->getJobPositionId() == $jobPosition->getJobPositionId() ){
-
+                foreach($DBjobPositionList as $DBjobPosition)
+                {
+                    if ($DBjobPosition->getJobPositionId() == $jobPosition->getJobPositionId())
+                    {
                         $flag = true;
 
                         $this->setActiveTrue($DBjobPosition->getJobPositionId());
 
-                        if( strcmp( $DBjobPosition->getDescription() , $jobPosition->getDescription() ) != 0 )
+                        if (strcmp($DBjobPosition->getDescription(), $jobPosition->getDescription()) != 0)
                             $this->editDescription($DBjobPosition->getJobPositionId(),$jobPosition->getDescription());
 
-                        if( $DBjobPosition->getCareerId() != $jobPosition->getCareerId() )
+                        if ($DBjobPosition->getCareerId() != $jobPosition->getCareerId())
                             $this->alterCareerId($DBjobPosition->getJobPositionId(),$jobPosition->getCareerId());
-        
                     }
-
                     if ($flag == true)
                         break;
-
                 }
-
                 if ($flag == false)
                     $this->Add($jobPosition);
-                    
             }
         }
     }
