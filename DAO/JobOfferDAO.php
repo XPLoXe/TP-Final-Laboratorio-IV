@@ -1,6 +1,7 @@
 <?php
     namespace DAO;
 
+    use Exception as Exception;
     use DAO\Connection as Connection;
     use DAO\CompanyDAO as CompanyDAO;
     use DAO\JobPositionDAO as JobPositionDAO;
@@ -133,6 +134,53 @@
                 throw $ex;
             }
         }
+
+
+        /* public function getJobOfferFilterByName($name)
+        {
+            try
+            {    
+                $query = "SELECT * FROM ".$this->tableName." WHERE name LIKE '%$name%'";
+    
+                $this->connection = Connection::GetInstance();
+    
+                $filterJobOffer = $this->connection->Execute($query);
+
+                $jobOfferList = array();
+
+                if(!empty($filterJobOffer)){
+
+                    foreach ($filterJobOffer as $row)
+                    {
+                        if ($row["active"] == 1)
+                        {
+                            $jobOffer = new JobOffer($row["company_id"]);
+                            $company = new Company($row["company_id"]);
+                            $jobPosition = new JobPosition($row["job_position_id"]);
+
+                            $jobOffer->setJobOfferId($row["job_offer_id"]);
+                            $jobOffer->setJobPosition($jobPositionDAO->getJobPositionById($row["job_position_id"]));
+                            $jobOffer->setCompany($companyDAO->getCompanyById($row["company_id"]));
+                            $jobOffer->setDescription($row["job_offer_description"]);
+                            $jobOffer->setPublicationDate(new DateTime($row["publication_date"]));
+                            $jobOffer->setExpirationDate(new DateTime($row["expiration_date"]));
+                            $jobOffer->setActive($row["active"]);
+
+                            array_push($jobOfferList,$company);
+                        }
+                    }
+                }
+
+                return $jobOfferList;
+    
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+
+        } */
+
 
 
         public function getJobOfferByUserId($userId): JobOffer

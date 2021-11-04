@@ -7,6 +7,7 @@
     use Models\Company as Company;
     use Controllers\CompanyController as CompanyController;
     use Controllers\JobPositionController as JobPositionController;
+    use DAO\CompanyDAO;
     use Utils\Utils as Utils;
     use DateTime;
 
@@ -15,11 +16,17 @@
     class JobOfferController
     {
         private $jobOfferDAO;
+        private $jobPositionController;
+        private $companyDAO;
+        private $jobPositionDAO;
 
 
         public function __construct()
         {
             $this->jobOfferDAO = new JobOfferDAO();
+            $this->companyDAO = new CompanyDAO();
+            $this->jobPositionDAO = new JobPositionDAO();
+            $this->jobPositionController = new JobPositionController;
         }
 
 
@@ -28,8 +35,11 @@
             Utils::checkAdmin();
             
             $jobOffer = new JobOffer;
-            $jobOffer->setCompanyId($parameters["companyId"]);
-            $jobOffer->setJobPositionId($parameters["jobPositionId"]);
+            $company = $this->companyDAO->GetCompanyById($parameters["companyId"]);
+            $jobPosition = $this->jobPositionDAO->getJobPositionById($parameters["jobPositionId"]);
+            
+            $jobOffer->setCompany($company);
+            $jobOffer->setJobPosition($jobPosition);
             $jobOffer->setDescription($parameters["description"]);
             $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
             $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
@@ -47,6 +57,49 @@
             $this->jobOfferDAO->Delete($parameters['jobOfferId']);
 
             $this->ShowListView();
+        }
+
+        public function FilterByName($parameters)
+        {
+            Utils::checkUserLoggedIn();
+
+            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
+                
+                if (empty($parameters["nameToFilter"])) 
+                {   
+                    $this->ShowListView();
+                } else
+                {
+                    $jobPositionList  = $this->jobPositionController->getJobPositionByName($parameters["nameToFilter"]);
+                    $jobOfferList = $this->GetAll();
+                    $jobOfferFiltered = array();
+
+                    if (!empty($jobPositionList))
+                    {
+                        foreach ($jobPositionList as $jobPosition)
+                        {
+                            foreach ($jobOfferList as $jobOffer)
+                            {
+                                if ($jobPosition->getJobPositionId() == $jobOffer->getJobPositionId()) {
+                                    array_push($jobOfferFiltered, $jobOffer);
+                                }
+                            }
+                        }
+                    } 
+                    else
+                    {
+                        $msgErrorFilter = '<strong style="color:red; font-size:small;"> Ninguna Compañia contiene el nombre ingresado </strong>'; // TODO: move HTML code to view
+
+                        $jobOfferList = $this->jobOfferDAO->GetAll();
+                    }
+
+                    $jobOfferList = array();
+                    $jobOfferList = $jobOfferFiltered;
+
+                    require_once(VIEWS_PATH."job-offer-list.php");
+
+                }
+            }
         }
 
 

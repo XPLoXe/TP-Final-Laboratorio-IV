@@ -19,7 +19,7 @@ require_once('nav.php');
             <div class="mb-4">
                 <form action="<?php echo FRONT_ROOT ?>JobOffer/FilterByName" method="post" class="bg-light-alpha p-4">
                     <div class="input-group input-group-lg col-md-6 mx-auto">
-                        <input type="text" name="jobPositionToFilter" class="form-control mx-3" placeholder="Ingrese puesto de trabajo">
+                        <input type="text" name="nameToFilter" class="form-control mx-3" placeholder="Ingrese puesto de trabajo">
                         <button type="submit" name="button" class="btn btn-dark d-block ">Filtrar</button>
                     </div>
                 </form>

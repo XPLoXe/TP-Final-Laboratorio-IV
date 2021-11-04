@@ -81,7 +81,7 @@
         }
 
 
-        public function setCompanyId(int $companyId): array
+        public function setCompanyId(int $companyId) 
         {
             $this->getCompany()->setCompanyId($companyId);
         }
