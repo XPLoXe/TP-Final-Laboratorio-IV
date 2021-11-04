@@ -19,7 +19,7 @@
                          <div class="col-lg-4">
                               <div class="form-group">
                                    <label for="">Año de fundación</label>
-                                   <input type="number" name="yearOfFoundation" class="form-control" required>
+                                   <input type="number" min="1901" max="<?php echo date("Y"); ?>" name="yearOfFoundation" class="form-control" required>
                               </div>
                          </div>
                          <div class="col-lg-4">
