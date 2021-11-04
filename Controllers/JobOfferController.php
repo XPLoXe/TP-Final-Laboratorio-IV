@@ -10,6 +10,8 @@
     use Utils\Utils as Utils;
     use DateTime;
 
+    use DAO\JobPositionDAO as JobPositionDAO;
+
     class JobOfferController
     {
         private $jobOfferDAO;
@@ -21,15 +23,13 @@
         }
 
 
-        public function Add($parameters)
+        public function Add(array $parameters)
         {
             Utils::checkAdmin();
-
-            // Bind parameters to JobOffer object
-            // Call DAO
+            
             $jobOffer = new JobOffer;
-            $jobOffer->setCompany(new Company($parameters["companyId"]));
-            $jobOffer->setJobPosition(new JobPosition($parameters["jobPositionId"]));
+            $jobOffer->setCompanyId($parameters["companyId"]);
+            $jobOffer->setJobPositionId($parameters["jobPositionId"]);
             $jobOffer->setDescription($parameters["description"]);
             $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
             $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
@@ -40,7 +40,7 @@
         }
 
 
-        public function Delete($parameters)
+        public function Delete(array $parameters)
         {
             Utils::checkAdmin();
 
@@ -50,7 +50,7 @@
         }
 
 
-        public function Edit($parameters)
+        public function Edit(array $parameters)
         {
             // Utils::checkAdmin();
             
@@ -73,6 +73,8 @@
         public function ShowAddView()
         {
             Utils::checkAdmin();
+
+            $this->jobOfferDAO->updateDatabase();
             
             $companyController = new CompanyController;
             $jobPositionController = new JobPositionController;
@@ -86,6 +88,8 @@
         public function ShowListView()
         {
             Utils::checkUserLoggedIn();
+
+            $this->jobOfferDAO->updateDatabase();
 
             // Update offers with data from API (JobPositions and Careers)
 
@@ -111,18 +115,7 @@
         
         public function GetAll(): array
         {
-            $jobPositionController = new JobPositionController;
-            $companyController = new CompanyController;
-
-            $jobOffers = $this->jobOfferDAO->GetAll(); // Array of JobOffer objects (incomplete)
-            $jobPositions = $jobPositionController->GetAll();
-            $companies = $companyController->GetAll();
-
-            foreach ($jobOffers as $jobOffer)
-            {
-                $jobOffer->setJobPosition($jobPositions[$jobOffer->getJobPositionId()]);
-                $jobOffer->setCompany($companies[$jobOffer->getCompanyId()]);
-            }
+            $jobOffers = $this->jobOfferDAO->GetAll();
 
             return $jobOffers;
         }
