@@ -81,7 +81,7 @@
             }
             else
             {
-                $this->message = "<h4 class = 'text-center' style='color: red;'> las contraseñas ingresadas no son las mismas </h4>";
+                $this->message = ERROR_VERIFY_PASSWORD;
                 return false;
             }
             
@@ -92,12 +92,12 @@
         {
             if (!is_null($this->studentController->getStudentByEmail($email)))
             {
-                $this->message = "<h4 class = 'text-center' style='color: green;'> Usuario registrado con éxito </h4>";
+                $this->message = SIGNUP_SUCCESS;
                 return true;
             }
             else
             {
-                $this->message = "<h4 class = 'text-center' style='color: red;'> El mail no existe </h4>";
+                $this->message = ERROR_VERIFY_EMAIL;
                 return false;
             }
         }
@@ -107,7 +107,7 @@
         {
             if ($this->userDAO->VerifyEmailDataBase($email)) 
             {
-                $this->message = "<h4 class = 'text-center' style='color: red;'> El email ya tiene una cuenta registrada </h4>";
+                $this->message = ERROR_VERIFY_EMAIL_DATABASE;
                 return true;
             } 
             return false;

@@ -88,7 +88,7 @@
                     } 
                     else
                     {
-                        $msgErrorFilter = '<strong style="color:red; font-size:small;"> Ninguna Compañia contiene el nombre ingresado </strong>'; // TODO: move HTML code to view
+                        $msgErrorFilter = ERROR_JOBOFFER_FILTER; // TODO: move HTML code to view
 
                         $jobOfferList = $this->jobOfferDAO->GetAll();
                     }

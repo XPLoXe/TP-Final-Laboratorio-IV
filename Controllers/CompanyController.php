@@ -116,7 +116,7 @@
 
                     if (empty($companyList))
                     {
-                        $msgErrorFilter = '<strong style="color:red; font-size:small;"> Ninguna Compañia contiene el nombre ingresado </strong>'; // TODO: move HTML code to view
+                        $msgErrorFilter = ERROR_COMPANY_FILTER; // TODO: move HTML code to view
 
                         $companyList = $this->companyDAO->GetAll();
                     } 
