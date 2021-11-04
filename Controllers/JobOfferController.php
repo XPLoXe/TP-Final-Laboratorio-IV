@@ -7,6 +7,7 @@
     use Models\Company as Company;
     use Controllers\CompanyController as CompanyController;
     use Controllers\JobPositionController as JobPositionController;
+    use DAO\CompanyDAO;
     use Utils\Utils as Utils;
     use DateTime;
 
@@ -16,10 +17,15 @@
     {
         private $jobOfferDAO;
         private $jobPositionController;
+        private $companyDAO;
+        private $jobPositionDAO;
+
 
         public function __construct()
         {
             $this->jobOfferDAO = new JobOfferDAO();
+            $this->companyDAO = new CompanyDAO();
+            $this->jobPositionDAO = new JobPositionDAO();
             $this->jobPositionController = new JobPositionController;
         }
 
@@ -29,8 +35,11 @@
             Utils::checkAdmin();
             
             $jobOffer = new JobOffer;
-            $jobOffer->setCompanyId($parameters["companyId"]);
-            $jobOffer->setJobPositionId($parameters["jobPositionId"]);
+            $company = $this->companyDAO->GetCompanyById($parameters["companyId"]);
+            $jobPosition = $this->jobPositionDAO->getJobPositionById($parameters["jobPositionId"]);
+            
+            $jobOffer->setCompany($company);
+            $jobOffer->setJobPosition($jobPosition);
             $jobOffer->setDescription($parameters["description"]);
             $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
             $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));

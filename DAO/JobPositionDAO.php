@@ -216,7 +216,7 @@ class JobPositionDAO implements IJobPositionDAO
             $resultSet = $this->connection->Execute($query);
             foreach ($resultSet as $row)
             {                
-                $jobPosition = new JobPosition();
+                $jobPosition = new JobPosition($row["job_position_id"]);
                 $jobPosition->setCareerId($row["career_id"]);
                 $jobPosition->setDescription($row["description"]);
 
@@ -301,11 +301,9 @@ class JobPositionDAO implements IJobPositionDAO
                     {
                         if ($row["active"] == 1)
                         {
-                            $jobPosition = new JobPosition(); 
-
+                             
                             /* echo "<pre>" , var_dump($row) , "</pre>"; */
-
-                            $jobPosition->setJobPositionId($row["job_position_id"]); 
+                            $jobPosition = new JobPosition($row["job_position_id"]);
                             $jobPosition->setCareerId($row["career_id"]); 
                             $jobPosition->setDescription($row["description"]); 
 
