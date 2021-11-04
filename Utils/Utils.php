@@ -27,7 +27,7 @@
 
         public static function isStudent(): bool
         {
-            if ($this->isUserLoggedIn())
+            if (self::isUserLoggedIn())
                 return $_SESSION['loggedUser']->getUserRoleDescription() == ROLE_STUDENT;
 
             return false;

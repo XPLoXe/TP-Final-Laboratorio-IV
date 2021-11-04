@@ -97,7 +97,6 @@
                     $jobOfferList = $jobOfferFiltered;
 
                     require_once(VIEWS_PATH."job-offer-list.php");
-
                 }
             }
         }
@@ -120,6 +119,15 @@
             //$this->ShowInfo($jobOffer);
         }
 
+        public function Apply(array $parameters){
+
+            if(Utils::isStudent())
+                $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId());
+
+            $this->ShowListView();
+
+        }
+
 
         public function ShowAddView()
         {
@@ -137,6 +145,9 @@
         public function ShowListView()
         {
             Utils::checkUserLoggedIn();
+
+            if(Utils::isStudent())
+                $isLookingForJob = $this->jobOfferDAO->isUserIdInOffer($_SESSION["loggedUser"]->getUserId());
 
             $jobOfferList = $this->GetAll();
 
