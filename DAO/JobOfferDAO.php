@@ -159,9 +159,9 @@
                             $jobPosition = new JobPosition($row["job_position_id"]);
 
                             $jobOffer->setJobOfferId($row["job_offer_id"]);
-                            $jobOffer->setJobPosition($jobPosition);
-                            $jobOffer->setCompany($company);
-                            $jobOffer->setDescription($row["description"]);
+                            $jobOffer->setJobPosition($jobPositionDAO->getJobPositionById($row["job_position_id"]));
+                            $jobOffer->setCompany($companyDAO->getCompanyById($row["company_id"]));
+                            $jobOffer->setDescription($row["job_offer_description"]);
                             $jobOffer->setPublicationDate(new DateTime($row["publication_date"]));
                             $jobOffer->setExpirationDate(new DateTime($row["expiration_date"]));
                             $jobOffer->setActive($row["active"]);
