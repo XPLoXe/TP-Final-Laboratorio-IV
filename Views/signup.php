@@ -15,7 +15,7 @@
         <form action="<?php echo FRONT_ROOT ?>User/Register" method="post" class="login-form bg-dark-alpha p-5 text-white">
             <div class="form-group">
                 <label for="">Ingrese su email</label>
-                <input type="text" name="email" class="form-control form-control-lg">
+                <input type="email" name="email" class="form-control form-control-lg">
             </div>
             <div class="form-group">
                 <label for="">Ingrese su contraseña</label>

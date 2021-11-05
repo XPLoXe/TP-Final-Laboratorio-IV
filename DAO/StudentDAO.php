@@ -34,7 +34,7 @@ class StudentDAO
     }
 
 
-    public function getStudentByEmail($email): Student
+    public function getStudentByEmail($email)
     {
         $this->RetrieveData();
 
