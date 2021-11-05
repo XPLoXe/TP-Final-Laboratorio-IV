@@ -1,5 +1,6 @@
 <?php
 
+
 use Utils\Utils as Utils;
 
 if (!Utils::isUserLoggedIn())
@@ -83,6 +84,17 @@ require_once('nav.php');
                                 </div>
                             </td>
                         </tr>
+
+                        <?php if(!is_null($jobOffer->getUserId())){ ?>
+                            <tr>
+                                <td>
+                                    <div class="col">
+                                        <strong style="color: green;"> Ha sido tomado</strong>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php }?>
+                        
 
                         <tr>
                             <td>
