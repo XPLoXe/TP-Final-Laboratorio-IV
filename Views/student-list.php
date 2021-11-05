@@ -18,6 +18,9 @@
                         <input type="text"  name="nameToFilter" class="form-control mx-3" placeholder="Ingrese apellido del estudiante">
                         <button type="submit" name="button" class="btn btn-dark d-block ">Filtrar</button>
                     </div>
+                    <div style="text-align: center;">
+                    <?php if (!empty($message)) echo $message;  ?>
+                    </div>
                 </form>
             </div>
 
