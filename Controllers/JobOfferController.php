@@ -149,9 +149,15 @@
             Utils::checkUserLoggedIn();
 
             if(Utils::isStudent())
+            {
                 $isLookingForJob = $this->jobOfferDAO->isUserIdInOffer($_SESSION["loggedUser"]->getUserId());
-
-            $jobOfferList = $this->GetAll();
+                $jobOfferList = $this->GetAllAvailable();
+            }
+            else
+            {
+                $jobOfferList = $this->GetAll();
+            }
+                
 
             require_once(VIEWS_PATH."job-offer-list.php");
         }
@@ -179,4 +185,13 @@
 
             return $jobOffers;
         }
+        
+        public function GetAllAvailable(): array
+        {
+            $jobOffers = $this->jobOfferDAO->GetAllAvailable();
+
+            return $jobOffers;
+        }
+
+
     }

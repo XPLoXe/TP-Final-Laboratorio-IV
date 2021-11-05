@@ -1,6 +1,8 @@
 <?php
 
+use Models\JobOffer;
 use Utils\Utils as Utils;
+use Controllers\UserController as UserController;
 
 if (!Utils::isUserLoggedIn())
     header("location: ../index.php");
@@ -83,6 +85,23 @@ require_once('nav.php');
                                 </div>
                             </td>
                         </tr>
+
+                        <?php if(!is_null($jobOffer->getUserId())){ ?>
+                            <tr>
+                                <td>
+                                    <div class="col">
+                                        <strong style="color: green;">
+                                            <?php 
+                                            $userController = new UserController();
+                                            $user = $userController->getUserById($jobOffer->getUserId());
+                                            echo "Tomado por: ". $user->getFirstName(). " " . $user->getLastName(); 
+                                            ?>
+                                        </strong>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php }?>
+                        
 
                         <tr>
                             <td>
