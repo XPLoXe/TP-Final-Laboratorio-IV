@@ -157,7 +157,6 @@
             {
                 $jobOfferList = $this->GetAll();
             }
-                
 
             require_once(VIEWS_PATH."job-offer-list.php");
         }
