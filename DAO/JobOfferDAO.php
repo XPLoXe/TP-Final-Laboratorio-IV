@@ -19,6 +19,7 @@
         private $jobPositionDAO;
         private $companyDAO;
 
+        
         public function __construct()
         {
             $this->jobPositionDAO = new JobPositionDAO;
@@ -30,7 +31,7 @@
         {
             try
             {
-                $query = "INSERT INTO ".$this->tableName." (job_position_id, company_id, description, publication_date, expiration_date) VALUES (:job_position_id, :company_id, :description, :publication_date, :expiration_date);";
+                $query = "INSERT INTO ".$this->tableName." (job_position_id, company_id, description, publication_date, expiration_date) VALUES (:job_position_id, :company_id, :description, :publication_date, :expiration_date) ;";
 
                 $parameters["job_position_id"] = $jobOffer->getJobPositionId();
                 $parameters["company_id"] = $jobOffer->getCompanyId();
@@ -53,7 +54,7 @@
         {
             try
             {
-                $query =   "UPDATE ".$this->tableName." SET active = false WHERE job_offer_id = :job_offer_id;";
+                $query =   "UPDATE ".$this->tableName." SET active = false WHERE job_offer_id = :job_offer_id ;";
 
                 $parameters['job_offer_id'] = $jobOfferId;
 
@@ -74,7 +75,7 @@
             {
                 $query =   "UPDATE ".$this->tableName." SET job_position_id = :job_position_id, 
                 company_id = :company_id, expiration_date = :expiration_date, description = :description 
-                WHERE job_offer_id = :job_offer_id;";
+                WHERE job_offer_id = :job_offer_id ;";
 
                 $parameters['job_offer_id'] = $jobOffer->getJobOfferId();
                 $parameters['job_position_id'] = $jobOffer->getJobPositionId();
@@ -145,13 +146,13 @@
                 $jobOfferList = array();
                 //change the name of the columns with as
                 $query = "SELECT jo.user_id, jo.description as job_offer_description ,jo.publication_date,jo.expiration_date,
-                                 jo.job_offer_id, jo.active, cp.name, cp.city, jp.description, cr.description,
+                                 jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description, cr.description,
                                  jp.job_position_id, cr.career_id, cp.company_id
-                        FROM JobOffers jo
-                        INNER JOIN Companies cp on jo.company_id = cp.company_id
-                        INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
-                        INNER JOIN Careers cr on jp.career_id = cr.career_id
-                        WHERE jo.active = :active AND jo.expiration_date > curdate() AND user_id IS NULL ;";
+                            FROM JobOffers jo
+                      INNER JOIN Companies cp on jo.company_id = cp.company_id
+                      INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
+                      INNER JOIN Careers cr on jp.career_id = cr.career_id
+                           WHERE jo.active = :active AND jo.expiration_date > curdate() AND user_id IS NULL ;";
 
                 $parameters["active"] = true;
 
@@ -159,19 +160,27 @@
 
                 $resultSet = $this->connection->Execute($query, $parameters);
 
-                if ($resultSet)
+                if (!empty($resultSet))
                 {
                     foreach ($resultSet as $row)
                     {
                         $jobOffer = new JobOffer();
                         
                         $jobOffer->setJobOfferId($row["job_offer_id"]);
-                        $jobOffer->setJobPosition($this->jobPositionDAO->getJobPositionById($row["job_position_id"]));
-                        $jobOffer->setCompany($this->companyDAO->getCompanyById($row["company_id"]));
+
+                        $jobPosition = new JobPosition($row['job_position_id']);
+                        $jobPosition->setCareerId($row['career_id']);
+                        $jobPosition->setDescription($row['job_position_description']);
+                        $jobOffer->setJobPosition($jobPosition);
+                        
+                        $company = new Company($row['company_id']);
+                        $company->setName($row["name"]);
+                        $company->setCity($row["city"]);
+                        $jobOffer->setCompany($company);
+
                         $jobOffer->setDescription($row["job_offer_description"]);
                         $jobOffer->setPublicationDate(new DateTime($row["publication_date"]));
                         $jobOffer->setExpirationDate(new DateTime($row["expiration_date"]));
-                        $jobOffer->setActive($row["active"]);
 
                         array_push($jobOfferList ,$jobOffer);
                     }
@@ -190,13 +199,13 @@
         {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName." WHERE user_id=':user_id'";
+                $query = "SELECT * FROM ".$this->tableName." WHERE user_id = :user_id ;";
 
                 $parameters["user_id"] = $userId;
 
                 $this->connection = Connection::GetInstance();
 
-                $resultSet = $this->connection->Execute($query,$parameters);
+                $resultSet = $this->connection->Execute($query, $parameters);
                 
                 return $resultSet;
             }
@@ -211,9 +220,9 @@
         {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName." WHERE job_position_id=':job_position_id'";
+                $query = "SELECT * FROM ".$this->tableName." WHERE job_position_id = :job_position_id ;";
 
-                $parameters["job_position_id"] = $jobPositionId;
+                $parameters['job_position_id'] = $jobPositionId;
 
                 $this->connection = Connection::GetInstance();
 
@@ -232,11 +241,13 @@
         {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName." WHERE active='true' AND expiration_date > '".date('d-m-y')."'";
+                $query = "SELECT * FROM ".$this->tableName." WHERE active = :active AND expiration_date > '".date('d-m-y')."'";
+
+                $parameters['active'] = true;
 
                 $this->connection = Connection::GetInstance();
 
-                $resultSet = $this->connection->Execute($query);
+                $resultSet = $this->connection->Execute($query, $parameters);
                 
                 return $resultSet;
             }
@@ -251,7 +262,7 @@
         {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName." WHERE expiration_date = '".date('d-m-y')."'";
+                $query = "SELECT * FROM ".$this->tableName." WHERE expiration_date = ".date('d-m-y').";";
 
                 $this->connection = Connection::GetInstance();
 
@@ -302,11 +313,13 @@
         {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName." WHERE company_id='".$companyId."'";
+                $query = "SELECT * FROM ".$this->tableName." WHERE company_id = :company_id ;";
+
+                $parameters['company_id'] = $companyId;
 
                 $this->connection = Connection::GetInstance();
 
-                $resultSet = $this->connection->Execute($query);
+                $resultSet = $this->connection->Execute($query, $parameters);
                 
                 return $resultSet;
             }
@@ -316,38 +329,19 @@
             }
         }
 
-  
-        public function getIdByUserId()
+
+        public function Apply(int $jobOfferId, int $userId)
         {
             try
             {
-                $query = "SELECT job_position_id FROM ".$this->tableName." WHERE user_id='".$userId."'";
+                $query = "UPDATE ".$this->tableName." SET user_id = :user_id WHERE job_offer_id = :job_offer_id ;";
 
-                $this->connection = Connection::GetInstance();
-
-                $resultSet = $this->connection->Execute($query);
-                
-                return $resultSet["job_position_id"];
-            }
-            catch (Exception $ex)
-            {
-                throw $ex;
-            }
-        }
-
-
-        public function Apply($jobOfferId,$user_id)//Apply
-        {
-            try
-            {
-                $query = "UPDATE ".$this->tableName." SET user_id=:user_id WHERE job_offer_id=:job_offer_id";
-
-                $parameters["user_id"] = $user_id;
+                $parameters["user_id"] = $userId;
                 $parameters["job_offer_id"] = $jobOfferId;
 
                 $this->connection = Connection::GetInstance();
 
-                $this->connection->ExecuteNonQuery($query,$parameters);
+                $this->connection->ExecuteNonQuery($query, $parameters);
                 
             }
             catch (Exception $ex)
@@ -356,20 +350,20 @@
             }
         }
 
-        public function isUserIdInOffer($userId)//para la botonera
+        public function isUserIdInOffer(int $userId)
         {
             try
             {
-                $query = "SELECT 'user_id' FROM ".$this->tableName." WHERE user_id='".$userId."'";
+                $query = "SELECT 'user_id' FROM ".$this->tableName." WHERE user_id = :user_id ;";
 
-                //$parameters["user_id"] = $userId;
+                $parameters["user_id"] = $userId;
 
                 $this->connection = Connection::GetInstance();
 
-                $resultSet = $this->connection->Execute($query);
+                $resultSet = $this->connection->Execute($query, $parameters);
 
-                if(empty($resultSet))
-                    return true;//is not looking for job
+                if (empty($resultSet))
+                    return true; // Is not looking for job
                 else
                     return false;
             }

@@ -22,7 +22,7 @@ class JobPositionDAO implements IJobPositionDAO
 
         $DBjobPositionList = $this->GetAll(true);
 
-        if(!($this->jobPositionList == $DBjobPositionList) )
+        if (!($this->jobPositionList == $DBjobPositionList))
         {
             $this->setInactiveJobPositionsDB();
 

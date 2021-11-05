@@ -81,7 +81,7 @@ class UserDAO implements IUserDAO
 
             $this->connection = Connection::GetInstance();
 
-            $resultSet = $this->connection->ExecuteNonQuery($query, $parameters);
+            $this->connection->ExecuteNonQuery($query, $parameters);
         }
         catch (Exception $ex)
         {
@@ -95,12 +95,16 @@ class UserDAO implements IUserDAO
         try
         {
             $query = "SELECT * FROM ". $this->tableName . " WHERE email = :email;";
+
             $parameters['email'] = $email;
+
             $this->connection = Connection::GetInstance();
-            $data = $this->connection->Execute($query, $parameters);
-            if (array_key_exists(0, $data))                         
+
+            $resultSet = $this->connection->Execute($query, $parameters);
+
+            if (array_key_exists(0, $resultSet))                         
             {   
-                if (strcmp($email, $data[0]["email"]) == 0)     //return true if the email is already on data base
+                if (strcmp($email, $resultSet[0]["email"]) == 0) // Returns true if email is in database
                 {
                     return true;
                 }
@@ -120,11 +124,13 @@ class UserDAO implements IUserDAO
         {
             $userList = array();
 
-            $query = "SELECT * FROM ".$this->tableName;//TO DO: InnerJoin
+            $query = "SELECT * FROM ".$this->tableName." u INNER JOIN UserRoles ur ON u.user_role_id = ur.user_role_id WHERE u.active = :active ;";
+
+            $parameters['active'] = true;
 
             $this->connection = Connection::GetInstance();
 
-            $resultSet = $this->connection->Execute($query);
+            $resultSet = $this->connection->Execute($query, $parameters);
             
             foreach ($resultSet as $row)
             {
@@ -134,7 +140,11 @@ class UserDAO implements IUserDAO
                 $user->setPassword($row["user_password"]);
                 $user->setFirstName($row["first_name"]);
                 $user->setLastName($row["last_name"]);
-                $user->setUserRole($this->userRoleDAO->getUserRoleById($row["user_role_id"]));
+
+                $userRole = new UserRole($row['user_role_id']);
+                $userRole->setDescription($row['description']);
+                $user->setUserRole($userRole);
+
                 $user->setAssociatedId($row["associated_id"]);
                 $user->setActive($row["active"]);
 
@@ -179,6 +189,4 @@ class UserDAO implements IUserDAO
             throw $ex;
         }
     }
-
-
 }
