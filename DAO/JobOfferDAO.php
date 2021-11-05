@@ -199,7 +199,7 @@
             try
             {                
                 $query = "SELECT jo.user_id, jo.description as job_offer_description ,jo.publication_date,jo.expiration_date,
-                                    jo.job_offer_id, jo.active, cp.name, cp.city, jp.job_position_description, cr.career_description,
+                                    jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description, cr.description as career_description,
                                     jp.job_position_id, cr.career_id, cp.company_id
                         FROM JobOffers jo
                         INNER JOIN Companies cp on jo.company_id = cp.company_id
@@ -228,14 +228,14 @@
                         
                         $jobOffer->setJobOfferId($row["job_offer_id"]);
 
-                        $jobPosition = new JobPosition($parameters['job_position_id']);
-                        $jobPosition->setDescription($parameters['job_position_description']);
-                        $jobPosition->setCareerId($parameters['career_id']);
+                        $jobPosition = new JobPosition($row['job_position_id']);
+                        $jobPosition->setDescription($row['job_position_description']);
+                        $jobPosition->setCareerId($row['career_id']);
                         $jobOffer->setJobPosition($jobPosition);
 
-                        $company = new Company($parameters['company_id']);
-                        $company->setName($parameters['name']);
-                        $company->setCity($parameters['city']);
+                        $company = new Company($row['company_id']);
+                        $company->setName($row['name']);
+                        $company->setCity($row['city']);
                         $jobOffer->setCompany($company);
 
                         $jobOffer->setDescription($row["job_offer_description"]);
