@@ -107,7 +107,6 @@
                     return true;
                 else
                     return false;
-
             }
             catch (Exception $ex)
             {
@@ -147,7 +146,7 @@
                         $companyList[$company->getCompanyId()] = $company;
                     }
                 }
-
+                
                 return $companyList;
             }
             catch (Exception $ex)
@@ -170,7 +169,6 @@
                 $resultSet = $this->connection->Execute($query);
                 
                 return $resultSet;
-                    
             }
             catch (Exception $ex)
             {
@@ -201,14 +199,14 @@
                 $company->setPhoneNumber($row["phone_number"]);
                 $company->setActive($row["active"]);
                
-                return $company;
-                    
+                return $company;  
             }
             catch (Exception $ex)
             {
                 throw $ex;
             }
         }
+
 
         public function getCompanyIdByName(string $name): int
         {
@@ -249,7 +247,6 @@
             {
                 throw $ex;
             }
-
         }
 
 
@@ -263,39 +260,34 @@
                 
                 $this->connection = Connection::GetInstance();
     
-                $filterCompanies = $this->connection->Execute($query, $parameters);
+                $filteredCompanies = $this->connection->Execute($query, $parameters);
 
                 $companyList = array();
 
-                if(!empty($filterCompanies)){
+                if(!empty($filteredCompanies)){
 
-                    foreach ($filterCompanies as $row)
+                    foreach ($filteredCompanies as $row)
                     {
-                        if ($row["active"] == 1)
-                        {
-                            $company = new Company($row["company_id"]);
+                        $company = new Company($row["company_id"]);
 
-                            $company->setName($row["name"]);
-                            $company->setYearOfFoundation($row["year_of_foundation"]);
-                            $company->setCity($row["city"]);
-                            $company->setDescription($row["description"]);
-                            $company->setLogo($row["logo"]);
-                            $company->setEmail($row["email"]);
-                            $company->setPhoneNumber($row["phone_number"]);
-                            $company->setActive($row["active"]);
+                        $company->setName($row["name"]);
+                        $company->setYearOfFoundation($row["year_of_foundation"]);
+                        $company->setCity($row["city"]);
+                        $company->setDescription($row["description"]);
+                        $company->setLogo($row["logo"]);
+                        $company->setEmail($row["email"]);
+                        $company->setPhoneNumber($row["phone_number"]);
+                        $company->setActive($row["active"]);
 
-                            array_push($companyList,$company);
-                        }
+                        array_push($companyList,$company);
                     }
                 }
 
                 return $companyList;
-    
             }
             catch (Exception $ex)
             {
                 throw $ex;
             }
-
         }
     }

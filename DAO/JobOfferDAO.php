@@ -372,29 +372,26 @@
                     return true;//is not looking for job
                 else
                     return false;
-                
             }
             catch (Exception $ex)
             {
                 throw $ex;
             }
-
         }
 
 
-        public function setActiveById($jobOfferId,$active)
+        public function setActiveById(int $jobOfferId, bool $active)
         {
             try
             {
-                $query = "UPDATE ".$this->tableName." SET active='".$active."' WHERE job_offer_id='".$jobOfferId."'";
+                $query = "UPDATE ".$this->tableName." SET active = :active WHERE job_offer_id = :job_offer_id ;";
 
-                //$parameters["user_id"] = $user_id;
-                //$parameters["job_offer_id"] = $jobOfferId;
+                $parameters["job_offer_id"] = $jobOfferId;
+                $parameters['active'] = $active;
 
                 $this->connection = Connection::GetInstance();
 
-                $this->connection->ExecuteNonQuery($query);
-                
+                $this->connection->ExecuteNonQuery($query, $parameters);
             }
             catch (Exception $ex)
             {

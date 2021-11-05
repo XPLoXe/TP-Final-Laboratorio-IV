@@ -7,5 +7,7 @@
     interface IUserDAO
     {
         function Add(User $user);
+        function Delete(int $userId);
+        function Edit(User $user);
         function GetAll();
     }
