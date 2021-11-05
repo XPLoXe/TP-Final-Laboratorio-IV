@@ -45,6 +45,51 @@ class UserDAO implements IUserDAO
         }
     }
 
+
+    public function Delete(int $userId)
+    {
+        try
+        {
+            $query =   "UPDATE ".$this->tableName." SET active = false WHERE user_id = :user_id ;";
+
+            $parameters['user_id'] = $userId;
+
+            $this->connection = Connection::GetInstance();
+
+            $rowCount = $this->connection->ExecuteNonQuery($query, $parameters);
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+    }
+
+
+    public function Edit(User $user)
+    {
+        try
+        {
+            $query =   "UPDATE ".$this->tableName." SET email = :email , user_password = :user_password , first_name = :first_name , last_name = :last_name , user_role_id = :user_role_id , associated_id = :associated_id WHERE user_id = :user_id ;";
+
+            $parameters['user_id'] = $user->getUserId();
+            $parameters['email'] = $user->getEmail();
+            $parameters['user_password'] = $user->getPassword();
+            $parameters['first_name'] = $user->getFirstName();
+            $parameters['last_name'] = $user->getLastName();
+            $parameters['user_role_id'] = $user->getUserRoleId();
+            $parameters['associated_id'] = $user->getAssociatedId();
+
+            $this->connection = Connection::GetInstance();
+
+            $resultSet = $this->connection->ExecuteNonQuery($query, $parameters);
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+    }
+
+
     public function VerifyEmailDataBase($email)
     {
         try
