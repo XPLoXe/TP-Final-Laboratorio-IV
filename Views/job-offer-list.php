@@ -1,5 +1,6 @@
 <?php
 
+
 use Utils\Utils as Utils;
 
 if (!Utils::isUserLoggedIn())
@@ -39,7 +40,7 @@ require_once('nav.php');
             <script>
                 function confirmDelete() {
 
-                    var response = confirm('¿Está seguro de que desea borrar la compañia ?');
+                    var response = confirm('¿Está seguro de que desea borrar la oferta laboral?');
 
                     if (response == true)
                         return true;
@@ -65,8 +66,8 @@ require_once('nav.php');
                                         <h1><?php echo $jobOffer->getCompany()->getName() ?></h1>
                                         <h4><?php echo $jobOffer->getCompany()->getCity() ?></h4>
                                     </div>
-                                    <div class="col d-flex">
-                                        <h3 class="my-auto ml-auto mb-3"><?php echo $jobOffer->getJobPosition()->getDescription() ?></h3>
+                                    <div class="col d-flex text-center ">
+                                        <h3 class="my-auto ml-auto"><?php echo $jobOffer->getJobPosition()->getDescription() ?></h3>
                                     </div>
                                     <div class="col align-self-end text-right">
                                         <h6><?php echo 'Publicado hace ' . daysBetweenDates($jobOffer->getPublicationDate()->format('Y-m-d'), date('Y-m-d')) . ' días' ?></h3>
@@ -86,6 +87,12 @@ require_once('nav.php');
 
                         <tr>
                             <td>
+
+                                <?php if(!is_null($jobOffer->getUserId())){  ?>
+                                <div class="float-left pt-2 ml-3 h5">
+                                    <strong style="color: green;">Ha sido tomado</strong>
+                                </div><?php } ?>
+
                                 <div class="float-right">
                                     <?php
                                     if (Utils::isStudent() && $isLookingForJob)

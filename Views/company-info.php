@@ -23,22 +23,24 @@
         </div>
 
         <div class="col">
-            <div class="row justify-content-md-center">
-              <p class="text-center"> 
-                <b>Fundada en:</b> <?php echo $company->getYearOfFoundation() ?> <br>
-                <b>Radicada en:</b> <?php echo $company->getCity() ?> <br> 
-              </p>
+            <div class="row d-flex justify-content-md-center">
+              <h4 class="text-center"> 
+                <strong>Fundada en:&nbsp</strong><?php echo $company->getYearOfFoundation() ?> <br><br>
+                <strong>Radicada en:&nbsp</strong> <?php echo $company->getCity() ?> <br> 
+              </h4>
             </div>
-            <div class="row text-center justify-content-md-center mt-4 ">
-              <strong><?php echo $company->getDescription() ?></strong>
+            <div class="row d-flex  ">
+              <strong class="text-center  justify-content-md-center mt-4"><?php echo $company->getDescription() ?></strong>
             </div>
         </div>
 
       </div>
 
-      <div class="row justify-content-end">
-        <div class="col-3 font-weight-bold" ><img src="<?php echo FRONT_ROOT.IMG_PATH ?>tel.png"><?php echo $company->getPhoneNumber()?></div>
-        <div class="col-3 font-weight-bold" ><img src="<?php echo FRONT_ROOT.IMG_PATH ?>email.png"><?php echo $company->getEmail()?></div>
+      <div class="row d-flex justify-content-around font-weight-bold">
+        <div class="col-6"><h5> <img src="<?php echo FRONT_ROOT.IMG_PATH ?>tel.png">&nbsp&nbsp&nbsp<?php echo $company->getPhoneNumber()?></h5></div>
+        <div class="col-6"><h5> <img src="<?php echo FRONT_ROOT.IMG_PATH ?>email.png">&nbsp&nbsp&nbsp<?php echo $company->getEmail()?></h5></div>
+      </div>
+        
       </div>
 
     </div>

@@ -50,7 +50,6 @@
                               <div class="form-group">
                                    <label for=""><strong>Descripción</strong></label>
                                    <textarea id="bio" name="description" class="form-control" style="width: 800px; height: 150px;"  placeholder="We Make Dreams Come True" required></textarea>
-                                   <!-- <input type="text" name="description" class="form-control" required> -->
                               </div>
                          </div>
                     </div>

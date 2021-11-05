@@ -124,9 +124,12 @@
         public function Apply(array $parameters){
 
             if(Utils::isStudent())
+            {
                 $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId());
+            }
 
-            $this->ShowListView();
+            $message = APPLY_SUCCESS;
+            require_once(VIEWS_PATH."home.php");
 
         }
 
@@ -149,9 +152,14 @@
             Utils::checkUserLoggedIn();
 
             if(Utils::isStudent())
+            {
                 $isLookingForJob = $this->jobOfferDAO->isUserIdInOffer($_SESSION["loggedUser"]->getUserId());
-
-            $jobOfferList = $this->GetAll();
+                $jobOfferList = $this->GetAllAvailable();
+            }
+            else
+            {
+                $jobOfferList = $this->GetAll();
+            }
 
             require_once(VIEWS_PATH."job-offer-list.php");
         }
@@ -176,6 +184,13 @@
         public function GetAll(): array
         {
             $jobOffers = $this->jobOfferDAO->GetAll();
+
+            return $jobOffers;
+        }
+        
+        public function GetAllAvailable(): array
+        {
+            $jobOffers = $this->jobOfferDAO->GetAllAvailable();
 
             return $jobOffers;
         }

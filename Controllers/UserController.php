@@ -72,6 +72,10 @@
             return $this->userDAO->getUserByEmail($email);
         }
 
+        public function getUserById($email)
+        {
+            return $this->userDAO->getUserById($email);
+        }
 
         public function VerifyPassword(string $password, string $password_confirmation)
         {
