@@ -15,15 +15,15 @@
         </header>
         <form action="<?php echo FRONT_ROOT ?>User/Register" method="post" class="login-form bg-dark-alpha p-5 text-white">
             <div class="form-group">
-                <label for="">email</label>
+                <label for="">Email</label>
                 <input type="email" name="email" class="form-control form-control-lg" placeholder="Ingrese su e-mail" required>
             </div>
             <div class="form-group">
-                <label for="">contraseña</label>
+                <label for="">Contraseña</label>
                 <input type="password" name="password" class="form-control form-control-lg" placeholder="Ingrese su contraseña" required>
             </div>
             <div class="form-group">
-                <label for="">contraseña</label>
+                <label for="">Contraseña</label>
                 <input type="password" name="password_confirmation" class="form-control form-control-lg" placeholder="Ingrese nuevamente su contraseña" required>
             </div>
             <input type="hidden" name="user_role_id" value="<?php echo $studentRoleId ?>"></input>
