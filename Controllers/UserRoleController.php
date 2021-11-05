@@ -13,6 +13,11 @@
             $this->userRoleDAO = new UserRoleDAO();
         }
 
+        public function GetAll(): array
+        {
+            return $this->userRoleDAO->GetAll();
+        }
+
         public function getUserRoleById($id): UserRole
         {
             return $this->userRoleDAO->getUserRoleById($id);
