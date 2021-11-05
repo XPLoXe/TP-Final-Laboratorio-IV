@@ -12,8 +12,33 @@
         private $tableName = "UserRoles";
 
 
-        public function GetAll()
+        public function GetAll(): array
         {
+            try
+            {
+                $userRoleList = array();
+
+                $query = "SELECT * FROM ".$this->tableName;
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query);
+                
+                foreach ($resultSet as $row)
+                {
+                    $userRole = new UserRole($row["user_role_id"]);
+                    $userRole->setDescription($row["description"]);
+                    $userRole->isActive($row["active"]);
+                    
+                    array_push($userRoleList, $userRole);
+                }
+
+                return $userRoleList;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
             return null;
         }
 

@@ -88,7 +88,7 @@ class CareerDAO implements ICareerDAO
         }
     }
 
-    public function GetAll()
+    public function GetAll(): array
     {
         try
         {
@@ -116,7 +116,6 @@ class CareerDAO implements ICareerDAO
         {
             throw $ex;
         }
-    
     }
 
     public function Add(Career $career)

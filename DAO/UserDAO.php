@@ -45,6 +45,51 @@ class UserDAO implements IUserDAO
         }
     }
 
+
+    public function Delete(int $userId)
+    {
+        try
+        {
+            $query =   "UPDATE ".$this->tableName." SET active = false WHERE user_id = :user_id ;";
+
+            $parameters['user_id'] = $userId;
+
+            $this->connection = Connection::GetInstance();
+
+            $rowCount = $this->connection->ExecuteNonQuery($query, $parameters);
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+    }
+
+
+    public function Edit(User $user)
+    {
+        try
+        {
+            $query =   "UPDATE ".$this->tableName." SET email = :email , user_password = :user_password , first_name = :first_name , last_name = :last_name , user_role_id = :user_role_id , associated_id = :associated_id WHERE user_id = :user_id ;";
+
+            $parameters['user_id'] = $user->getUserId();
+            $parameters['email'] = $user->getEmail();
+            $parameters['user_password'] = $user->getPassword();
+            $parameters['first_name'] = $user->getFirstName();
+            $parameters['last_name'] = $user->getLastName();
+            $parameters['user_role_id'] = $user->getUserRoleId();
+            $parameters['associated_id'] = $user->getAssociatedId();
+
+            $this->connection = Connection::GetInstance();
+
+            $resultSet = $this->connection->ExecuteNonQuery($query, $parameters);
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+    }
+
+
     public function VerifyEmailDataBase($email)
     {
         try
@@ -134,6 +179,39 @@ class UserDAO implements IUserDAO
             throw $ex;
         }
     }
+
+    public function getUserById(int $id): User
+    {
+        try
+        {
+            $userList = array();
+
+            $query = "SELECT * FROM ".$this->tableName.' WHERE user_id="'.$id.'"';
+
+            $this->connection = Connection::GetInstance();
+
+            $resultSet = $this->connection->Execute($query);
+
+            $user = new User();
+            $user->setUserId($resultSet[0]["user_id"]);
+            $user->setEmail($resultSet[0]["email"]);
+            $user->setPassword($resultSet[0]["user_password"]);
+            $user->setFirstName($resultSet[0]["first_name"]);
+            $user->setLastName($resultSet[0]["last_name"]);
+            $user->setUserRole($this->userRoleDAO->getUserRoleById($resultSet[0]["user_role_id"])); 
+            if (!is_null($resultSet[0]["associated_id"]))
+                $user->setAssociatedId($resultSet[0]["associated_id"]);
+            $user->setActive($resultSet[0]["active"]);
+
+            return $user;
+        }
+        catch (Exception $ex)
+        {
+            throw $ex;
+        }
+    }
+
+    
 
 
 }

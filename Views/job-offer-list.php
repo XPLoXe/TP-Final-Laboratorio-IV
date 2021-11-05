@@ -1,5 +1,6 @@
 <?php
 
+
 use Utils\Utils as Utils;
 
 if (!Utils::isUserLoggedIn())
@@ -84,6 +85,17 @@ require_once('nav.php');
                             </td>
                         </tr>
 
+                        <?php if(!is_null($jobOffer->getUserId())){ ?>
+                            <tr>
+                                <td>
+                                    <div class="col">
+                                        <strong style="color: green;"> Ha sido tomado</strong>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php }?>
+                        
+
                         <tr>
                             <td>
                                 <div class="float-right">
@@ -92,7 +104,7 @@ require_once('nav.php');
                                         echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="apply" value=' . $jobOffer->getJobOfferId() . '>Postularse</button>';
 
                                     if (Utils::isAdmin()) {
-                                        echo '<button class="btn btn-dark mx-2" type= "submit" name="jobOfferId" form="edit" value=' . $jobOffer->getJobOfferId() . '>Editar</button> ';
+                                        echo '<button class="btn btn-success" type= "submit" name="jobOfferId" form="edit" value=' . $jobOffer->getJobOfferId() . '>Editar</button> ';
                                         echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDelete()" name="jobOfferId" form="delete" value=' . $jobOffer->getJobOfferId() . '>Eliminar</button>';
                                     }
                                     ?>
