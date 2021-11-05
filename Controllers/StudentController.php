@@ -55,4 +55,36 @@
             return $this->studentDAO->getCareerIdByStudentId($studentId);
 
         }
+
+        public function FilterByLastName($parameters)
+        {
+            Utils::checkUserLoggedIn();
+
+            $studentList = array();
+
+            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
+
+                if (empty($parameters["nameToFilter"])) 
+                {
+                    $this->ShowListView();
+                } else
+                {
+                    $student  = $this->studentDAO->getStudentByLastName($parameters["nameToFilter"]);
+
+                    if (is_null($student))
+                    {
+                        $message = ERROR_STUDENT_FILTER; 
+
+                        $studentList = $this->studentDAO->GetAll();
+                    } 
+                    else
+                    {
+                        array_push($studentList, $student);
+                    }
+
+                    require_once(VIEWS_PATH."student-list.php");
+
+                }
+            }
+        }
     }

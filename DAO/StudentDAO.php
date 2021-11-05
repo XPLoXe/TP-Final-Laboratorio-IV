@@ -65,7 +65,7 @@ class StudentDAO
     }
 
 
-    public function getStudentById($id): Student
+    public function getStudentById($id)
     {
         $this->RetrieveData();
 
@@ -80,8 +80,24 @@ class StudentDAO
         return null;
     }
 
+    public function getStudentByLastName($lastName)
+    {
+        $this->RetrieveData();
 
-    public function getCareerIdByStudentId($studentId): int
+        foreach ($this->studentList as $student) 
+        {
+            if ($student->getLastName() == $lastName) {
+                return $student;
+            }
+
+        }
+
+        return null;
+    }
+
+    
+
+    public function getCareerIdByStudentId($studentId)
     {
         $this->RetrieveData();
 

@@ -11,4 +11,5 @@ define("SIGNUP_SUCCESS", "<h4 class = 'text-center' style='color: green;'> Usuar
 define("ERROR_JOBOFFER_FILTER", "<strong style='color:red; font-size:small;'> Ninguna Compañia contiene el nombre ingresado </strong>");
 define("ERROR_COMPANY_FILTER", "<strong style='color:red; font-size:small;'> Ninguna Compañia contiene el nombre ingresado </strong>");
 define("ERROR_COMPANY_DUPLICATE", "<strong style='color:red; font-size:small;'> La Compañia ya existe </strong>");
+define("ERROR_STUDENT_FILTER", "<strong style='color:red; font-size:small;'> Ningun estudiante contiene el apellido ingresado </strong>");
 define("APPLY_SUCCESS", "<h4 class = 'text-center' style='color: green;'> ¡Felicitaciones! La aplicación fue exitosa </h4>");
