@@ -15,9 +15,9 @@
         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
           Compañías
         </a>
-        <div class="dropdown-menu" style="background-color: grey">
-          <a class="dropdown-item" style="color: black;" href="<?php echo FRONT_ROOT ?>Company/ShowListView">Listar</a>
-          <a class="dropdown-item" style="color: black;" href="<?php echo FRONT_ROOT ?>Company/ShowAddView">Agregar</a>
+        <div class="nav-item dropdown-menu mt-1" style="background-color: #343a40">
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/ShowListView">Listar</a>
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/ShowAddView">Agregar</a>
         </div>
       </li>
 
@@ -25,9 +25,9 @@
         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
           Ofertas Laborales
         </a>
-        <div class="dropdown-menu" style="background-color: grey">
-          <a class="dropdown-item" style="color: black;" href="<?php echo FRONT_ROOT ?>JobOffer/ShowListView">Listar</a>
-          <a class="dropdown-item" style="color: black;" href="<?php echo FRONT_ROOT ?>JobOffer/ShowAddView">Agregar</a>
+        <div class="dropdown-menu mt-1" style="background-color: #343a40">
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/ShowListView">Listar</a>
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/ShowAddView">Agregar</a>
         </div>
       </li>
 
@@ -35,9 +35,9 @@
         <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
           Alumnos
         </a>
-        <div class="dropdown-menu" style="background-color: grey">
-          <a class="dropdown-item" style="color: black;" href="<?php echo FRONT_ROOT ?>Student/ShowListView">Listar</a>
-          <a class="dropdown-item" style="color: black;" href="<?php echo FRONT_ROOT ?>Login/ShowSignupView">Registrar</a>
+        <div class="dropdown-menu mt-1" style="background-color: #343a40">
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>Student/ShowListView">Listar</a>
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>Login/ShowSignupView">Registrar</a>
         </div>
       </li>
 
