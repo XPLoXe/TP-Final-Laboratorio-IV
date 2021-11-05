@@ -123,26 +123,29 @@
             $email = $parameters['email'];
             $password = $parameters['password'];
             $password_confirmation = $parameters['password_confirmation'];
-            $user_role_id = $parameters['user_role_id'];
+            $user_role_id = (int) $parameters['user_role_id'];
 
             if ($this->VerifyEmailAPI($email))
             {
-                if($this->VerifyPassword($password, $password_confirmation))
+                if ($this->VerifyPassword($password, $password_confirmation))
                 {
-                    if(!$this->VerifyEmailDataBase($email))     
+                    if (!$this->VerifyEmailDataBase($email))     
                     {   
                         $this->Add($email, $password, $user_role_id);
+
                         $message = $this->message;
-                        if(Utils::isAdmin())
+
+                        if (Utils::isAdmin())
                         {
                             require_once(VIEWS_PATH."home.php");
-                        }
-                        require_once(VIEWS_PATH."login.php");
+                        } else
+                            require_once(VIEWS_PATH."login.php");
                     }
-                    
                 }
+            } else
+            {
+                $message = $this->message;
+                require_once(VIEWS_PATH."signup.php");
             }
-            $message = $this->message;
-            require_once(VIEWS_PATH."signup.php");
         }
     }
