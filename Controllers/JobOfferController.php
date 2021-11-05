@@ -117,6 +117,8 @@
             $this->jobOfferDAO->Edit($jobOffer);
 
             //$this->ShowInfo($jobOffer);
+            $jobOfferList = $this->jobOfferDAO->GetAll();
+            require_once(VIEWS_PATH."job-offer-list.php");
         }
 
         public function Apply(array $parameters){
