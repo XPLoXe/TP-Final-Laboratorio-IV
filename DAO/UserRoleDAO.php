@@ -12,7 +12,7 @@
         private $tableName = "UserRoles";
 
 
-        public function GetAll()
+        public function GetAll(): array
         {
             try
             {
