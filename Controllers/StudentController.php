@@ -36,7 +36,7 @@
             return $this->studentDAO->getStudentByEmail($email);
         }
 
-        public function Add($fileNumber, $firstName, $lastName)
+        /* public function Add($fileNumber, $firstName, $lastName)
         {
             Utils::checkAdmin();
 
@@ -48,7 +48,7 @@
             $this->studentDAO->Add($student);
 
             $this->ShowAddView();
-        }
+        } */
 
         public function getIdCareerByStudentId($studentId){
 

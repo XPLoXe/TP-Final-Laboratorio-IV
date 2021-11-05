@@ -72,9 +72,9 @@
             return $this->userDAO->getUserByEmail($email);
         }
 
-        public function getUserById($email)
+        public function getUserById($id)
         {
-            return $this->userDAO->getUserById($email);
+            return $this->userDAO->getUserById($id);
         }
 
         public function VerifyPassword(string $password, string $password_confirmation)

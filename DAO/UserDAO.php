@@ -189,4 +189,37 @@
                 throw $ex;
             }
         }
+
+        public function getUserById(int $id): User
+        {
+            try
+            {
+                $userList = array();
+
+                $query = "SELECT * FROM ".$this->tableName.' WHERE email="'.$id.'"';
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query);
+
+                $user = new User();
+                $user->setUserId($resultSet[0]["user_id"]);
+                $user->setEmail($resultSet[0]["email"]);
+                $user->setPassword($resultSet[0]["user_password"]);
+                $user->setFirstName($resultSet[0]["first_name"]);
+                $user->setLastName($resultSet[0]["last_name"]);
+                $user->setUserRole($this->userRoleDAO->getUserRoleById($resultSet[0]["user_role_id"])); // TODO: use INNER JOIN
+                if (!is_null($resultSet[0]["associated_id"]))
+                    $user->setAssociatedId($resultSet[0]["associated_id"]);
+                $user->setActive($resultSet[0]["active"]);
+
+                return $user;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
     }
