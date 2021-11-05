@@ -10,3 +10,4 @@ define("ERROR_VERIFY_EMAIL_DATABASE", "<h4 class = 'text-center' style='color: r
 define("SIGNUP_SUCCESS", "<h4 class = 'text-center' style='color: green;'> Usuario registrado con éxito </h4>");
 define("ERROR_JOBOFFER_FILTER", "<strong style='color:red; font-size:small;'> Ninguna Compañia contiene el nombre ingresado </strong>");
 define("ERROR_COMPANY_FILTER", "<strong style='color:red; font-size:small;'> Ninguna Compañia contiene el nombre ingresado </strong>");
+define("APPLY_SUCCESS", "<h4 class = 'text-center' style='color: green;'> ¡Felicitaciones! La aplicación fue exitosa </h4>");

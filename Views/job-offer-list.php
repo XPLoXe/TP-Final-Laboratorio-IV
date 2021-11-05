@@ -40,7 +40,7 @@ require_once('nav.php');
             <script>
                 function confirmDelete() {
 
-                    var response = confirm('¿Está seguro de que desea borrar la compañia ?');
+                    var response = confirm('¿Está seguro de que desea borrar la oferta laboral?');
 
                     if (response == true)
                         return true;

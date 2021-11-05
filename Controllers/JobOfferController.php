@@ -124,9 +124,12 @@
         public function Apply(array $parameters){
 
             if(Utils::isStudent())
+            {
                 $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId());
+            }
 
-            $this->ShowListView();
+            $message = APPLY_SUCCESS;
+            require_once(VIEWS_PATH."home.php");
 
         }
 
