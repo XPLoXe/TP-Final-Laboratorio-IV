@@ -1,6 +1,7 @@
 <?php
 namespace DAO;
 
+use Exception as Exception;
 use Interfaces\ICareerDAO as ICareerDAO;
 use DAO\Connection;
 use Models\Career as Career;
