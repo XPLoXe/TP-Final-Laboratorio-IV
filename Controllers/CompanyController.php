@@ -85,19 +85,29 @@
         {
             Utils::checkAdmin();
 
-            $company = new Company();
-            $company->setName($parameters['name']);
-            $company->setYearOfFoundation($parameters['yearOfFoundation']);
-            $company->setCity($parameters['city']);
-            $company->setDescription($parameters['description']);
-            $company->setLogo(base64_encode(file_get_contents($parameters['logo']["tmp_name"])));
-            $company->setEmail($parameters['email']);
-            $company->setPhoneNumber($parameters['phoneNumber']);
-            $company->setActive(true);
+            if( $this->companyDAO->isNameInBD($parameters['name']) || $this->companyDAO->isEmailInBD($parameters['email']) ){//debugear
 
-            $this->companyDAO->Add($company);
+                $message = ERROR_COMPANY_DUPLICATE ;
 
-            $this->ShowListView();
+            }else{
+
+                $company = new Company();
+                $company->setName($parameters['name']);
+                $company->setYearOfFoundation($parameters['yearOfFoundation']);
+                $company->setCity($parameters['city']);
+                $company->setDescription($parameters['description']);
+                $company->setLogo(base64_encode(file_get_contents($parameters['logo']["tmp_name"])));
+                $company->setEmail($parameters['email']);
+                $company->setPhoneNumber($parameters['phoneNumber']);
+                $company->setActive(true);
+
+                $this->companyDAO->Add($company);
+
+            }
+
+            $companyList = $this->companyDAO->GetAll();
+
+            require_once(VIEWS_PATH."company-list.php");
         }
         
 
@@ -116,7 +126,7 @@
 
                     if (empty($companyList))
                     {
-                        $msgErrorFilter = ERROR_COMPANY_FILTER; // TODO: move HTML code to view
+                        $message = ERROR_COMPANY_FILTER; // TODO: move HTML code to view
 
                         $companyList = $this->companyDAO->GetAll();
                     } 

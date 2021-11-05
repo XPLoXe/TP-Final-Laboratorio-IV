@@ -16,13 +16,13 @@
             <div class="mb-4">
                 <form action="<?php echo FRONT_ROOT ?>Company/FilterByName" method="post" class="bg-light-alpha p-4">
                     <div class="input-group input-group-lg col-md-6 mx-auto">
-                        <input type="text"  name="nameToFilter" class="form-control mx-3" placeholder="Ingrese nombre de la compañia">
+                        <input type="text"  name="nameToFilter" class="form-control mx-3" placeholder="Ingrese nombre de la compañía">
                         <button type="submit" name="button" class="btn btn-dark d-block ">Filtrar</button>
                     </div>
                 </form>
             </div>
 
-            <?php if (isset($msgErrorFilter)) echo $msgErrorFilter;  ?>
+            <?php if (!empty($message)) echo $message;  ?>
             <script type="text/javascript">
                 function confirmDelete() {
 
@@ -57,7 +57,7 @@
                         foreach ($companyList as $company) 
                         {?>
                             <tr class="p-4">
-                                <td><img src="data:image/png;base64, <?php echo $company->getLogo() ?>" alt="image logo" width=50px></img></td>
+                                <td ><img src="data:image/png;base64,<?php echo $company->getLogo() ?>" alt="image logo" height=50px width=80px></img></td>
                                 <td><?php echo $company->getName() ?></td>
                                 <td><?php echo $company->getCity() ?></td>
                                 <td><?php echo $company->getPhoneNumber(); ?></td>

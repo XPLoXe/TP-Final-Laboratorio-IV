@@ -14,22 +14,20 @@
         {
             try
             {
-                if (!$this->isCompanyInBD($parameters["name"], $parameters["email"])){
+                $query = "INSERT INTO ".$this->tableName." (name, year_of_foundation, city, description, logo, email, phone_number) VALUES (:name, :year_of_foundation, :city, :description, :logo, :email, :phone_number);";
 
-                    $query = "INSERT INTO ".$this->tableName." (name, year_of_foundation, city, description, logo, email, phone_number) VALUES (:name, :year_of_foundation, :city, :description, :logo, :email, :phone_number);";
-
-                    $parameters["name"] = $company->getName();
-                    $parameters["year_of_foundation"] = $company->getYearOfFoundation();
-                    $parameters["city"] = $company->getCity();
-                    $parameters["description"] = $company->getDescription();
-                    $parameters["logo"] = $company->getLogo();
-                    $parameters["email"] = $company->getEmail();
-                    $parameters["phone_number"] = $company->getPhoneNumber();
-                    
-                    $this->connection = Connection::GetInstance();
-        
-                    $this->connection->ExecuteNonQuery($query, $parameters);
-                }
+                $parameters["name"] = $company->getName();
+                $parameters["year_of_foundation"] = $company->getYearOfFoundation();
+                $parameters["city"] = $company->getCity();
+                $parameters["description"] = $company->getDescription();
+                $parameters["logo"] = $company->getLogo();
+                $parameters["email"] = $company->getEmail();
+                $parameters["phone_number"] = $company->getPhoneNumber();
+                
+                $this->connection = Connection::GetInstance();
+    
+                $this->connection->ExecuteNonQuery($query, $parameters);
+              
             }
             catch (Exception $ex)
             {
@@ -90,18 +88,41 @@
         }
 
 
-        public function isCompanyInBD($name, $email): bool
+        public function isNameInBD($name): bool
         {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName." WHERE name = :name AND email = :email;";
+                $query = "SELECT name FROM ".$this->tableName." WHERE name = :name ;";
 
                 $parameters['name'] = $name;
+ 
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query,$parameters);
+                
+                if(!empty($resultSet))
+                    return true;
+                else
+                    return false;
+
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+        public function isEmailInBD($email): bool
+        {
+            try
+            {
+                $query = "SELECT email FROM ".$this->tableName." WHERE email = :email ;";
+
                 $parameters['email'] = $email;
  
                 $this->connection = Connection::GetInstance();
 
-                $resultSet = $this->connection->Execute($query);
+                $resultSet = $this->connection->Execute($query,$parameters);
                 
                 if(!empty($resultSet))
                     return true;

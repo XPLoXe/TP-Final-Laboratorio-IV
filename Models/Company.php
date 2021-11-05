@@ -14,7 +14,7 @@
         private bool $active;
 
 
-        public function __construct($companyId)
+        public function __construct($companyId = 0)
         {
             $this->companyId = $companyId;
         }
