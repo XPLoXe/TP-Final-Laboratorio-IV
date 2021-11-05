@@ -75,7 +75,7 @@ class UserDAO implements IUserDAO
         {
             $userList = array();
 
-            $query = "SELECT * FROM ".$this->tableName;
+            $query = "SELECT * FROM ".$this->tableName;//TO DO: InnerJoin
 
             $this->connection = Connection::GetInstance();
 
@@ -84,11 +84,12 @@ class UserDAO implements IUserDAO
             foreach ($resultSet as $row)
             {
                 $user = new User();
+                $user->setUserId($row["user_id"]);
                 $user->setEmail($row["email"]);
                 $user->setPassword($row["user_password"]);
                 $user->setFirstName($row["first_name"]);
                 $user->setLastName($row["last_name"]);
-                $user->setUserRole($userRoleDAO->getUserRoleById($row["user_role_id"]));
+                $user->setUserRole($this->userRoleDAO->getUserRoleById($row["user_role_id"]));
                 $user->setAssociatedId($row["associated_id"]);
                 $user->setActive($row["active"]);
 
@@ -116,6 +117,7 @@ class UserDAO implements IUserDAO
             $resultSet = $this->connection->Execute($query);
 
             $user = new User();
+            $user->setUserId($resultSet[0]["user_id"]);
             $user->setEmail($resultSet[0]["email"]);
             $user->setPassword($resultSet[0]["user_password"]);
             $user->setFirstName($resultSet[0]["first_name"]);
@@ -134,22 +136,4 @@ class UserDAO implements IUserDAO
     }
 
 
-    private function RetrieveData()
-    {
-        // $this->studentList = array();
-
-        // $dataAPI = $this->getUsers();
-
-        //$array = levantodelabasededatos
-
-        // foreach ($array as $valuesArray) 
-        // {
-        //     $user = new User();
-
-        //     $student->setEmail($valuesArray["email"]);
-        //     $student->setActive($valuesArray["active"]);
-
-        //     array_push($this->studentList, $student);
-        // }
-    }
 }

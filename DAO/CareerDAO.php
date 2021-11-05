@@ -1,6 +1,7 @@
 <?php
 namespace DAO;
 
+use Exception as Exception;
 use Interfaces\ICareerDAO as ICareerDAO;
 use DAO\Connection;
 use Models\Career as Career;
@@ -14,7 +15,6 @@ class CareerDAO implements ICareerDAO
 
     public function updateDatabaseFromAPI()
     {
-
         $this->RetrieveData();
 
         $DBcareerList = $this->GetAll();
@@ -23,7 +23,7 @@ class CareerDAO implements ICareerDAO
 
             foreach($this->careerList as $career){
 
-                $flag=false;
+                $flag = false;
                 
                 foreach($DBcareerList as $DBcareer){
 

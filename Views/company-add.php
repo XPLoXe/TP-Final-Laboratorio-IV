@@ -12,49 +12,49 @@
                     <div class="row">                         
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Nombre</label>
-                                   <input type="text" name="name" class="form-control" required>
+                                   <label for=""><strong>Nombre</strong></label>
+                                   <input type="text" name="name" class="form-control" placeholder="Messirve.inc" required>
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Año de fundación</label>
-                                   <input type="number" name="yearOfFoundation" class="form-control" required>
+                                   <label for=""><strong>Año de fundación</strong></label>
+                                   <input type="number" min="1901" max="<?php echo date("Y"); ?>" name="yearOfFoundation" class="form-control" placeholder="1987" required>
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Ciudad</label>
-                                   <input type="text" name="city" class="form-control" required>
+                                   <label for=""><strong>Ciudad</strong></label>
+                                   <input type="text" name="city" class="form-control" placeholder="Barcelona" required>
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Descripción</label>
-                                   <textarea id="bio" name="description" class="form-control" required></textarea>
-                                   <!-- <input type="text" name="description" class="form-control" required> -->
+                                   <label for=""><strong>Email</strong></label>
+                                   <input type="email" name="email" class="form-control" placeholder="messirve@OhYeah.inc" required>
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Email</label>
-                                   <input type="email" name="email" class="form-control" required>
+                                   <label for=""><strong>Teléfono</strong></label>
+                                   <input type="text" name="phoneNumber" class="form-control" placeholder="0800-MESSI" required>
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Teléfono</label>
-                                   <input type="text" name="phoneNumber" class="form-control" required>
-                              </div>
-                         </div>
-                         <div class="col-lg-4">
-                              <div class="form-group">
-                                   <label for="">Logo</label>
+                                   <label for=""><strong>Logo</strong></label>
                                    <input type="file" name="logo" accept="image/png" class="form-control" required>
                               </div>
                          </div>
+                         <div class="col-lg-4">
+                              <div class="form-group">
+                                   <label for=""><strong>Descripción</strong></label>
+                                   <textarea id="bio" name="description" class="form-control" style="width: 800px; height: 150px;"  placeholder="We Make Dreams Come True" required></textarea>
+                                   <!-- <input type="text" name="description" class="form-control" required> -->
+                              </div>
+                         </div>
                     </div>
-                    <button type="submit" name="button" class="btn btn-dark ml-auto d-block">Agregar</button>
+                    <button type="submit" name="button"  class="btn btn-success mx-2 ml-auto d-block">Agregar</button>
                </form>
           </div>
      </section>

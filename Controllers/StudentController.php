@@ -52,7 +52,7 @@
 
         public function getIdCareerByStudentId($studentId){
 
-            return $studentDAO->getCareerIdByStudentId($studentId);
+            return $this->studentDAO->getCareerIdByStudentId($studentId);
 
         }
     }

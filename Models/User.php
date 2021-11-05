@@ -117,4 +117,9 @@
         {
             $this->active = $active;
         }
+
+        public function getUserRoleId()
+        {
+            return $this->userRole->getUserRoleId();
+        }
     }

@@ -6,11 +6,13 @@
     use Models\User as User;
     use Utils\Utils as Utils;
     use Controllers\StudentController as StudentController;
+    use Config\Message as Message;
 
-class LoginController
+    class LoginController
     {
         private $message;
 
+        
         public function Login()
         {
             $parameters = array();
@@ -36,7 +38,7 @@ class LoginController
                         
                         if ($user->getUserRole()->getDescription() == ROLE_ADMIN)
                         {
-                            $jobOfferDAO->updateDatabase();
+                            $jobOfferDAO->tryDatabaseUpdate();
 
                             $_SESSION["loggedUser"] = $user;   
                             require_once(VIEWS_PATH."home.php");
@@ -45,16 +47,15 @@ class LoginController
                         {
                             if ($StudentController->getStudentByEmail($email)->isActive())  //checks if user is active in the API 
                             {
-                                $jobOfferDAO->updateDatabase();
+                                $jobOfferDAO->tryDatabaseUpdate();
 
                                 $_SESSION["loggedUser"] = $user;
                                 require_once(VIEWS_PATH."home.php");
                             }
                             else
                             {
-                                $this->message = "<h4 class = 'text-center' style='color: red;'> El Usuario ha sido dado de baja </h4>
-                                                    <p class = 'text-center' style='color: red;'> Para más información contactarse con la universidad </p> ";
-                                $message = $this->message;
+                                
+                                $message = LOGIN_INACTIVE;
                                 require_once(VIEWS_PATH."login.php");
                             }
                             
@@ -62,16 +63,14 @@ class LoginController
                     }
                     else
                     {
-                        $this->message = "<h4 class = 'text-center' style='color: red;'> Contraseña incorrecta </h4>";
-                        $message = $this->message;
+                        $message = WRONG_PASSWORD;
                         require_once(VIEWS_PATH."login.php");
                     }
 
                 }
                 else
                 {
-                    $this->message = "<h4 class = 'text-center' style='color: red;'> El Email ingresado no existe </h4>";
-                    $message = $this->message;
+                    $message = WRONG_EMAIL;
                     require_once(VIEWS_PATH."login.php");
                 }
                 

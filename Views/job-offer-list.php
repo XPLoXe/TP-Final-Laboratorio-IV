@@ -88,11 +88,11 @@ require_once('nav.php');
                             <td>
                                 <div class="float-right">
                                     <?php
-                                    if (!Utils::isAdmin())
+                                    if (Utils::isStudent() && $isLookingForJob)
                                         echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="apply" value=' . $jobOffer->getJobOfferId() . '>Postularse</button>';
 
                                     if (Utils::isAdmin()) {
-                                        echo '<button class="btn btn-dark mx-2" type= "submit" name="jobOfferId" form="edit" value=' . $jobOffer->getJobOfferId() . '>Editar</button> ';
+                                        echo '<button class="btn btn-success" type= "submit" name="jobOfferId" form="edit" value=' . $jobOffer->getJobOfferId() . '>Editar</button> ';
                                         echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDelete()" name="jobOfferId" form="delete" value=' . $jobOffer->getJobOfferId() . '>Eliminar</button>';
                                     }
                                     ?>

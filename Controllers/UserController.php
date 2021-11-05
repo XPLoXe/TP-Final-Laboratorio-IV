@@ -3,6 +3,7 @@
 
     use DAO\StudentDAO;
     use DAO\UserDAO as UserDAO;
+    use DAO\userRoleDAO;
     use Models\Student as Student;
     use Models\User as User;
     use Models\UserRole as UserRole;
@@ -14,14 +15,16 @@
         private $userRoleController;
         private $message;
         private $studentController;
+        private $userRoleDAO;
 
 
         public function __construct()
         {
             $this->studentController = new StudentController();
+            $this->userRoleController = new UserRoleController();
             $this->message = "";
             $this->userDAO = new UserDAO();
-            $this->userRoleController = new UserRoleController();
+            $this->userRoleDAO = new userRoleDAO();
         }
 
 
@@ -45,9 +48,10 @@
 
         private function Add(string $email, string $password, int $userRoleId)
         {
-            $userRole = new UserRole($userRoleId);
-            $userRole->setDescription($this->userRoleController->getDescriptionById($userRoleId));
+
             
+            $userRole = $this->userRoleDAO->getUserRoleById($userRoleId);
+
             $student = new Student();
             $student = $this->studentController->getStudentByEmail($email);
 
@@ -77,7 +81,7 @@
             }
             else
             {
-                $this->message = "<h4 class = 'text-center' style='color: red;'> las contraseñas ingresadas no son las mismas </h4>";
+                $this->message = ERROR_VERIFY_PASSWORD;
                 return false;
             }
             
@@ -88,12 +92,12 @@
         {
             if (!is_null($this->studentController->getStudentByEmail($email)))
             {
-                $this->message = "<h4 class = 'text-center' style='color: green;'> Usuario registrado con éxito </h4>";
+                $this->message = SIGNUP_SUCCESS;
                 return true;
             }
             else
             {
-                $this->message = "<h4 class = 'text-center' style='color: red;'> El mail no existe </h4>";
+                $this->message = ERROR_VERIFY_EMAIL;
                 return false;
             }
         }
@@ -103,7 +107,7 @@
         {
             if ($this->userDAO->VerifyEmailDataBase($email)) 
             {
-                $this->message = "<h4 class = 'text-center' style='color: red;'> El email ya tiene una cuenta registrada </h4>";
+                $this->message = ERROR_VERIFY_EMAIL_DATABASE;
                 return true;
             } 
             return false;
