@@ -4,10 +4,13 @@
     use DAO\JobOfferDAO as JobOfferDAO;
     use Models\JobOffer as JobOffer;
     use Models\JobPosition as JobPosition;
+    use Models\Student as Student;
     use Models\Company as Company;
     use Controllers\CompanyController as CompanyController;
     use Controllers\JobPositionController as JobPositionController;
-    use DAO\CompanyDAO;
+    use Controllers\StudentController as StudentController;
+    use DAO\CompanyDAO;//SACAR
+    use DAO\StudentDAO as StudentDAO;//SACAR
     use Utils\Utils as Utils;
     use DateTime;
 
@@ -17,16 +20,17 @@
     {
         private $jobOfferDAO;
         private $jobPositionController;
-        private $companyDAO;
-        private $jobPositionDAO;
+        private $companyController;
+        private $companyDAO;//SACAR
+        private $jobPositionDAO;//SACAR
 
 
         public function __construct()
         {
-            $this->jobOfferDAO = new JobOfferDAO();
-            $this->companyDAO = new CompanyDAO();
-            $this->jobPositionDAO = new JobPositionDAO();
-            $this->jobPositionController = new JobPositionController;
+            $this->jobOfferDAO = new JobOfferDAO();// SACAR
+            $this->companyDAO = new CompanyDAO();// SACAR
+            $this->jobPositionDAO = new JobPositionDAO();// SACAR
+            $this->jobPositionController = new JobPositionController();
         }
 
 
@@ -59,7 +63,7 @@
             $this->ShowListView();
         }
 
-        public function FilterByName($parameters)
+        public function FilterByPosition($parameters)
         {
             Utils::checkUserLoggedIn();
 
@@ -71,7 +75,9 @@
                 } else
                 {
                     $jobPositionList  = $this->jobPositionController->getJobPositionByName($parameters["nameToFilter"]);
+
                     $jobOfferList = $this->GetAll();
+
                     $jobOfferFiltered = array();
 
                     if (!empty($jobPositionList))
@@ -85,16 +91,14 @@
                                 }
                             }
                         }
+
+                        $jobOfferList = $jobOfferFiltered;
+
                     } 
                     else
                     {
                         $msgErrorFilter = ERROR_JOBOFFER_FILTER; // TODO: move HTML code to view
-
-                        $jobOfferList = $this->jobOfferDAO->GetAll();
-                    }
-
-                    $jobOfferList = array();
-                    $jobOfferList = $jobOfferFiltered;
+                    } 
 
                     require_once(VIEWS_PATH."job-offer-list.php");
                 }
@@ -117,7 +121,7 @@
             $this->jobOfferDAO->Edit($jobOffer);
 
             //$this->ShowInfo($jobOffer);
-            $jobOfferList = $this->jobOfferDAO->GetAll();
+            $jobOfferList = $this->GetAll();
             require_once(VIEWS_PATH."job-offer-list.php");
         }
 
@@ -154,12 +158,9 @@
             if(Utils::isStudent())
             {
                 $isLookingForJob = $this->jobOfferDAO->isUserIdInOffer($_SESSION["loggedUser"]->getUserId());
-                $jobOfferList = $this->GetAllAvailable();
             }
-            else
-            {
-                $jobOfferList = $this->GetAll();
-            }
+            
+            $jobOfferList = $this->GetAll();
 
             require_once(VIEWS_PATH."job-offer-list.php");
         }
@@ -183,15 +184,15 @@
         
         public function GetAll(): array
         {
-            $jobOffers = $this->jobOfferDAO->GetAll();
+
+            if(Utils::isAdmin())
+                $jobOffers = $this->jobOfferDAO->GetAll(FILTER_ALL);
+            else if(Utils::isStudent())
+                $jobOffers = $this->jobOfferDAO->GetAll(FILTER_STUDENT);
+
 
             return $jobOffers;
         }
         
-        public function GetAllAvailable(): array
-        {
-            $jobOffers = $this->jobOfferDAO->GetAllAvailable();
 
-            return $jobOffers;
-        }
     }

@@ -18,7 +18,7 @@ require_once('nav.php');
             <h2 class="mb-4">Ofertas laborales</h2>
 
             <div class="mb-4">
-                <form action="<?php echo FRONT_ROOT ?>JobOffer/FilterByName" method="post" class="bg-light-alpha p-4">
+                <form action="<?php echo FRONT_ROOT ?>JobOffer/FilterByPosition" method="post" class="bg-light-alpha p-4">
                     <div class="input-group input-group-lg col-md-6 mx-auto">
                         <input type="text" name="nameToFilter" class="form-control mx-3" placeholder="Ingrese puesto de trabajo">
                         <button type="submit" name="button" class="btn btn-dark d-block ">Filtrar</button>
@@ -70,8 +70,15 @@ require_once('nav.php');
                                         <h3 class="my-auto ml-auto"><?php echo $jobOffer->getJobPosition()->getDescription() ?></h3>
                                     </div>
                                     <div class="col align-self-end text-right">
-                                        <h6><?php echo 'Publicado hace ' . daysBetweenDates($jobOffer->getPublicationDate()->format('Y-m-d'), date('Y-m-d')) . ' días' ?></h3>
-                                            <h6><?php echo 'Vence el día ' . $jobOffer->getExpirationDate()->format('d-m-Y') . '' ?></h3>
+                                        <h6><?php echo 'Publicado hace ' . daysBetweenDates($jobOffer->getPublicationDate()->format('Y-m-d'), date('Y-m-d')) . ' días' ?></h6>
+                                        <?php
+
+                                            if($jobOffer->getExpirationDate()->format('d-m-Y') > date('d-m-Y'))
+                                                echo '<h6> Vence el día ' . $jobOffer->getExpirationDate()->format('d-m-Y') . '</h6>' ;
+                                            else
+                                                echo '<h6 style="color: red"> Vencio el día ' . $jobOffer->getExpirationDate()->format('d-m-Y') . '</h6>' ;
+
+                                        ?>
                                     </div>
                                 </div>
                             </td>

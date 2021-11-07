@@ -5,6 +5,7 @@
     use DAO\Connection as Connection;
     use DAO\CompanyDAO as CompanyDAO;
     use DAO\JobPositionDAO as JobPositionDAO;
+    use DAO\StudentDAO as StudentDAO;
     use Models\JobOffer as JobOffer;
     use Models\JobPosition as JobPosition;
     use Models\User as User;
@@ -138,74 +139,29 @@
             }
         }
 
-
-        public function GetAllAvailable()
-        {
-            try
-            {
-                $jobOfferList = array();
-                //change the name of the columns with as
-                $query = "SELECT jo.user_id, jo.description as job_offer_description ,jo.publication_date,jo.expiration_date,
-                                 jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description, cr.description,
-                                 jp.job_position_id, cr.career_id, cp.company_id
-                            FROM JobOffers jo
-                      INNER JOIN Companies cp on jo.company_id = cp.company_id
-                      INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
-                      INNER JOIN Careers cr on jp.career_id = cr.career_id
-                           WHERE jo.active = :active AND jo.expiration_date > curdate() AND user_id IS NULL ;";
-
-                $parameters["active"] = true;
-
-                $this->connection = Connection::GetInstance();
-
-                $resultSet = $this->connection->Execute($query, $parameters);
-
-                if (!empty($resultSet))
-                {
-                    foreach ($resultSet as $row)
-                    {
-                        $jobOffer = new JobOffer();
-                        
-                        $jobOffer->setJobOfferId($row["job_offer_id"]);
-
-                        $jobPosition = new JobPosition($row['job_position_id']);
-                        $jobPosition->setCareerId($row['career_id']);
-                        $jobPosition->setDescription($row['job_position_description']);
-                        $jobOffer->setJobPosition($jobPosition);
-                        
-                        $company = new Company($row['company_id']);
-                        $company->setName($row["name"]);
-                        $company->setCity($row["city"]);
-                        $jobOffer->setCompany($company);
-
-                        $jobOffer->setDescription($row["job_offer_description"]);
-                        $jobOffer->setPublicationDate(new DateTime($row["publication_date"]));
-                        $jobOffer->setExpirationDate(new DateTime($row["expiration_date"]));
-
-                        array_push($jobOfferList ,$jobOffer);
-                    }
-                }
-
-                return $jobOfferList;
-            }
-            catch (Exception $ex)
-            {
-                throw $ex;
-            }
-        }
-
-        public function GetAll()
+        public function GetAll( $filter )
         {
             try
             {                
                 $query = "SELECT jo.user_id, jo.description as job_offer_description ,jo.publication_date,jo.expiration_date,
-                                    jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description, cr.description as career_description,
-                                    jp.job_position_id, cr.career_id, cp.company_id
+                                    jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description, cr.description as career_description, 
+                                    cp.active as company_active, jp.job_position_id, cr.career_id, cp.company_id, jp.career_id
                         FROM JobOffers jo
                         INNER JOIN Companies cp on jo.company_id = cp.company_id
                         INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
                         INNER JOIN Careers cr on jp.career_id = cr.career_id
-                        WHERE jo.active = :active AND jo.expiration_date > curdate();";
+                        WHERE jo.active = :active ";
+
+                if($filter == FILTER_ALL){
+
+                    $query .=";";
+
+                }else if($filter == FILTER_STUDENT){
+
+                    $query .="AND jo.expiration_date > curdate() AND cr.career_id = :career_id AND user_id IS NULL ;";
+                    $studentDAO = new StudentDAO();
+                    $parameters["career_id"] = $studentDAO->getCareerIdByStudentId($_SESSION["loggedUser"]->getAssociatedId());
+                }
 
                 $parameters["active"] = true;
 
@@ -213,10 +169,11 @@
 
                 $resultSet = $this->connection->Execute($query, $parameters);
 
+                $jobOfferList = array();
+
                 if ($resultSet)
                 {
-                    $jobOfferList = array();
-
+                    
                     foreach ($resultSet as $row)
                     {
                         $jobOffer = new JobOffer();
@@ -236,6 +193,7 @@
                         $company = new Company($row['company_id']);
                         $company->setName($row['name']);
                         $company->setCity($row['city']);
+                        $company->setActive($row['company_active']);
                         $jobOffer->setCompany($company);
 
                         $jobOffer->setDescription($row["job_offer_description"]);
