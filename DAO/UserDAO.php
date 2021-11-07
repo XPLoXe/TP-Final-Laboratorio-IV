@@ -1,12 +1,12 @@
 <?php
     namespace DAO;
 
-    use Exception as Exception;
-    use Interfaces\IUserDAO as IUserDAO;
-    use Models\User as User;
     use DAO\UserRoleDAO as UserRoleDAO;
     use DAO\Connection as Connection;
+    use Interfaces\IUserDAO as IUserDAO;
+    use Models\User as User;
     use Models\UserRole as UserRole;
+    use Exception;
 
     class UserDAO implements IUserDAO
     {
@@ -21,7 +21,7 @@
         }
 
         
-        public function Add(User $user)
+        public function Add(User $user): void
         {
             try
             {
@@ -46,7 +46,7 @@
         }
 
 
-        public function Delete(int $userId)
+        public function Delete(int $userId): void
         {
             try
             {
@@ -65,7 +65,7 @@
         }
 
 
-        public function Edit(User $user)
+        public function Edit(User $user): void
         {
             try
             {
@@ -90,7 +90,7 @@
         }
 
 
-        public function VerifyEmailDataBase($email)
+        public function IsEmailInDataBase(string $email): bool
         {
             try
             {
@@ -102,12 +102,10 @@
 
                 $resultSet = $this->connection->Execute($query, $parameters);
 
-                if (array_key_exists(0, $resultSet))                         
+                if (!is_empty($resultSet))                         
                 {   
-                    if (strcmp($email, $resultSet[0]["email"]) == 0) // Returns true if email is in database
-                    {
+                    if (strcmp($email, $resultSet[0]["email"]) == 0)
                         return true;
-                    }
                 }
             }
             catch (Exception $ex)
@@ -118,7 +116,7 @@
         }
 
 
-        public function GetAll()
+        public function GetAll(): array
         {
             try
             {
@@ -150,7 +148,6 @@
 
                     array_push($userList, $user);
                 }
-
                 return $userList;
             }
             catch (Exception $ex)
@@ -159,7 +156,8 @@
             }
         }
 
-        public function getUserByEmail(string $email): User
+
+        public function GetUserByEmail(string $email): User
         {
             try
             {
@@ -177,9 +175,8 @@
                 $user->setPassword($resultSet[0]["user_password"]);
                 $user->setFirstName($resultSet[0]["first_name"]);
                 $user->setLastName($resultSet[0]["last_name"]);
-                $user->setUserRole($this->userRoleDAO->getUserRoleById($resultSet[0]["user_role_id"])); // TODO: use INNER JOIN
-                if (!is_null($resultSet[0]["associated_id"]))
-                    $user->setAssociatedId($resultSet[0]["associated_id"]);
+                $user->setUserRole($this->userRoleDAO->GetUserRoleById($resultSet[0]["user_role_id"])); // TODO: use INNER JOIN
+                $user->setAssociatedId($resultSet[0]["associated_id"]);
                 $user->setActive($resultSet[0]["active"]);
 
                 return $user;
@@ -190,17 +187,20 @@
             }
         }
 
-        public function getUserById(int $id): User
+
+        public function GetUserById(int $userId): User
         {
             try
             {
                 $userList = array();
 
-                $query = "SELECT * FROM ".$this->tableName.' WHERE email="'.$id.'"';
+                $query = "SELECT * FROM ".$this->tableName." WHERE email = :user_id ;";
+
+                $parameters['user_id'] = $userId;
 
                 $this->connection = Connection::GetInstance();
 
-                $resultSet = $this->connection->Execute($query);
+                $resultSet = $this->connection->Execute($query, $parameters);
 
                 $user = new User();
                 $user->setUserId($resultSet[0]["user_id"]);
@@ -208,9 +208,8 @@
                 $user->setPassword($resultSet[0]["user_password"]);
                 $user->setFirstName($resultSet[0]["first_name"]);
                 $user->setLastName($resultSet[0]["last_name"]);
-                $user->setUserRole($this->userRoleDAO->getUserRoleById($resultSet[0]["user_role_id"])); // TODO: use INNER JOIN
-                if (!is_null($resultSet[0]["associated_id"]))
-                    $user->setAssociatedId($resultSet[0]["associated_id"]);
+                $user->setUserRole($this->userRoleDAO->GetUserRoleById($resultSet[0]["user_role_id"])); // TODO: use INNER JOIN
+                $user->setAssociatedId($resultSet[0]["associated_id"]);
                 $user->setActive($resultSet[0]["active"]);
 
                 return $user;
@@ -220,6 +219,4 @@
                 throw $ex;
             }
         }
-
-
     }

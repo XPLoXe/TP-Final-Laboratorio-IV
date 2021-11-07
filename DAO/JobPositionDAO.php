@@ -1,10 +1,10 @@
 <?php
     namespace DAO;
 
-    use Exception as Exception;
-    use Interfaces\IJobPositionDAO as IJobPositionDAO;
     use DAO\Connection;
+    use Interfaces\IJobPositionDAO as IJobPositionDAO;
     use Models\JobPosition as JobPosition;
+    use Exception;
 
     class JobPositionDAO implements IJobPositionDAO
     {
@@ -13,10 +13,10 @@
         private $tableName = "JobPositions";
 
 
-        public function updateDatabaseFromAPI()
+        public function UpdateDatabaseFromAPI()
         {
             $careerDAO = new CareerDAO;
-            $careerDAO->updateDatabaseFromAPI();
+            $careerDAO->UpdateDatabaseFromAPI();
 
             $this->RetrieveData();
 
@@ -24,7 +24,7 @@
 
             if (!($this->jobPositionList == $DBjobPositionList))
             {
-                $this->setInactiveJobPositionsDB();
+                $this->SetJobPositionsInactive();
 
                 foreach ($this->jobPositionList as $jobPosition)
                 {
@@ -36,10 +36,10 @@
                         {
                             $flag = true;
 
-                            $this->setActiveTrue($DBjobPosition->getJobPositionId());
+                            $this->SetActive($DBjobPosition->getJobPositionId());
 
                             if (strcmp($DBjobPosition->getDescription(), $jobPosition->getDescription()) != 0)
-                                $this->editDescription($DBjobPosition->getJobPositionId(),$jobPosition->getDescription());
+                                $this->EditDescription($DBjobPosition->getJobPositionId(),$jobPosition->getDescription());
 
                             if ($DBjobPosition->getCareerId() != $jobPosition->getCareerId())
                                 $this->alterCareerId($DBjobPosition->getJobPositionId(),$jobPosition->getCareerId());
@@ -53,7 +53,8 @@
             }
         }
 
-        public function setInactiveJobPositionsDB()
+
+        public function SetJobPositionsInactive(): void
         {
             try
             {
@@ -71,7 +72,8 @@
             }
         }
 
-        public function setActiveTrue(int $jobPositionId)
+
+        public function SetActive(int $jobPositionId): void
         {
             try
             {
@@ -90,17 +92,17 @@
             }
         }
 
-        public function getJobPositionById($jobPositionId)
+        public function GetJobPositionById(int $jobPositionId): JobPosition
         {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName." WHERE job_position_id = '".$jobPositionId."' ;";
+                $query = "SELECT * FROM ".$this->tableName." WHERE job_position_id = :job_position_id ;";
 
-                //$parameters["job_position_id"] = $jobPositionId;
+                $parameters["job_position_id"] = $jobPositionId;
 
                 $this->connection = Connection::GetInstance();
 
-                $row = $this->connection->Execute($query)[0];
+                $row = $this->connection->Execute($query, $parameters)[0];
             
                 $jobPosition = new JobPosition($row["job_position_id"]);
                 $jobPosition->setCareerId($row["career_id"]);
@@ -114,17 +116,18 @@
             }
         }
 
-        public function isActiveById($jobPositionId):bool
+
+        public function IsActive(int $jobPositionId): bool
         {
             try
             {    
-                $query = "SELECT active FROM ".$this->tableName." WHERE job_position_id='".$jobPositionId."'";
+                $query = "SELECT active FROM ".$this->tableName." WHERE job_position_id = :job_position_id ;";
 
-                //parameters["job_position_id"]=$jobPositionId;
+                parameters["job_position_id"] = $jobPositionId;
 
                 $this->connection = Connection::GetInstance();
                 
-                $isActive = $this->connection->Execute($query)[0]["active"];
+                $isActive = $this->connection->Execute($query, $parameters)[0]["active"];
 
                 return $isActive;
             }
@@ -132,22 +135,21 @@
             {
                 throw $ex;
             }
-
         }
 
-        public function editDescription($jobPositionId,$newDescription)
+
+        public function EditDescription(int $jobPositionId, string $newDescription): void
         {
             try
             {
-                $query = "UPDATE ".$this->tableName." SET description=':description 'WHERE job_position_id=':job_position_id'";
+                $query = "UPDATE ".$this->tableName." SET description = :description WHERE job_position_id = :job_position_id ;";
 
                 $parameters["description"] = $newDescription;
                 $parameters["job_position_id"] = $jobPositionId;
 
                 $this->connection = Connection::GetInstance();
 
-                $this->connection->ExecuteNonQuery($query,$parameters);
-                
+                $this->connection->ExecuteNonQuery($query, $parameters);
             }
             catch (Exception $ex)
             {
@@ -155,27 +157,8 @@
             }
         }
 
-        public function alterCareerId($jobPositionId, $newCareerId){
 
-            try
-            {
-                $query = "UPDATE ".$this->tableName." SET career_id=':career_id' WHERE job_position_id=':job_position_id' ";
-
-                $parameters["career_id"] = $newCareerId;
-                $parameters["job_position_id"] = $jobPositionId;
-
-                $this->connection = Connection::GetInstance();
-
-                $this->connection->ExecuteNonQuery($query,$parameters);
-                
-            }
-            catch (Exception $ex)
-            {
-                throw $ex;
-            }
-        }
-
-        public function Add(JobPosition $jobPosition)
+        public function Add(JobPosition $jobPosition): void
         {
             try
             {
@@ -195,7 +178,8 @@
             }
         }
 
-        public function GetAll($giveMeAll = false)
+
+        public function GetAll(bool $includeInactive = false): array
         {
             try
             {
@@ -203,15 +187,13 @@
 
                 $query = "SELECT * FROM ".$this->tableName." ";
 
-                //when i call GetAll() i want the active jobpositions
-                //when i call GetAll(true) i want all the jobpositions
-
-                if($giveMeAll == false)
+                if ($includeInactive == false)
                     $query.="WHERE active='1'";
                 
                 $this->connection = Connection::GetInstance();
 
                 $resultSet = $this->connection->Execute($query);
+
                 foreach ($resultSet as $row)
                 {                
                     $jobPosition = new JobPosition($row["job_position_id"]);
@@ -220,7 +202,6 @@
 
                     array_push($jobPositionList, $jobPosition);
                 }
-
                 return $jobPositionList;
             }
             catch (Exception $ex)
@@ -229,7 +210,8 @@
             }
         }
 
-        public function getIdByDescription($description)
+
+        public function GetIdByDescription(string $description): int
         {
             try
             {
@@ -250,7 +232,7 @@
         }
 
 
-        private function getJobPositionFromApi()
+        private function GetJobPositionsFromApi()
         {
             $apiJobPosition = curl_init(API_URL . "JobPosition");
 
@@ -267,12 +249,12 @@
         {
             $this->jobPositionList = array();
 
-            $dataAPI = $this->getJobPositionFromApi();
+            $dataAPI = $this->GetJobPositionsFromApi();
 
             $arrayToDecode = json_decode($dataAPI, true);
 
-            foreach ($arrayToDecode as $valuesArray) {
-
+            foreach ($arrayToDecode as $valuesArray)
+            {
                 $jobPosition = new JobPosition($valuesArray["jobPositionId"]); 
                 $jobPosition->setCareerId($valuesArray["careerId"]); 
                 $jobPosition->setDescription($valuesArray["description"]); 
@@ -281,44 +263,38 @@
             }
         }
 
-        public function getJobPositionByName($name)
-            {
-                try
-                {    
-                    $query = "SELECT * FROM ".$this->tableName." WHERE description LIKE '%$name%'";
-        
-                    $this->connection = Connection::GetInstance();
-        
-                    $filterJobPosition = $this->connection->Execute($query);
 
-                    $jobPositionList = array();
+        public function GetJobPositionByName(string $name): JobPosition
+        {
+            try
+            {    
+                $query = "SELECT * FROM ".$this->tableName." WHERE description LIKE '%$name%'";
+    
+                $this->connection = Connection::GetInstance();
+    
+                $filterJobPosition = $this->connection->Execute($query);
 
-                    if(!empty($filterJobPosition)){
+                $jobPositionList = array();
 
-                        foreach ($filterJobPosition as $row)
-                        {
-                            if ($row["active"] == 1)
-                            {
-                                
-                                /* echo "<pre>" , var_dump($row) , "</pre>"; */
-                                $jobPosition = new JobPosition($row["job_position_id"]);
-                                $jobPosition->setCareerId($row["career_id"]); 
-                                $jobPosition->setDescription($row["description"]); 
+                if (!empty($filterJobPosition))
+                {
+                    foreach ($filterJobPosition as $row)
+                    {
+                        if ($row["active"] == 1)
+                        {                            
+                            $jobPosition = new JobPosition($row["job_position_id"]);
+                            $jobPosition->setCareerId($row["career_id"]); 
+                            $jobPosition->setDescription($row["description"]); 
 
-                                array_push($jobPositionList, $jobPosition);
-                            }
+                            array_push($jobPositionList, $jobPosition);
                         }
                     }
-
-                    /* echo "<pre>" , var_dump($jobPositionList) , "</pre>"; */
-
-                    return $jobPositionList;
-        
                 }
-                catch (Exception $ex)
-                {
-                    throw $ex;
-                }
-
+                return $jobPositionList;
             }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
     }

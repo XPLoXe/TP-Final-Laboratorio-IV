@@ -9,9 +9,9 @@
         private int $active;
         
 
-       public function __construct($id)
+       public function __construct(int $jobPositionId)
         {
-            $this->jobPositionId = $id;
+            $this->jobPositionId = $jobPositionId;
         } 
 
 
