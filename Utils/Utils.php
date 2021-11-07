@@ -58,6 +58,6 @@
         
         public static function dateTimeToString(DateTime $date): string
         {
-            return $date->format('d-m-Y');
+            return $date->format('Y-m-d');
         }
     }

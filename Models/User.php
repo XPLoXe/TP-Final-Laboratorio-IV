@@ -102,7 +102,7 @@
         
         public function setAssociatedId(?int $associatedId): void
         {
-            if (!is_null($associatedId));
+            if (!is_null($associatedId))
                 $this->associatedId = $associatedId;
         }
 

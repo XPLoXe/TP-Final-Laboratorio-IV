@@ -123,7 +123,7 @@
             {    
                 $query = "SELECT active FROM ".$this->tableName." WHERE job_position_id = :job_position_id ;";
 
-                parameters["job_position_id"] = $jobPositionId;
+                $parameters["job_position_id"] = $jobPositionId;
 
                 $this->connection = Connection::GetInstance();
                 
@@ -264,7 +264,7 @@
         }
 
 
-        public function GetJobPositionByName(string $name): JobPosition
+        public function GetJobPositionByName(string $name): array
         {
             try
             {    

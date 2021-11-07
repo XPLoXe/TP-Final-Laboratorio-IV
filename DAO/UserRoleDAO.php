@@ -1,10 +1,10 @@
 <?php
     namespace DAO;
 
-    use DAO\Connection;
+    use Exception as Exception;
     use Interfaces\IUserRoleDAO as IUserRoleDAO;
+    use DAO\Connection;
     use Models\UserRole;
-    use Exception;
 
     class userRoleDAO implements IUserRoleDAO
     {
@@ -32,6 +32,7 @@
                     
                     array_push($userRoleList, $userRole);
                 }
+
                 return $userRoleList;
             }
             catch (Exception $ex)
@@ -42,7 +43,7 @@
         }
 
 
-        public function GetIdByDescription(string $description): int
+        public function getIdByDescription(string $description): int
         {
             try
             {
@@ -62,14 +63,13 @@
         }
 
 
-        public function GetUserRoleById(int $userRoleId): UserRole
+        public function getUserRoleById(int $userRoleId): UserRole
         {
             try
             {
-                $query = "SELECT * FROM ".$this->tableName.' WHERE user_role_id = :user_role_id AND active = :active ;';
+                $query = "SELECT * FROM ".$this->tableName.' WHERE user_role_id = :user_role_id;';
 
                 $parameters['user_role_id'] = $userRoleId;
-                $parameters['active'] = true;
 
                 $this->connection = Connection::GetInstance();
 
@@ -88,7 +88,7 @@
         }
 
 
-        public function GetDescriptionById(int $userRoleId): string
+        public function getDescriptionById($userRoleId): string
         {
             try
             {
@@ -103,6 +103,7 @@
                     if ($row["user_role_id"] == $userRoleId)
                         return $row["description"];
                 }
+
                 return null;
             }
             catch (Exception $ex)

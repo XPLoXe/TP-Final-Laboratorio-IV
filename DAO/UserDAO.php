@@ -102,7 +102,7 @@
 
                 $resultSet = $this->connection->Execute($query, $parameters);
 
-                if (!is_empty($resultSet))                         
+                if (!empty($resultSet))                         
                 {   
                     if (strcmp($email, $resultSet[0]["email"]) == 0)
                         return true;

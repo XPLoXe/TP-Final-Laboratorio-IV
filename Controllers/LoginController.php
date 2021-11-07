@@ -2,7 +2,8 @@
     namespace Controllers;
 
     use Config\Message as Message;
-    use Controllers\studentController as studentController;
+    use Controllers\StudentController as StudentController;
+    use Controllers\UserController as UserController;
     use DAO\JobOfferDAO as JobOfferDAO;
     use DAO\UserDAO as UserDAO;
     use Models\User as User;
@@ -27,7 +28,7 @@
                 $userController = new UserController;
                 $user = new User;
                 
-                if ($userController->VerifyEmailDataBase($email)) 
+                if ($userController->IsEmailInDataBase($email)) 
                 {
                     $user = $userController->GetUserByEmail($email);
                     

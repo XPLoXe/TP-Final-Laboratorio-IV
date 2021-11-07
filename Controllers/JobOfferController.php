@@ -24,11 +24,10 @@
 
         public function __construct()
         {
-            $this->jobOfferDAO = new JobOfferDAO();
-            $this->companyDAO = new CompanyDAO();
-            $this->jobPositionDAO = new JobPositionDAO();
+            $this->jobOfferDAO = new JobOfferDAO();// SACAR
+            $this->companyDAO = new CompanyDAO();// SACAR
+            $this->jobPositionDAO = new JobPositionDAO();// SACAR
             $this->jobPositionController = new JobPositionController();
-            $this->userController = new UserController();
         }
 
 
@@ -63,6 +62,48 @@
             $this->ShowListView();
         }
 
+        public function FilterByPosition($parameters)
+        {
+            Utils::checkUserLoggedIn();
+
+            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
+                
+                if (empty($parameters["nameToFilter"])) 
+                {   
+                    $this->ShowListView();
+                } else
+                {
+                    $jobPositionList  = $this->jobPositionController->getJobPositionByName($parameters["nameToFilter"]);
+
+                    $jobOfferList = $this->GetAll();
+
+                    $jobOfferFiltered = array();
+
+                    if (!empty($jobPositionList))
+                    {
+                        foreach ($jobPositionList as $jobPosition)
+                        {
+                            foreach ($jobOfferList as $jobOffer)
+                            {
+                                if ($jobPosition->getJobPositionId() == $jobOffer->getJobPositionId()) {
+                                    array_push($jobOfferFiltered, $jobOffer);
+                                }
+                            }
+                        }
+
+                        $jobOfferList = $jobOfferFiltered;
+
+                    } 
+                    else
+                    {
+                        $msgErrorFilter = ERROR_JOBOFFER_FILTER; // TODO: move HTML code to view
+                    } 
+
+                    require_once(VIEWS_PATH."job-offer-list.php");
+                }
+            }
+        }
+
 
         public function Edit(array $parameters)
         {
@@ -78,26 +119,21 @@
             
             $this->jobOfferDAO->Edit($jobOffer);
 
-            $jobOfferList = $this->jobOfferDAO->GetAll();
+            $jobOfferList = $this->GetAll();
             require_once(VIEWS_PATH."job-offer-list.php");
         }
 
         
         public function GetAll(): array
         {
-            $jobOffers = $this->jobOfferDAO->GetAll();
+            if(Utils::isAdmin())
+                $jobOffers = $this->jobOfferDAO->GetAll(FILTER_ALL);
+            else if(Utils::isStudent())
+                $jobOffers = $this->jobOfferDAO->GetAll(FILTER_STUDENT);
 
             return $jobOffers;
         }
-
         
-        public function GetAllAvailable(): array
-        {
-            $jobOffers = $this->jobOfferDAO->GetAllAvailable();
-
-            return $jobOffers;
-        }
-
 
         public function Apply(array $parameters): void
         {
@@ -129,11 +165,10 @@
 
             if (Utils::isStudent())
             {
-                $isLookingForJob = $this->jobOfferDAO->IsUserIdInOffer($_SESSION["loggedUser"]->getUserId());
-                $jobOfferList = $this->GetAllAvailable();
+                $isLookingForJob = $this->jobOfferDAO->isUserIdInOffer($_SESSION["loggedUser"]->getUserId());
             }
-            else
-                $jobOfferList = $this->GetAll();
+            
+            $jobOfferList = $this->GetAll();
 
             require_once(VIEWS_PATH."job-offer-list.php");
         }
@@ -184,7 +219,7 @@
         {
             Utils::checkAdmin();
             
-            $jobOffer = $this->jobOfferDAO->getJobOfferById($parameters['jobOfferId']);
+            $jobOffer = $this->jobOfferDAO->GetJobOfferById($this->GetAll(),$parameters['jobOfferId']);
 
             $jobPositionList = $this->jobPositionDAO->GetAll();
             array_unshift($jobPositionList, $jobOffer->getJobPosition());
@@ -194,4 +229,5 @@
 
             require_once(VIEWS_PATH."job-offer-edit.php");
         }
+
     }

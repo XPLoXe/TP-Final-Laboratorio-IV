@@ -7,7 +7,7 @@
     {
         private int $jobOfferId;
         private JobPosition $jobPosition;
-        private int $userId;
+        private $user_id;
         private Company $company;
         private string $description;
         private DateTime $publicationDate;
@@ -54,19 +54,15 @@
         }
 
 
-        public function getUserId(): int
+        public function getUserId()
         {
-            if (isset($this->userId))
-                return $this->userId;
-            else
-                return null;
+            return $this->user_id;
         }
 
 
-        public function setUserId(?int $userId)
+        public function setUserId($user_id)
         {
-            if (!is_null($userId))
-                $this->userId = $userId;
+            $this->user_id = $user_id;
         }
 
 

@@ -2,11 +2,11 @@
     namespace DAO;
 
     use DAO\Connection as Connection;
-    use DAO\CompanyDAO as CompanyDAO;
     use DAO\JobPositionDAO as JobPositionDAO;
-    use Models\Company as Company;
+    use DAO\StudentDAO as StudentDAO;
     use Models\JobOffer as JobOffer;
     use Models\JobPosition as JobPosition;
+    use Models\Company as Company;
     use Models\User as User;
     use Utils\Utils as Utils;
     use DateTime;
@@ -16,16 +16,6 @@
     {
         private $connection;
         private $tableName = "JobOffers";
-        private $jobPositionDAO;
-        private $companyDAO;
-
-
-        public function __construct()
-        {
-            $this->jobPositionDAO = new JobPositionDAO;
-            $this->companyDAO = new CompanyDAO;
-        }
-
 
         public function Add(JobOffer $jobOffer): void
         {
@@ -101,7 +91,9 @@
             {
                 $jobOfferList = $this->GetAll();
 
-                $this->jobPositionDAO->UpdateDatabaseFromAPI();
+                $jobPositionDAO = new JobPositionDAO();
+
+                $jobPositionDAO->UpdateDatabaseFromAPI();
 
                 foreach ($jobOfferList as $jobOffer)
                 {
@@ -140,7 +132,6 @@
         }
 
 
-<<<<<<< HEAD
         public function GetAllAvailable()
         {
             try
@@ -253,21 +244,29 @@
         }
 
 
-=======
->>>>>>> dev
-        public function GetAll()
+        public function GetAll( $filter )
         {
             try
             {                
-                $query = "SELECT jo.user_id, jo.description as job_offer_description, jo.publication_date, jo.expiration_date,
-                                    jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description, 
-                                    cr.description as career_description, cp.active as company_active,
-                                    jp.job_position_id, cr.career_id, cp.company_id
-                          FROM JobOffers jo
-                          INNER JOIN Companies cp on jo.company_id = cp.company_id
-                          INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
-                          INNER JOIN Careers cr on jp.career_id = cr.career_id
-                          WHERE jo.active = :active AND jo.expiration_date > curdate();";
+                $query = "SELECT jo.user_id, jo.description as job_offer_description ,jo.publication_date,jo.expiration_date,
+                                    jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description, cr.description as career_description, 
+                                    cp.active as company_active, jp.job_position_id, cr.career_id, cp.company_id, jp.career_id
+                        FROM JobOffers jo
+                        INNER JOIN Companies cp on jo.company_id = cp.company_id
+                        INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
+                        INNER JOIN Careers cr on jp.career_id = cr.career_id
+                        WHERE jo.active = :active ";
+
+                if($filter == FILTER_ALL){
+
+                    $query .=";";
+
+                }else if($filter == FILTER_STUDENT){
+
+                    $query .="AND jo.expiration_date > curdate() AND cr.career_id = :career_id AND user_id IS NULL ;";
+                    $studentDAO = new StudentDAO();
+                    $parameters["career_id"] = $studentDAO->GetCareerIdByStudentId($_SESSION["loggedUser"]->getAssociatedId());
+                }
 
                 $parameters["active"] = true;
 
@@ -275,10 +274,11 @@
 
                 $resultSet = $this->connection->Execute($query, $parameters);
 
-                if (!is_empty($resultSet))
-                {
-                    $jobOfferList = array();
+                $jobOfferList = array();
 
+                if ($resultSet)
+                {
+                    
                     foreach ($resultSet as $row)
                     {
                         $jobOffer = new JobOffer();
@@ -377,5 +377,18 @@
             {
                 throw $ex;
             }
+        }
+
+        public function GetJobOfferById($jobOfferList,$jobOfferId): JobOffer
+        {
+
+            foreach($jobOfferList as $jobOffer){
+
+                if($jobOffer->getJobOfferId() == $jobOfferId)
+                    return $jobOffer;
+
+            }
+
+            return false;
         }
     }   
