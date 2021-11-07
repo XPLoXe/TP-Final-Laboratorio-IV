@@ -3,26 +3,42 @@
 
     use DAO\StudentDAO as StudentDAO;
     use Models\Student as Student;
-
     use Utils\Utils as Utils;
 
     class StudentController
     {
         private $studentDAO;
 
+
         public function __construct()
         {
             $this->studentDAO = new StudentDAO();
         }
 
-        public function ShowAddView()
-        {
-            Utils::checkAdmin();
 
-            require_once(VIEWS_PATH."student-add.php");
+        public function GetStudentByEmail(string $email): Student
+        {
+            return $this->studentDAO->GetStudentByEmail($email);
         }
 
-        public function ShowListView()
+
+        public function IsStudentActiveInUniversity(string $email): bool
+        {
+            $student = $this->GetStudentByEmail($email);
+
+            if (!is_null($student))
+            {
+                if ($student->isActive())
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+
+
+        public function ShowListView(): void
         {
             Utils::checkUserLoggedIn();
 
@@ -31,59 +47,30 @@
             require_once(VIEWS_PATH."student-list.php");
         }
 
-        public function getStudentByEmail($email)
-        {
-            return $this->studentDAO->getStudentByEmail($email);
-        }
 
-        /* public function Add($fileNumber, $firstName, $lastName)
-        {
-            Utils::checkAdmin();
-
-            $student = new Student();
-            $student->setFileNumber($fileNumber);
-            $student->setFirstName($firstName);
-            $student->setLastName($lastName);
-
-            $this->studentDAO->Add($student);
-
-            $this->ShowAddView();
-        } */
-
-        public function getIdCareerByStudentId($studentId){
-
-            return $this->studentDAO->getCareerIdByStudentId($studentId);
-
-        }
-
-        public function FilterByLastName($parameters)
+        public function FilterByLastName(array $parameters): void
         {
             Utils::checkUserLoggedIn();
 
             $studentList = array();
 
-            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
-
+            if ($_SERVER['REQUEST_METHOD'] == "POST") 
+            {
                 if (empty($parameters["nameToFilter"])) 
-                {
                     $this->ShowListView();
-                } else
+                else
                 {
-                    $student  = $this->studentDAO->getStudentByLastName($parameters["nameToFilter"]);
+                    $student  = $this->studentDAO->GetStudentByLastName($parameters["nameToFilter"]);
 
                     if (is_null($student))
                     {
-                        $message = ERROR_STUDENT_FILTER; 
-
+                        $message = ERROR_STUDENT_FILTER;
                         $studentList = $this->studentDAO->GetAll();
                     } 
                     else
-                    {
                         array_push($studentList, $student);
-                    }
 
                     require_once(VIEWS_PATH."student-list.php");
-
                 }
             }
         }

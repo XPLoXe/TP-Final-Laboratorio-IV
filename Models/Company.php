@@ -26,7 +26,7 @@
         }
 
 
-        public function setCompanyId($companyId): void
+        public function setCompanyId(int $companyId): void
         {
             $this->companyId = $companyId;
         }
@@ -38,7 +38,7 @@
         }
 
 
-        public function setName($name): void
+        public function setName(string $name): void
         {
             $this->name = $name;
         }
@@ -50,7 +50,7 @@
         }
 
 
-        public function setYearOfFoundation($yearOfFoundation): void
+        public function setYearOfFoundation(string $yearOfFoundation): void
         {
             $this->yearOfFoundation = (int) $yearOfFoundation;
         }        
@@ -62,7 +62,7 @@
         }
 
 
-        public function setCity($city): void
+        public function setCity(string $city): void
         {
             $this->city = $city;
         }     
@@ -74,7 +74,7 @@
         }
 
 
-        public function setDescription($description): void
+        public function setDescription(string $description): void
         {
             $this->description = $description;
         }      
@@ -98,7 +98,7 @@
         }
 
 
-        public function setEmail($email): void
+        public function setEmail(string $email): void
         {
             $this->email = $email;
         }    

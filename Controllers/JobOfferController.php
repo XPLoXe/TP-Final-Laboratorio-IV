@@ -1,24 +1,22 @@
 <?php
     namespace Controllers;
 
-    use DAO\JobOfferDAO as JobOfferDAO;
-    use Models\JobOffer as JobOffer;
-    use Models\JobPosition as JobPosition;
-    use Models\Company as Company;
     use Controllers\CompanyController as CompanyController;
     use Controllers\JobPositionController as JobPositionController;
-    use DAO\CompanyDAO;
+    use DAO\CompanyDAO as CompanyDAO;
+    use DAO\JobOfferDAO as JobOfferDAO;
+    use DAO\JobPositionDAO as JobPositionDAO;
+    use Models\Company as Company;
+    use Models\JobOffer as JobOffer;
+    use Models\JobPosition as JobPosition;
     use Utils\Utils as Utils;
     use DateTime;
-    use DAO\JobPositionDAO as JobPositionDAO;
-    use DAO\UserDAO;
 
-
-class JobOfferController
+    class JobOfferController
     {
-        private $jobOfferDAO;
         private $jobPositionController;
         private $companyDAO;
+        private $jobOfferDAO;
         private $jobPositionDAO;
         private $userController;
 
@@ -39,11 +37,13 @@ class JobOfferController
             Utils::checkAdmin();
             
             $jobOffer = new JobOffer;
-            $company = $this->companyDAO->GetCompanyById($parameters["companyId"]);
-            $jobPosition = $this->jobPositionDAO->getJobPositionById($parameters["jobPositionId"]);
             
+            $company = $this->companyDAO->GetCompanyById($parameters["companyId"]);
             $jobOffer->setCompany($company);
+
+            $jobPosition = $this->jobPositionDAO->GetJobPositionById($parameters["jobPositionId"]);
             $jobOffer->setJobPosition($jobPosition);
+
             $jobOffer->setDescription($parameters["description"]);
             $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
             $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
@@ -63,48 +63,6 @@ class JobOfferController
             $this->ShowListView();
         }
 
-        public function FilterByName($parameters)
-        {
-            Utils::checkUserLoggedIn();
-
-            if ($_SERVER['REQUEST_METHOD'] == "POST") { 
-                
-                if (empty($parameters["nameToFilter"])) 
-                {   
-                    $this->ShowListView();
-                } else
-                {
-                    $jobPositionList  = $this->jobPositionController->getJobPositionByName($parameters["nameToFilter"]);
-                    $jobOfferList = $this->GetAll();
-                    $jobOfferFiltered = array();
-
-                    if (!empty($jobPositionList))
-                    {
-                        foreach ($jobPositionList as $jobPosition)
-                        {
-                            foreach ($jobOfferList as $jobOffer)
-                            {
-                                if ($jobPosition->getJobPositionId() == $jobOffer->getJobPositionId()) {
-                                    array_push($jobOfferFiltered, $jobOffer);
-                                }
-                            }
-                        }
-                    } 
-                    else
-                    {
-                        $msgErrorFilter = ERROR_JOBOFFER_FILTER; // TODO: move HTML code to view
-
-                        $jobOfferList = $this->jobOfferDAO->GetAll();
-                    }
-
-                    $jobOfferList = array();
-                    $jobOfferList = $jobOfferFiltered;
-
-                    require_once(VIEWS_PATH."job-offer-list.php");
-                }
-            }
-        }
-
 
         public function Edit(array $parameters)
         {
@@ -120,25 +78,38 @@ class JobOfferController
             
             $this->jobOfferDAO->Edit($jobOffer);
 
-            //$this->ShowInfo($jobOffer);
             $jobOfferList = $this->jobOfferDAO->GetAll();
             require_once(VIEWS_PATH."job-offer-list.php");
         }
 
-        public function Apply(array $parameters){
+        
+        public function GetAll(): array
+        {
+            $jobOffers = $this->jobOfferDAO->GetAll();
 
-            if(Utils::isStudent())
-            {
-                $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId());
-            }
+            return $jobOffers;
+        }
 
-            $message = APPLY_SUCCESS;
-            require_once(VIEWS_PATH."home.php");
+        
+        public function GetAllAvailable(): array
+        {
+            $jobOffers = $this->jobOfferDAO->GetAllAvailable();
 
+            return $jobOffers;
         }
 
 
-        public function ShowAddView()
+        public function Apply(array $parameters): void
+        {
+            if (Utils::isStudent())
+                $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId());
+
+            $message = APPLY_SUCCESS;
+            require_once(VIEWS_PATH."home.php");
+        }
+
+
+        public function ShowAddView(): void
         {
             Utils::checkAdmin();
             
@@ -151,25 +122,65 @@ class JobOfferController
             require_once(VIEWS_PATH."job-offer-add.php");
         }
 
-        public function ShowListView()
+
+        public function ShowListView(): void
         {
             Utils::checkUserLoggedIn();
 
-            if(Utils::isStudent())
+            if (Utils::isStudent())
             {
-                $isLookingForJob = $this->jobOfferDAO->isUserIdInOffer($_SESSION["loggedUser"]->getUserId());
+                $isLookingForJob = $this->jobOfferDAO->IsUserIdInOffer($_SESSION["loggedUser"]->getUserId());
                 $jobOfferList = $this->GetAllAvailable();
             }
             else
-            {
                 $jobOfferList = $this->GetAll();
-            }
 
             require_once(VIEWS_PATH."job-offer-list.php");
         }
 
 
-        public function ShowEditView($parameters)
+        public function FilterByName(array $parameters)
+        {
+            Utils::checkUserLoggedIn();
+
+            if (Utils::isStudent())
+                $isLookingForJob = $this->jobOfferDAO->IsUserIdInOffer($_SESSION["loggedUser"]->getUserId());
+           
+            if (empty($parameters["nameToFilter"]))
+                $this->ShowListView();
+            else
+            {
+                $jobPositionList  = $this->jobPositionController->GetJobPositionByName($parameters["nameToFilter"]);
+                $jobOfferList = $this->GetAll();
+                $jobOfferFiltered = array();
+
+                if (!empty($jobPositionList))
+                {
+                    foreach ($jobPositionList as $jobPosition)
+                    {
+                        foreach ($jobOfferList as $jobOffer)
+                        {
+                            if ($jobPosition->getJobPositionId() == $jobOffer->getJobPositionId()) {
+                                array_push($jobOfferFiltered, $jobOffer);
+                            }
+                        }
+                    }
+                } 
+                else
+                {
+                    $msgErrorFilter = ERROR_JOBOFFER_FILTER;
+                    $jobOfferList = $this->jobOfferDAO->GetAll();
+                }
+
+                $jobOfferList = array();
+                $jobOfferList = $jobOfferFiltered;
+
+                require_once(VIEWS_PATH."job-offer-list.php");
+            }
+        }
+
+
+        public function ShowEditView(array $parameters): void
         {
             Utils::checkAdmin();
             
@@ -182,38 +193,5 @@ class JobOfferController
             array_unshift($companyList, $jobOffer->getCompany());
 
             require_once(VIEWS_PATH."job-offer-edit.php");
-        }
-
-        
-        public function GetAll(): array
-        {
-            $jobOffers = $this->jobOfferDAO->GetAll();
-
-            return $jobOffers;
-        }
-        
-        public function GetAllAvailable(): array
-        {
-            $jobOffers = $this->jobOfferDAO->GetAllAvailable();
-
-            return $jobOffers;
-        }
-
-        public function GetAllUnavailable(): array
-        {
-            return $this->jobOfferDAO->GetAllUnavailable();
-        }
-
-        public function ShowApplicationsView()
-        {
-            $jobOfferList = $this->GetAllUnavailable();
-            $userList = array();
-
-            foreach ($jobOfferList as $jobOffer)
-            {
-                array_push($jobOfferList[$jobOffer], $this->userController->getUserById($jobOffer->getUserId())); //Associative Array
-            }
-            
-            require_once(VIEWS_PATH."student-application.php");
         }
     }

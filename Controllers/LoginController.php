@@ -1,64 +1,59 @@
 <?php
     namespace Controllers;
 
-    use DAO\UserDAO as UserDAO;
+    use Config\Message as Message;
+    use Controllers\studentController as studentController;
     use DAO\JobOfferDAO as JobOfferDAO;
+    use DAO\UserDAO as UserDAO;
     use Models\User as User;
     use Utils\Utils as Utils;
-    use Controllers\StudentController as StudentController;
-    use Config\Message as Message;
 
     class LoginController
     {
         private $message;
 
         
-        public function Login()
+        public function Login(): void
         {
-            $parameters = array();
             $jobOfferDAO = new JobOfferDAO;
             
             if ($_SERVER['REQUEST_METHOD'] == "POST")
             {
-                $parameters = $_POST;
                 $email = $_POST["email"];
                 $password = $_POST["password"];
-                $message = ""; //needs to be set in order to avoid Views errors in login.php when logging out
+                $message = "";
 
-                // Load users
+                $studentController = new StudentController;
                 $userController = new UserController;
-                $user = new User();
-                $StudentController = new StudentController();
+                $user = new User;
                 
-                if ($userController->VerifyEmailDataBase($email)) {
-
-                    $user = $userController->getUserByEmail($email);
+                if ($userController->VerifyEmailDataBase($email)) 
+                {
+                    $user = $userController->GetUserByEmail($email);
                     
-                    if ($password == $user->getPassword()) {
-                        
+                    if ($password == $user->getPassword())
+                    {                        
                         if ($user->getUserRole()->getDescription() == ROLE_ADMIN)
                         {
-                            /* $jobOfferDAO->tryDatabaseUpdate(); */
+                            $jobOfferDAO->TryDatabaseUpdate();
 
                             $_SESSION["loggedUser"] = $user;   
                             require_once(VIEWS_PATH."home.php");
                         } 
                         else
                         {
-                            if ($StudentController->getStudentByEmail($email)->isActive())  //checks if user is active in the API 
+                            if ($studentController->GetStudentByEmail($email)->isActive())  //checks if user is active in the API 
                             {
-                                /* $jobOfferDAO->tryDatabaseUpdate(); */
+                                $jobOfferDAO->TryDatabaseUpdate();
 
                                 $_SESSION["loggedUser"] = $user;
                                 require_once(VIEWS_PATH."home.php");
                             }
                             else
                             {
-                                
-                                $message = LOGIN_INACTIVE;
+                                $message = STUDENT_INACTIVE;
                                 require_once(VIEWS_PATH."login.php");
                             }
-                            
                         }
                     }
                     else
@@ -66,16 +61,11 @@
                         $message = WRONG_PASSWORD;
                         require_once(VIEWS_PATH."login.php");
                     }
-
-                }
-                else
+                } else
                 {
                     $message = WRONG_EMAIL;
                     require_once(VIEWS_PATH."login.php");
                 }
-                
-                
-                
             } else
             {
                 header("location:login.php");
@@ -84,20 +74,20 @@
         }
 
 
-        public function Logout()
+        public function Logout(): void
         {
-            $_SESSION = array(); //Cleans every variable set in $_SESSION (session_destroy() does not clean them)
+            $_SESSION = array();
             session_destroy();
             $message = "";
             require_once(VIEWS_PATH."login.php");
         }
 
 
-        public function ShowSignupView()
+        public function ShowSignupView(): void
         {
             $userRoleController = new UserRoleController();
             $message = "";
-            $studentRoleId = $userRoleController->getIdByDescription(ROLE_STUDENT);
+            $studentRoleId = $userRoleController->GetIdByDescription(ROLE_STUDENT);
             require_once(VIEWS_PATH."signup.php");
         }
 
