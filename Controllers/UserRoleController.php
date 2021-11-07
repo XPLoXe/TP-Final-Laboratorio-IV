@@ -1,8 +1,8 @@
 <?php
     namespace Controllers;
 
-    use Models\UserRole as UserRole;
     use DAO\UserRoleDAO as UserRoleDAO;
+    use Models\UserRole as UserRole;
 
     class UserRoleController
     {
@@ -13,23 +13,27 @@
             $this->userRoleDAO = new UserRoleDAO();
         }
 
+
         public function GetAll(): array
         {
             return $this->userRoleDAO->GetAll();
         }
 
-        public function getUserRoleById($id): UserRole
+
+        public function GetUserRoleById($id): UserRole
         {
-            return $this->userRoleDAO->getUserRoleById($id);
+            return $this->userRoleDAO->GetUserRoleById($id);
         }
 
-        public function getIdByDescription(string $description): int
+
+        public function GetIdByDescription(string $description): int
         {
-            return $this->userRoleDAO->getIdByDescription($description);
+            return $this->userRoleDAO->GetIdByDescription($description);
         }
 
-        public function getDescriptionById(int $id): string
+
+        public function GetDescriptionById(int $descriptionId): string
         {
-            return $this->userRoleDAO->getDescriptionById($id);
+            return $this->userRoleDAO->GetDescriptionById($descriptionId);
         }
     }

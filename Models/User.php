@@ -12,7 +12,7 @@
         private string $firstName;
         private string $lastName;
         private UserRole $userRole;
-        private int $associatedId; // ID for the student in API in the case of a student, or company_in in the case of a company user
+        private int $associatedId;
         private bool $active;
 
 
@@ -100,9 +100,9 @@
         }
 
         
-        public function setAssociatedId(int $associatedId): void
+        public function setAssociatedId(?int $associatedId): void
         {
-            if ($associatedId != null)
+            if (!is_null($associatedId))
                 $this->associatedId = $associatedId;
         }
 
@@ -118,7 +118,7 @@
             $this->active = $active;
         }
 
-        public function getUserRoleId()
+        public function getUserRoleId(): int
         {
             return $this->userRole->getUserRoleId();
         }

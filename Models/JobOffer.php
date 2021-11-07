@@ -84,7 +84,7 @@
         }
 
 
-        public function setCompanyId(int $companyId) 
+        public function setCompanyId(int $companyId): void
         {
             if (!isset($this->company))
                 $this->company = new Company($companyId);

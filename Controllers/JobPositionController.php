@@ -1,10 +1,8 @@
 <?php
-
     namespace Controllers;
 
     use DAO\JobPositionDAO as JobPositionDAO;
     use Models\JobPosition as JobPosition;
-
     use Utils\Utils as Utils;
 
     class JobPositionController
@@ -25,8 +23,8 @@
             return $jobPositionList;
         }
 
-        
-        public function getJobPositionById(int $jobPositionId): JobPosition
+
+        public function GetJobPositionById(int $jobPositionId): JobPosition
         {
             $jobPositionList = $this->jobPositionDAO->GetAll();
             
@@ -38,10 +36,10 @@
 
             return null;
         }
+    
 
-        public function getJobPositionByName(string $name) 
+        public function GetJobPositionByName(string $name): array
         {
-            return $this->jobPositionDAO->getJobPositionByName($name);
+            return $this->jobPositionDAO->GetJobPositionByName($name);
         }
     }
-?>

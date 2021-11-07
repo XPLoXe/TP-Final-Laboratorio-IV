@@ -73,7 +73,7 @@ require_once('nav.php');
                                         <h6><?php echo 'Publicado hace ' . daysBetweenDates($jobOffer->getPublicationDate()->format('Y-m-d'), date('Y-m-d')) . ' días' ?></h6>
                                         <?php
 
-                                            if($jobOffer->getExpirationDate()->format('d-m-Y') > date('d-m-Y'))
+                                            if($jobOffer->getExpirationDate()->format('Y-m-d') > date('Y-m-d'))
                                                 echo '<h6> Vence el día ' . $jobOffer->getExpirationDate()->format('d-m-Y') . '</h6>' ;
                                             else
                                                 echo '<h6 style="color: red"> Vencio el día ' . $jobOffer->getExpirationDate()->format('d-m-Y') . '</h6>' ;

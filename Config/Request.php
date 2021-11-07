@@ -7,6 +7,7 @@
         private $method;
         private $parameters = array();
         
+
         public function __construct()
         {
             $url = filter_input(INPUT_GET, "url", FILTER_SANITIZE_URL);
@@ -39,7 +40,7 @@
                 else
                     $this->parameters = $urlArray;
             }
-            elseif ($_POST)
+            else if ($_POST)
                 $this->parameters = $_POST;
             
             if ($_FILES)
@@ -53,20 +54,27 @@
             }
         }
 
+
         private static function getMethodRequest()
         {
             return $_SERVER["REQUEST_METHOD"];
         }            
 
-        public function getController() {
+
+        public function getController() 
+        {
             return $this->controller;
         }
 
-        public function getMethod() {
+
+        public function getMethod() 
+        {
             return $this->method;
         }
 
-        public function getparameters() {
+
+        public function getparameters() 
+        {
             return $this->parameters;
         }
     }

@@ -37,7 +37,7 @@ require_once('nav.php');
                     <div class="col-lg-4">
                         <div class="form-group">
                             <label for="">Fecha de vencimiento</label>
-                            <input type="date" name="expirationDate" value="<?php echo $jobOffer->getExpirationDate()->format("Y-m-d") ?>" min="<?php echo date('Y-m-d'); ?>" max="<?php echo mktime(0, 0, 0, date("m") + 3, date("d"), date("Y")) ?>" class="form-control" required>
+                            <input type="date" name="expirationDate" value="<?php echo $jobOffer->getExpirationDate()->format('Y-m-d') ?>" min="<?php echo date('Y-m-d'); ?>" max="<?php echo mktime(0, 0, 0, date("m") + 3, date("d"), date("Y")) ?>" class="form-control" required>
                         </div>
                     </div>
                     <div class="col-lg-4">

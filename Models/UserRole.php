@@ -21,7 +21,7 @@
         }
 
 
-        public function setUserRoleId(int $userRoleId)
+        public function setUserRoleId(int $userRoleId): void
         {
             $this->userRoleId = $userRoleId;
         }
@@ -33,7 +33,7 @@
         }
 
 
-        public function setDescription(string $description)
+        public function setDescription(string $description): void
         {
             $this->description = $description;
         }
@@ -43,7 +43,7 @@
             return $this->active;
         }
 
-        public function setActive(bool $active)
+        public function setActive(bool $active): void
         {
             $this->active = $active;
         }
