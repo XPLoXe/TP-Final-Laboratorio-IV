@@ -3,6 +3,7 @@
 
     use Controllers\CompanyController as CompanyController;
     use Controllers\JobPositionController as JobPositionController;
+    use Controllers\userController as userController;
     use DAO\CompanyDAO as CompanyDAO;
     use DAO\JobOfferDAO as JobOfferDAO;
     use DAO\JobPositionDAO as JobPositionDAO;
@@ -28,6 +29,7 @@
             $this->companyDAO = new CompanyDAO();// SACAR
             $this->jobPositionDAO = new JobPositionDAO();// SACAR
             $this->jobPositionController = new JobPositionController();
+            $this->userController = new UserController();
         }
 
 
@@ -134,15 +136,35 @@
             return $jobOffers;
         }
         
+        public function GetJobOfferById($jobOfferId)
+        {
+            return $this->jobOfferDAO->GetJobOfferById($this->jobOfferDAO->GetAll(FILTER_ALL),$jobOfferId);
+        }
+
+        public function GetJobOfferByUserId($id)
+        {
+            return $this->jobOfferDAO->GetJobOfferByUserID($id);
+        }
 
         public function Apply(array $parameters): void
         {
             if (Utils::isStudent())
-                $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId());
+                $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId(), true);
 
             $message = APPLY_SUCCESS;
             require_once(VIEWS_PATH."home.php");
         }
+
+        public function DeleteApplicant(array $parameters): void
+        {
+            $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId(), false);
+            $message = APPLY_SUCCESS;
+            require_once(VIEWS_PATH."home.php");
+        }
+
+        
+
+        
 
 
         public function ShowAddView(): void
@@ -204,7 +226,7 @@
                 else
                 {
                     $msgErrorFilter = ERROR_JOBOFFER_FILTER;
-                    $jobOfferList = $this->jobOfferDAO->GetAll();
+                    $jobOfferList = $this->jobOfferDAO->GetAll(FILTER_ALL);
                 }
 
                 $jobOfferList = array();
@@ -230,4 +252,26 @@
             require_once(VIEWS_PATH."job-offer-edit.php");
         }
 
+        public function ShowApplicationsView()
+        {
+            $jobOfferListAll = $this->GetAll();
+            $jobOfferList = array();
+            $userList = array();
+
+            foreach ($jobOfferListAll as $jobOffer)
+            {
+                /* array_push($jobOfferList[$jobOffer], $this->userController->getUserById($jobOffer->getUserId())); */ //Associative Array
+                if(!is_null($jobOffer->getUserId()))
+                {
+                    array_push($jobOfferList, $jobOffer);
+                    array_push($userList, $this->userController->getUserById($jobOffer->getUserId()));
+                }
+                
+            }
+            
+            require_once(VIEWS_PATH."student-application.php");
+        }
+
+
     }
+?>

@@ -53,6 +53,7 @@ require_once('nav.php');
                 <form id="edit" action="<?php echo FRONT_ROOT ?>JobOffer/ShowEditView" name='edit' method='POST'></form>
                 <form id="delete" action="<?php echo FRONT_ROOT ?>JobOffer/Delete" name='delete' method='POST'></form>
                 <form id="apply" action="<?php echo FRONT_ROOT ?>JobOffer/Apply" name='apply' method='POST'></form>
+                <pre><?php var_dump($userList)?></pre>
                 <?php
                 foreach ($jobOfferList as $jobOffer) {
                 ?>
@@ -88,7 +89,7 @@ require_once('nav.php');
                             <td>
 
                                 <div class="float-left pt-2 ml-3 h5">
-                                    <strong style="color: green;"><?php echo  ?></strong>
+                                    <strong style="color: green;"><?php echo "tomada por ". $userList[$jobOffer->getUserId()]  ?></strong>
                                 </div>
 
                                 <div class="float-right">

@@ -89,7 +89,7 @@
         {
             try
             {
-                $jobOfferList = $this->GetAll();
+                $jobOfferList = $this->GetAll(FILTER_ALL);
 
                 $jobPositionDAO = new JobPositionDAO();
 
@@ -315,7 +315,33 @@
         }
 
 
-        public function Apply(int $jobOfferId, int $userId): void
+        public function Apply(int $jobOfferId, int $userId, bool $flag): void
+        {
+            try
+            {
+                if ($flag) {
+                    $query = "UPDATE ".$this->tableName." SET user_id = :user_id WHERE job_offer_id = :job_offer_id ;";
+                }
+                else
+                {
+                    $query = "UPDATE ".$this->tableName." SET user_id = ". NULL ." WHERE job_offer_id = :job_offer_id ;";
+                }
+
+                $parameters["user_id"] = $userId;
+                $parameters["job_offer_id"] = $jobOfferId;
+
+                $this->connection = Connection::GetInstance();
+
+                $this->connection->ExecuteNonQuery($query, $parameters);
+                
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+        /* public function DeleteApplication(int $jobOfferId, int $userId): void
         {
             try
             {
@@ -333,7 +359,7 @@
             {
                 throw $ex;
             }
-        }
+        } */
 
 
         public function IsUserIdInOffer(int $userId): bool
@@ -376,6 +402,64 @@
             catch (Exception $ex)
             {
                 throw $ex;
+            }
+        }
+
+        public function GetJobOfferByUserID($userId)
+        {
+            {
+                try
+                {
+                    $jobOfferList = array();
+                    //change the name of the columns with as
+                    $query = "SELECT jo.user_id, jo.description as job_offer_description ,jo.publication_date,jo.expiration_date,
+                                     jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description, cr.description,
+                                     jp.job_position_id, cr.career_id, cp.company_id
+                                FROM JobOffers jo
+                          INNER JOIN Companies cp on jo.company_id = cp.company_id
+                          INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
+                          INNER JOIN Careers cr on jp.career_id = cr.career_id
+                               WHERE jo.active = :active AND jo.expiration_date > curdate() AND user_id = :userId ;";
+    
+                    $parameters['active'] = true;
+                    $parameters['userId'] = $userId;
+                    
+                    $this->connection = Connection::GetInstance();
+    
+                    $resultSet = $this->connection->Execute($query, $parameters);
+    
+                    if (!empty($resultSet))
+                    {
+                        foreach ($resultSet as $row)
+                        {
+                            $jobOffer = new JobOffer();
+                            
+                            $jobOffer->setJobOfferId($row["job_offer_id"]);
+    
+                            $jobPosition = new JobPosition($row['job_position_id']);
+                            $jobPosition->setCareerId($row['career_id']);
+                            $jobPosition->setDescription($row['job_position_description']);
+                            $jobOffer->setJobPosition($jobPosition);
+                            
+                            $company = new Company($row['company_id']);
+                            $company->setName($row["name"]);
+                            $company->setCity($row["city"]);
+                            $jobOffer->setCompany($company);
+    
+                            $jobOffer->setDescription($row["job_offer_description"]);
+                            $jobOffer->setPublicationDate(new DateTime($row["publication_date"]));
+                            $jobOffer->setExpirationDate(new DateTime($row["expiration_date"]));
+    
+                            array_push($jobOfferList ,$jobOffer);
+                        }
+                    }
+    
+                    return $jobOfferList;
+                }
+                catch (Exception $ex)
+                {
+                    throw $ex;
+                }
             }
         }
 

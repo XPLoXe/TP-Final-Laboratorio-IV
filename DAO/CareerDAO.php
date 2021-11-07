@@ -34,6 +34,18 @@
             }
         }
 
+        /* public function Delete()
+        {
+
+        }
+
+        public function Edit()
+        {
+
+        } */
+
+        
+
 
         public function UpdateDatabaseFromAPI(): void
         {
@@ -138,6 +150,39 @@
                 throw $ex;
             }
         }
+
+
+        public function GetCareerById($id): Career
+        {
+            try
+            {
+                $DBcareerList = array();
+
+                $query = "SELECT * FROM ".$this->tableName." WHERE career_id = :id;";
+
+                $parameters['id'] = $id;
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query, $parameters);
+                
+                foreach ($resultSet as $row)
+                {                
+                    $career = new Career();
+                    $career->setCareerId($row["career_id"]);
+                    $career->setDescription($row["description"]);
+                    $career->setActive($row["active"]);
+                }
+
+                return $career;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+        
 
 
         private function GetCareersFromApi()
