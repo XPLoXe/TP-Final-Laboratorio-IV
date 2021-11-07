@@ -38,6 +38,7 @@
         <div class="dropdown-menu mt-1" style="background-color: #343a40">
           <a class="nav-link" href="<?php echo FRONT_ROOT ?>Student/ShowListView">Listar</a>
           <a class="nav-link" href="<?php echo FRONT_ROOT ?>Login/ShowSignupView">Registrar</a>
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/ShowApplicationsView">Postulaciones</a>
         </div>
       </li>
 

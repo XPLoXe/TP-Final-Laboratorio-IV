@@ -38,7 +38,7 @@
                         
                         if ($user->getUserRole()->getDescription() == ROLE_ADMIN)
                         {
-                            $jobOfferDAO->tryDatabaseUpdate();
+                            /* $jobOfferDAO->tryDatabaseUpdate(); */
 
                             $_SESSION["loggedUser"] = $user;   
                             require_once(VIEWS_PATH."home.php");
@@ -47,7 +47,7 @@
                         {
                             if ($StudentController->getStudentByEmail($email)->isActive())  //checks if user is active in the API 
                             {
-                                $jobOfferDAO->tryDatabaseUpdate();
+                                /* $jobOfferDAO->tryDatabaseUpdate(); */
 
                                 $_SESSION["loggedUser"] = $user;
                                 require_once(VIEWS_PATH."home.php");
@@ -100,4 +100,6 @@
             $studentRoleId = $userRoleController->getIdByDescription(ROLE_STUDENT);
             require_once(VIEWS_PATH."signup.php");
         }
+
+       
     }

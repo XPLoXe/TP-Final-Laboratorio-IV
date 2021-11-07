@@ -10,15 +10,18 @@
     use DAO\CompanyDAO;
     use Utils\Utils as Utils;
     use DateTime;
-
     use DAO\JobPositionDAO as JobPositionDAO;
+    use DAO\UserDAO;
 
-    class JobOfferController
+
+class JobOfferController
     {
         private $jobOfferDAO;
         private $jobPositionController;
         private $companyDAO;
         private $jobPositionDAO;
+        private $userController;
+
 
 
         public function __construct()
@@ -26,7 +29,8 @@
             $this->jobOfferDAO = new JobOfferDAO();
             $this->companyDAO = new CompanyDAO();
             $this->jobPositionDAO = new JobPositionDAO();
-            $this->jobPositionController = new JobPositionController;
+            $this->jobPositionController = new JobPositionController();
+            $this->userController = new UserController();
         }
 
 
@@ -193,5 +197,23 @@
             $jobOffers = $this->jobOfferDAO->GetAllAvailable();
 
             return $jobOffers;
+        }
+
+        public function GetAllUnavailable(): array
+        {
+            return $this->jobOfferDAO->GetAllUnavailable();
+        }
+
+        public function ShowApplicationsView()
+        {
+            $jobOfferList = $this->GetAllUnavailable();
+            $userList = array();
+
+            foreach ($jobOfferList as $jobOffer)
+            {
+                array_push($jobOfferList[$jobOffer], $this->userController->getUserById($jobOffer->getUserId())); //Associative Array
+            }
+            
+            require_once(VIEWS_PATH."student-application.php");
         }
     }
