@@ -111,7 +111,7 @@ require_once('nav.php');
                                         if(!is_null($jobOffer->getUserId()))
                                         {
                                             echo '<strong style="color: green;">Ha sido tomado</strong>';
-                                            echo '<input type="hidden" form="deleteApplicant" value="<?php echo $jobOffer->getUserId() ?>" name="userId">';
+                                            ?><input type="hidden" form="deleteApplicant" value="<?php echo $jobOffer->getUserId() ?>" name="userId"><?php
                                             echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Eliminar Postulante</button>';
                                         }
                                         if(!empty($jobOffer->getFlyer()))
