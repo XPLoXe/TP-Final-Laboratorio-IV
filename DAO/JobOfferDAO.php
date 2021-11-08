@@ -315,7 +315,7 @@
         }
 
 
-        public function Apply(int $jobOfferId, int $userId, bool $flag): void
+        public function Apply(int $jobOfferId, int $userId, bool $flag): string
         {
             try
             {
@@ -324,10 +324,12 @@
                 if ($flag) 
                 {
                     $parameters["user_id"] = $userId;
+                    $message = APPLY_SUCCESS;
                 }
                 else
                 {
                     $parameters["user_id"] = NULL;
+                    $message = APPLY_DELETE;
                 }
 
                 $parameters["job_offer_id"] = $jobOfferId;
@@ -341,6 +343,8 @@
             {
                 throw $ex;
             }
+
+            return $message;
         }
 
 

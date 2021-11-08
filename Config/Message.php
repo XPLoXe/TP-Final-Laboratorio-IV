@@ -13,4 +13,4 @@ define("ERROR_COMPANY_FILTER", "<strong style='color:red; font-size:small;'> Nin
 define("ERROR_COMPANY_DUPLICATE", "<strong style='color:red; font-size:small;'> La Compañia ya existe </strong>");
 define("ERROR_STUDENT_FILTER", "<strong style='color:red; font-size:small;'> Ningun estudiante contiene el apellido ingresado </strong>");
 define("APPLY_SUCCESS", "<h4 class = 'text-center' style='color: green;'> ¡Felicitaciones! La aplicación fue exitosa </h4>");
-define("APPLY_DELETE", "<h4 class = 'text-center' style='color: green;'> La aplicación ha sido eliminada exitosamente </h4>");
+define("APPLY_DELETE", "<h4 class = 'text-center' style='color: red;'> La aplicación ha sido eliminada exitosamente </h4>");

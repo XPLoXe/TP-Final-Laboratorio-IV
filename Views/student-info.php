@@ -22,6 +22,7 @@
 
 <div class="container emp-profile">
             <form id="info" action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='info' method='POST' class="bg-light-alpha p-5" >
+                
                 <div class="row">
                     <div class="col-md-6">
                         <div class="profile-head">
@@ -146,4 +147,6 @@
                 </div>
             </form>           
         </div>
-        <form id="deleteApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='deleteApplicant' method='POST' class="bg-light-alpha p-5" ></form>
+        <form id='deleteApplicant' action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='deleteApplicant' method='POST' ></form>
+                                
+        
