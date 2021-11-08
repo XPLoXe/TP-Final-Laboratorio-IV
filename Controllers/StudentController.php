@@ -1,6 +1,8 @@
 <?php
     namespace Controllers;
 
+    use Controllers\JobOfferController as JobOfferController;
+    use DAO\CareerDAO;
     use DAO\StudentDAO as StudentDAO;
     use Models\Student as Student;
     use Utils\Utils as Utils;
@@ -8,11 +10,13 @@
     class StudentController
     {
         private $studentDAO;
-
+        private $careerDAO;
 
         public function __construct()
         {
             $this->studentDAO = new StudentDAO();
+            $this->careerDAO = new CareerDAO;
+            
         }
 
 
@@ -45,6 +49,17 @@
             $studentList = $this->studentDAO->GetAll();
 
             require_once(VIEWS_PATH."student-list.php");
+        }
+
+        public function ShowInfoView(): void
+        {
+            Utils::checkUserLoggedIn();
+            $student = $this->studentDAO->GetStudentByEmail($_SESSION["loggedUser"]->getEmail());
+            $career = $this->careerDAO->GetCareerById($student->getCareerId());
+            $jobOfferController = new JobOfferController();
+            $jobOffer = $jobOfferController->GetJobOfferByUserId($_SESSION["loggedUser"]->getUserId());
+
+            require_once(VIEWS_PATH."student-info.php");
         }
 
 

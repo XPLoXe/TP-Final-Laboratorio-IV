@@ -38,7 +38,7 @@
         }
     
 
-        public function GetJobPositionByName(string $name): JobPosition
+        public function GetJobPositionByName(string $name): array
         {
             return $this->jobPositionDAO->GetJobPositionByName($name);
         }

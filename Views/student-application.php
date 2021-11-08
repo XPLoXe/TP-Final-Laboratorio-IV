@@ -1,6 +1,5 @@
 <?php
 
-
 use Utils\Utils as Utils;
 
 if (!Utils::isUserLoggedIn())
@@ -18,7 +17,7 @@ require_once('nav.php');
             <h2 class="mb-4">Ofertas laborales</h2>
 
             <div class="mb-4">
-                <form action="<?php echo FRONT_ROOT ?>JobOffer/FilterByPosition" method="post" class="bg-light-alpha p-4">
+                <form action="<?php echo FRONT_ROOT ?>JobOffer/FilterByName" method="post" class="bg-light-alpha p-4">
                     <div class="input-group input-group-lg col-md-6 mx-auto">
                         <input type="text" name="nameToFilter" class="form-control mx-3" placeholder="Ingrese puesto de trabajo">
                         <button type="submit" name="button" class="btn btn-dark d-block ">Filtrar</button>
@@ -47,17 +46,6 @@ require_once('nav.php');
                     else
                         return false;
                 }
-
-                function confirmDeleteApplicant() {
-
-                    var response = confirm('¿Está seguro de que desea borrar al aplicante?');
-
-                    if (response == true)
-                        return true;
-                    else
-                        return false;
-                }
-                
             </script>
 
             <?php
@@ -65,7 +53,7 @@ require_once('nav.php');
                 <form id="edit" action="<?php echo FRONT_ROOT ?>JobOffer/ShowEditView" name='edit' method='POST'></form>
                 <form id="delete" action="<?php echo FRONT_ROOT ?>JobOffer/Delete" name='delete' method='POST'></form>
                 <form id="apply" action="<?php echo FRONT_ROOT ?>JobOffer/Apply" name='apply' method='POST'></form>
-                <form id="deleteApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='deleteApplicant' method='POST'></form>
+                <pre><?php var_dump($userList)?></pre>
                 <?php
                 foreach ($jobOfferList as $jobOffer) {
                 ?>
@@ -82,15 +70,8 @@ require_once('nav.php');
                                         <h3 class="my-auto ml-auto"><?php echo $jobOffer->getJobPosition()->getDescription() ?></h3>
                                     </div>
                                     <div class="col align-self-end text-right">
-                                        <h6><?php echo 'Publicado hace ' . daysBetweenDates($jobOffer->getPublicationDate()->format('Y-m-d'), date('Y-m-d')) . ' días' ?></h6>
-                                        <?php
-
-                                            if($jobOffer->getExpirationDate()->format('Y-m-d') > date('Y-m-d'))
-                                                echo '<h6> Vence el día ' . $jobOffer->getExpirationDate()->format('d-m-Y') . '</h6>' ;
-                                            else
-                                                echo '<h6 style="color: red"> Vencio el día ' . $jobOffer->getExpirationDate()->format('d-m-Y') . '</h6>' ;
-
-                                        ?>
+                                        <h6><?php echo 'Publicado hace ' . daysBetweenDates($jobOffer->getPublicationDate()->format('Y-m-d'), date('Y-m-d')) . ' días' ?></h3>
+                                            <h6><?php echo 'Vence el día ' . $jobOffer->getExpirationDate()->format('d-m-Y') . '' ?></h3>
                                     </div>
                                 </div>
                             </td>
@@ -107,11 +88,9 @@ require_once('nav.php');
                         <tr>
                             <td>
 
-                                <?php if(!is_null($jobOffer->getUserId())){  ?>
                                 <div class="float-left pt-2 ml-3 h5">
-                                    <strong style="color: green;">Ha sido tomado</strong>
-                                    <?php echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Eliminar Postulante</button>';?>
-                                </div><?php } ?>
+                                    <strong style="color: green;"><?php echo "tomada por ". $userList[$jobOffer->getUserId()]  ?></strong>
+                                </div>
 
                                 <div class="float-right">
                                     <?php

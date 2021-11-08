@@ -60,6 +60,18 @@
             return null;
         }
 
+        public function GetCareerIdByStudentId(string $studentId): int
+        {
+            $this->RetrieveData();
+
+            foreach ($this->studentList as $student) 
+            {
+                if ($student->getStudentId() == $studentId)
+                    return $student->getCareerId();
+            }
+
+            return null;  
+        }
 
         private function RetrieveData(): void // TODO: add $msg for situation where it can't retrieve students from API
         {

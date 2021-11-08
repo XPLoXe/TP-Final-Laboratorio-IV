@@ -102,7 +102,7 @@
 
                 $resultSet = $this->connection->Execute($query, $parameters);
 
-                if (!is_empty($resultSet))                         
+                if (!empty($resultSet))                         
                 {   
                     if (strcmp($email, $resultSet[0]["email"]) == 0)
                         return true;
@@ -194,7 +194,7 @@
             {
                 $userList = array();
 
-                $query = "SELECT * FROM ".$this->tableName." WHERE email = :user_id ;";
+                $query = "SELECT * FROM ".$this->tableName." WHERE user_id = :user_id ;";
 
                 $parameters['user_id'] = $userId;
 
@@ -211,7 +211,6 @@
                 $user->setUserRole($this->userRoleDAO->GetUserRoleById($resultSet[0]["user_role_id"])); // TODO: use INNER JOIN
                 $user->setAssociatedId($resultSet[0]["associated_id"]);
                 $user->setActive($resultSet[0]["active"]);
-
                 return $user;
             }
             catch (Exception $ex)
