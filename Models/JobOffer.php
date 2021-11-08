@@ -70,6 +70,11 @@
         {
             return $this->company;
         }
+
+        public function getCompanyName(): string
+        {
+            return $this->company->getName();
+        }
     
 
         public function setCompany(Company $company): void

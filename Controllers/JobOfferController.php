@@ -157,14 +157,10 @@
 
         public function DeleteApplicant(array $parameters): void
         {
-            $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId(), false);
+            $this->jobOfferDAO->Apply($parameters["jobOfferId"], $_SESSION["loggedUser"]->getUserId(), false);
             $message = APPLY_SUCCESS;
             require_once(VIEWS_PATH."home.php");
         }
-
-        
-
-        
 
 
         public function ShowAddView(): void

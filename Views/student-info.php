@@ -8,8 +8,20 @@
     require_once('nav.php');
 ?>
 
+<script>
+    function confirmDeleteApplicant() {
+
+        var response = confirm('¿Está seguro de que desea borrar al aplicante?');
+
+        if (response == true)
+            return true;
+        else
+            return false;
+    }
+</script>
+
 <div class="container emp-profile">
-            <form method="post">
+            <form id="info" action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='info' method='POST' class="bg-light-alpha p-5" >
                 <div class="row">
                     <div class="col-md-6">
                         <div class="profile-head">
@@ -28,9 +40,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-2">
-                        <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile"/>
-                    </div>
+                    
                 </div>
                 <div class="row">
                     <div class="col-md-8">
@@ -71,63 +81,69 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <label>User Id</label>
+                                        <label>DNI</label>
                                     </div>
                                     <div class="col-md-6">
-                                        <p><?php echo $student->getStudentId(); ?></p>
+                                        <p><?php echo $student->getDni(); ?></p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Legajo</label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><?php echo $student->getFileNumber(); ?></p>
                                     </div>
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>Experience</label>
+                                <?php if (!is_null($jobOffer))
+                                { ?>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Compañía</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><?php echo $jobOffer->getCompanyName(); ?></p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <p>Expert</p>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Posición</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><?php echo $jobOffer->getJobPosition()->getDescription(); ?></p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>Hourly Rate</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label>Descripción</label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><?php echo $jobOffer->getDescription(); ?></p>
+                                        </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <p>10$/hr</p>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label><?php echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Cancelar Postulación</button>';?></label>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button class="btn-success mx-2 btn" type="submit" name="id" form="info" value="<?php echo $jobOffer->getCompanyId() ?>">Detalles de la Compañía</button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>Total Projects</label>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p>230</p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>English Level</label>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p>Expert</p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label>Availability</label>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p>6 months</p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <label>Your Bio</label><br/>
-                                        <p>Your detail description</p>
-                                    </div>
-                                </div>
+
+
+                                <?php } 
+                                    else {?>
+                                        <div class="col-md-6">
+                                            <label>Usted no aplicó a ninguna Oferta Laboral </label>
+                                        </div>
+                                    <?php }?>
                             </div>
                         </div>
                     </div>
                 </div>
             </form>           
         </div>
+        <form id="deleteApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='deleteApplicant' method='POST' class="bg-light-alpha p-5" ></form>

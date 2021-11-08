@@ -319,15 +319,17 @@
         {
             try
             {
-                if ($flag) {
-                    $query = "UPDATE ".$this->tableName." SET user_id = :user_id WHERE job_offer_id = :job_offer_id ;";
+                $query = "UPDATE ".$this->tableName." SET user_id = :user_id WHERE job_offer_id = :job_offer_id ;";
+
+                if ($flag) 
+                {
+                    $parameters["user_id"] = $userId;
                 }
                 else
                 {
-                    $query = "UPDATE ".$this->tableName." SET user_id = ". NULL ." WHERE job_offer_id = :job_offer_id ;";
+                    $parameters["user_id"] = NULL;
                 }
 
-                $parameters["user_id"] = $userId;
                 $parameters["job_offer_id"] = $jobOfferId;
 
                 $this->connection = Connection::GetInstance();
@@ -341,11 +343,12 @@
             }
         }
 
+
         /* public function DeleteApplication(int $jobOfferId, int $userId): void
         {
             try
             {
-                $query = "UPDATE ".$this->tableName." SET user_id = :user_id WHERE job_offer_id = :job_offer_id ;";
+                $query = "UPDATE ".$this->tableName." SET user_id = ". NULL ." WHERE job_offer_id = :job_offer_id ;";
 
                 $parameters["user_id"] = $userId;
                 $parameters["job_offer_id"] = $jobOfferId;
@@ -359,7 +362,7 @@
             {
                 throw $ex;
             }
-        } */
+        }  */
 
 
         public function IsUserIdInOffer(int $userId): bool
@@ -419,7 +422,7 @@
                           INNER JOIN Companies cp on jo.company_id = cp.company_id
                           INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
                           INNER JOIN Careers cr on jp.career_id = cr.career_id
-                               WHERE jo.active = :active AND jo.expiration_date > curdate() AND user_id = :userId ;";
+                               WHERE jo.active = :active AND jo.user_id = :userId;";
     
                     $parameters['active'] = true;
                     $parameters['userId'] = $userId;
@@ -427,15 +430,15 @@
                     $this->connection = Connection::GetInstance();
     
                     $resultSet = $this->connection->Execute($query, $parameters);
-    
+                    
+                    $jobOffer = new JobOffer();
+
                     if (!empty($resultSet))
                     {
                         foreach ($resultSet as $row)
                         {
-                            $jobOffer = new JobOffer();
-                            
                             $jobOffer->setJobOfferId($row["job_offer_id"]);
-    
+
                             $jobPosition = new JobPosition($row['job_position_id']);
                             $jobPosition->setCareerId($row['career_id']);
                             $jobPosition->setDescription($row['job_position_description']);
@@ -445,16 +448,18 @@
                             $company->setName($row["name"]);
                             $company->setCity($row["city"]);
                             $jobOffer->setCompany($company);
-    
+
                             $jobOffer->setDescription($row["job_offer_description"]);
                             $jobOffer->setPublicationDate(new DateTime($row["publication_date"]));
                             $jobOffer->setExpirationDate(new DateTime($row["expiration_date"]));
-    
-                            array_push($jobOfferList ,$jobOffer);
                         }
                     }
+                    else
+                    {
+                        return null;
+                    }
     
-                    return $jobOfferList;
+                    return $jobOffer;
                 }
                 catch (Exception $ex)
                 {

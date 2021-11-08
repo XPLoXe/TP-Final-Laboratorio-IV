@@ -65,7 +65,7 @@ require_once('nav.php');
                 <form id="edit" action="<?php echo FRONT_ROOT ?>JobOffer/ShowEditView" name='edit' method='POST'></form>
                 <form id="delete" action="<?php echo FRONT_ROOT ?>JobOffer/Delete" name='delete' method='POST'></form>
                 <form id="apply" action="<?php echo FRONT_ROOT ?>JobOffer/Apply" name='apply' method='POST'></form>
-                <form id="deleteApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='apply' method='POST'></form>
+                <form id="deleteApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='deleteApplicant' method='POST'></form>
                 <?php
                 foreach ($jobOfferList as $jobOffer) {
                 ?>
@@ -110,7 +110,7 @@ require_once('nav.php');
                                 <?php if(!is_null($jobOffer->getUserId())){  ?>
                                 <div class="float-left pt-2 ml-3 h5">
                                     <strong style="color: green;">Ha sido tomado</strong>
-                                    <?php echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="delete" value=' . $jobOffer->getJobOfferId() . '>Eliminar Postulante</button>';?>
+                                    <?php echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Eliminar Postulante</button>';?>
                                 </div><?php } ?>
 
                                 <div class="float-right">
