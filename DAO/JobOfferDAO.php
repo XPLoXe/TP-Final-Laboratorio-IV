@@ -213,23 +213,12 @@
         }
 
 
-        public function Apply(int $jobOfferId, int $userId, bool $flag): string
+        public function Apply(int $jobOfferId, int $userId): void
         {
             try
             {
                 $query = "UPDATE ".$this->tableName." SET user_id = :user_id WHERE job_offer_id = :job_offer_id ;";
-
-                if ($flag) 
-                {
-                    $parameters["user_id"] = $userId;
-                    $message = APPLY_SUCCESS;
-                }
-                else
-                {
-                    $parameters["user_id"] = NULL;
-                    $message = APPLY_DELETE;
-                }
-
+                $parameters["user_id"] = $userId;
                 $parameters["job_offer_id"] = $jobOfferId;
 
                 $this->connection = Connection::GetInstance();
@@ -241,9 +230,29 @@
             {
                 throw $ex;
             }
-
-            return $message;
+            
         }
+
+
+        public function DeleteApplication(int $jobOfferId): void
+        {
+            try
+            {
+                $query = "UPDATE ".$this->tableName." SET user_id = :user_id WHERE job_offer_id = :job_offer_id ;";
+
+                $parameters["user_id"] = NULL;
+                $parameters["job_offer_id"] = $jobOfferId;
+
+                $this->connection = Connection::GetInstance();
+
+                $this->connection->ExecuteNonQuery($query, $parameters);
+                
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        } 
 
 
         public function IsUserIdInOffer(int $userId): bool
@@ -350,7 +359,7 @@
             }
         }
 
-        public function GetJobOfferById($jobOfferList,$jobOfferId): JobOffer
+        public function GetJobOfferById($jobOfferList,$jobOfferId)
         {
 
             foreach($jobOfferList as $jobOffer){

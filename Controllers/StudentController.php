@@ -20,9 +20,15 @@
         }
 
 
-        public function GetStudentByEmail(string $email): Student
+        public function GetStudentByEmail(string $email)
         {
             return $this->studentDAO->GetStudentByEmail($email);
+        }
+
+
+        public function GetStudentById(int $id)
+        {
+            return $this->studentDAO->GetStudentById($id);
         }
 
 

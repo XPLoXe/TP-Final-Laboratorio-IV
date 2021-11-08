@@ -65,6 +65,7 @@ require_once('nav.php');
                 <form id="delete" action="<?php echo FRONT_ROOT ?>JobOffer/Delete" name='delete' method='POST'></form>
                 <form id="apply" action="<?php echo FRONT_ROOT ?>JobOffer/Apply" name='apply' method='POST'></form>
                 <form id="deleteApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='deleteApplicant' method='POST'></form>
+                <form id="generatePDF" action="<?php echo FRONT_ROOT ?>JobOffer/GeneratePDF" name='generatePDF' method='POST' target='_blank'></form>
                 <?php
                 foreach ($jobOfferList as $jobOffer) {
                 ?>
@@ -105,12 +106,12 @@ require_once('nav.php');
 
                         <tr>
                             <td>
-
                                 <div class="float-left ml-3 h5">
                                     <?php 
                                         if(!is_null($jobOffer->getUserId()))
                                         {
                                             echo '<strong style="color: green;">Ha sido tomado</strong>';
+                                            echo '<input type="hidden" form="deleteApplicant" value="<?php echo $jobOffer->getUserId() ?>" name="userId">';
                                             echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Eliminar Postulante</button>';
                                         }
                                         if(!empty($jobOffer->getFlyer()))
@@ -124,7 +125,8 @@ require_once('nav.php');
                                         echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="apply" value=' . $jobOffer->getJobOfferId() . '>Postularse</button>';
 
                                     if (Utils::isAdmin()) {
-                                        echo '<button class="btn btn-success" type= "submit" name="jobOfferId" form="edit" value=' . $jobOffer->getJobOfferId() . '>Editar</button> ';
+                                        echo '<button class="btn btn-warning mx-2" type= "submit" name="jobOfferId" form="generatePDF" value=' . $jobOffer->getJobOfferId() . '>Generar PDF</button> ';
+                                        echo '<button class="btn btn-success mx-2" type= "submit" name="jobOfferId" form="edit" value=' . $jobOffer->getJobOfferId() . '>Editar</button> ';
                                         echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDelete()" name="jobOfferId" form="delete" value=' . $jobOffer->getJobOfferId() . '>Eliminar</button>';
                                     }
                                     ?>

@@ -12,8 +12,9 @@
     use Models\JobPosition as JobPosition;
     use Utils\Utils as Utils;
     use DateTime;
+    use FPDF;
 
-    class JobOfferController
+class JobOfferController
     {
         private $jobPositionController;
         private $companyDAO;
@@ -153,7 +154,7 @@
         public function Apply(array $parameters): void
         {
             if (Utils::isStudent())
-                $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId(), true);
+                $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId());
 
             $message = APPLY_SUCCESS;
             require_once(VIEWS_PATH."home.php");
@@ -161,7 +162,26 @@
 
         public function DeleteApplicant(array $parameters): void
         {
-            $message = $this->jobOfferDAO->Apply($parameters["jobOfferId"], $_SESSION["loggedUser"]->getUserId(), false);
+            
+            $userController = new UserController;
+            $user = $userController->GetUserById($parameters["userId"]);
+            $this->jobOfferDAO->DeleteApplication($parameters["jobOfferId"]);
+
+            if (Utils::isAdmin()) {
+                $to_email = $user->getEmail();
+                $subject = APPLY_DELETE_EMAIL_SUBJECT;
+                $body = APPLY_DELETE_EMAIL;
+                $headers = APPLY_DELETE_EMAIL_HEADER;
+                mail($to_email, $subject, $body, $headers);
+
+                /* if (mail($to_email, $subject, $body, $headers)) {
+                    echo "Email enviado correctamente a $to_email...";
+                } else {
+                    echo "Envio de email fallido";
+                } */
+            }
+
+            $message = APPLY_DELETE;
             require_once(VIEWS_PATH."home.php");
         }
 
@@ -183,7 +203,7 @@
         public function ShowListView(): void
         {
             Utils::checkUserLoggedIn();
-
+        
             if (Utils::isStudent())
             {
                 $isLookingForJob = $this->jobOfferDAO->isUserIdInOffer($_SESSION["loggedUser"]->getUserId());
@@ -259,7 +279,7 @@
 
             foreach ($jobOfferListAll as $jobOffer)
             {
-                /* array_push($jobOfferList[$jobOffer], $this->userController->getUserById($jobOffer->getUserId())); */ //Associative Array
+                /* array_push($jobOfferList[$jobOffer], $this->userController->getUserById($jobOffer->getUserId())); */ //Associative Array for multiple applicants
                 if(!is_null($jobOffer->getUserId()))
                 {
                     array_push($jobOfferList, $jobOffer);
@@ -271,6 +291,45 @@
             require_once(VIEWS_PATH."student-application.php");
         }
 
+        public function GeneratePDF(array $parameters)
+        {
+            $jobOffer = $this->GetJobOfferById($parameters["jobOfferId"]);
+
+            $this->CreatePDF($jobOffer);
+
+            require_once(VIEWS_PATH."job-offer-list.php");
+        }
+
+        public function CreatePDF(JobOffer $jobOffer): void //must be created in another function because of how FPDF works
+        {
+            ob_end_clean(); //clears
+            $pdf=new FPDF();
+
+            $pdf->AddPage();
+            $pdf->SetFont('Arial', 'B', 20);
+            $pdf->Cell(60,20,$jobOffer->getCompanyName());
+            $pdf->Ln(20);   //line break
+
+            $pdf->SetFont('Arial', 'B', 16);
+            $pdf->Cell(60,20,"Ciudad: ");
+            $pdf->SetFont('Arial', '', 16);
+            $pdf->Cell(60,20,$jobOffer->getCompany()->getCity());
+            $pdf->Ln(20);
+
+            $pdf->SetFont('Arial', 'B', 14);
+            $pdf->Cell(60,20,"Puesto Laboral: ");
+            $pdf->SetFont('Arial', '', 14);
+            $pdf->Cell(60,20,$jobOffer->getJobPosition()->getDescription());
+            $pdf->Ln(20);
+
+            $pdf->SetFont('Arial', 'B', 12);
+            $pdf->Cell(60,20,"ID de usuario postulado: ");
+            $pdf->SetFont('Arial', '', 12);
+            $pdf->Cell(60,20,$jobOffer->getUserId());
+            $pdf->Ln(20);   
+
+            $pdf->Output("OfficeForm.pdf", "I");
+        }
 
     }
 ?>
