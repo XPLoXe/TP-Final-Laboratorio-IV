@@ -162,8 +162,7 @@
             $this->jobOfferDAO->DeleteApplication($parameters["jobOfferId"]);
 
             if (Utils::isAdmin()) {
-                /* $to_email = $student->getEmail(); */
-                $to_email = "aleeeboki@gmail.com";
+                $to_email = $student->getEmail();
                 $subject = APPLY_DELETE_EMAIL_SUBJECT;
                 $body = APPLY_DELETE_EMAIL;
                 $headers = APPLY_DELETE_EMAIL_HEADER;
@@ -174,6 +173,7 @@
                     echo "Envio de email fallido";
                 }
             }
+            
             $message = APPLY_DELETE;
             require_once(VIEWS_PATH."home.php");
         }
