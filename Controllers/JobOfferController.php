@@ -157,12 +157,13 @@
 
         public function DeleteApplicant(array $parameters): void
         {
-            $studentController = new StudentController;
-            $student = $studentController->GetStudentById($parameters["userId"]);
+            
+            $userController = new UserController;
+            $user = $userController->GetUserById($parameters["userId"]);
             $this->jobOfferDAO->DeleteApplication($parameters["jobOfferId"]);
 
             if (Utils::isAdmin()) {
-                $to_email = $student->getEmail();
+                $to_email = $user->getEmail();
                 $subject = APPLY_DELETE_EMAIL_SUBJECT;
                 $body = APPLY_DELETE_EMAIL;
                 $headers = APPLY_DELETE_EMAIL_HEADER;
@@ -173,7 +174,7 @@
                     echo "Envio de email fallido";
                 }
             }
-            
+
             $message = APPLY_DELETE;
             require_once(VIEWS_PATH."home.php");
         }
