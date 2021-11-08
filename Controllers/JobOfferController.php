@@ -168,12 +168,13 @@ class JobOfferController
                 $subject = APPLY_DELETE_EMAIL_SUBJECT;
                 $body = APPLY_DELETE_EMAIL;
                 $headers = APPLY_DELETE_EMAIL_HEADER;
+                mail($to_email, $subject, $body, $headers);
 
-                if (mail($to_email, $subject, $body, $headers)) {
+                /* if (mail($to_email, $subject, $body, $headers)) {
                     echo "Email enviado correctamente a $to_email...";
                 } else {
                     echo "Envio de email fallido";
-                }
+                } */
             }
 
             $message = APPLY_DELETE;
@@ -323,10 +324,7 @@ class JobOfferController
             $pdf->Cell(60,20,$jobOffer->getUserId());
             $pdf->Ln(20);   
 
-            $pdf->SetFont('Arial', '', 12);
-            $pdf->Cell(60,20,$jobOffer->getDescription());
-
-            $pdf->Output();
+            $pdf->Output("OfficeForm.pdf", "I");
         }
 
     }
