@@ -324,7 +324,10 @@ class JobOfferController
             $pdf->Cell(60,20,$jobOffer->getUserId());
             $pdf->Ln(20);   
 
-            $pdf->Output("OfficeForm.pdf", "I");
+            $pdf->SetFont('Arial', '', 12);
+            $pdf->Cell(60,20,$jobOffer->getDescription());
+
+            $pdf->Output();
         }
 
     }
