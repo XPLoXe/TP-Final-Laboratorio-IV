@@ -48,6 +48,8 @@
             $jobOffer->setDescription($parameters["description"]);
             $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
             $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
+            if(!empty($parameters['flyer']['tmp_name']))
+                $jobOffer->setFlyer(base64_encode(file_get_contents($parameters['flyer']["tmp_name"])));
             
             $this->jobOfferDAO->Add($jobOffer);
 
@@ -118,6 +120,8 @@
             $jobOffer->setCompanyId($parameters['companyId']);      
             $jobOffer->setExpirationDate(new DateTime($parameters['expirationDate']));
             $jobOffer->setDescription($parameters['description']);
+            if(!empty($parameters['flyer']['tmp_name']))
+                $jobOffer->setFlyer($parameters['flyer']["tmp_name"]);
             
             $this->jobOfferDAO->Edit($jobOffer);
 

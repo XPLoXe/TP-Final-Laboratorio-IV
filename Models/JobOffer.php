@@ -13,6 +13,7 @@
         private DateTime $publicationDate;
         private DateTime $expirationDate;
         private bool $active;
+        private string $flyer; // base64 encode of the image
 
 
         public function getJobOfferId(): int
@@ -142,5 +143,15 @@
         public function setActive(bool $active): void
         {
             $this->active = $active;
+        }
+
+        public function getFlyer(): string
+        {
+            return $this->flyer;
+        }
+
+        public function setFlyer($flyer): void
+        {
+            $this->flyer = $flyer;
         }
     }

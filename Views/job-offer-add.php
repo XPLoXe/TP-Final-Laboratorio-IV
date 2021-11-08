@@ -44,6 +44,12 @@
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
+                                   <label for="">Flyer</label>
+                                   <input type="file" name="flyer" class="form-control" accept="image/png" required >
+                              </div>
+                         </div>
+                         <div class="col-lg-4">
+                              <div class="form-group">
                                    <label for="">Descripción</label>
                                    <textarea id="bio" name="description" class="form-control" required></textarea> 
                               </div>

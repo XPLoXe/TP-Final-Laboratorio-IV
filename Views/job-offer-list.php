@@ -57,7 +57,6 @@ require_once('nav.php');
                     else
                         return false;
                 }
-                
             </script>
 
             <?php
@@ -107,11 +106,17 @@ require_once('nav.php');
                         <tr>
                             <td>
 
-                                <?php if(!is_null($jobOffer->getUserId())){  ?>
-                                <div class="float-left pt-2 ml-3 h5">
-                                    <strong style="color: green;">Ha sido tomado</strong>
-                                    <?php echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Eliminar Postulante</button>';?>
-                                </div><?php } ?>
+                                <div class="float-left ml-3 h5">
+                                    <?php 
+                                        if(!is_null($jobOffer->getUserId()))
+                                        {
+                                            echo '<strong style="color: green;">Ha sido tomado</strong>';
+                                            echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Eliminar Postulante</button>';
+                                        }
+                                        if(!empty($jobOffer->getFlyer()))
+                                            echo '<a class="btn btn-success" href="data:image/png;base64,'.$jobOffer->getFlyer().'"  alt="image flyer" download>Descargar Flyer</a>';
+                                    ?>
+                                </div>
 
                                 <div class="float-right">
                                     <?php
