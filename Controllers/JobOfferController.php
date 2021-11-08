@@ -149,7 +149,7 @@
         public function Apply(array $parameters): void
         {
             if (Utils::isStudent())
-                $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId(), true);
+                $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId());
 
             $message = APPLY_SUCCESS;
             require_once(VIEWS_PATH."home.php");
@@ -157,7 +157,25 @@
 
         public function DeleteApplicant(array $parameters): void
         {
-            $message = $this->jobOfferDAO->Apply($parameters["jobOfferId"], $_SESSION["loggedUser"]->getUserId(), false);
+            
+            $userController = new UserController;
+            $user = $userController->GetUserById($parameters["userId"]);
+            $this->jobOfferDAO->DeleteApplication($parameters["jobOfferId"]);
+
+            if (Utils::isAdmin()) {
+                $to_email = $user->getEmail();
+                $subject = APPLY_DELETE_EMAIL_SUBJECT;
+                $body = APPLY_DELETE_EMAIL;
+                $headers = APPLY_DELETE_EMAIL_HEADER;
+
+                if (mail($to_email, $subject, $body, $headers)) {
+                    echo "Email enviado correctamente a $to_email...";
+                } else {
+                    echo "Envio de email fallido";
+                }
+            }
+
+            $message = APPLY_DELETE;
             require_once(VIEWS_PATH."home.php");
         }
 
@@ -179,7 +197,7 @@
         public function ShowListView(): void
         {
             Utils::checkUserLoggedIn();
-
+        
             if (Utils::isStudent())
             {
                 $isLookingForJob = $this->jobOfferDAO->isUserIdInOffer($_SESSION["loggedUser"]->getUserId());

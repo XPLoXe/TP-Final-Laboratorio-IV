@@ -34,7 +34,7 @@
         }
 
 
-        public function GetStudentByEmail(string $email): Student
+        public function GetStudentByEmail(string $email)
         {
             $this->RetrieveData();
 
@@ -47,7 +47,22 @@
             return null;
         }
 
-        public function GetStudentByLastName(string $lastName): Student
+
+        public function GetStudentById(int $id)
+        {
+            $this->RetrieveData();
+
+            foreach ($this->studentList as $student) 
+            {
+                if ($student->getStudentId() == $id)
+                    return $student;
+            }
+
+            return null;
+        }
+
+
+        public function GetStudentByLastName(string $lastName)
         {
             $this->RetrieveData();
 
@@ -60,7 +75,7 @@
             return null;
         }
 
-        public function GetCareerIdByStudentId(string $studentId): int
+        public function GetCareerIdByStudentId(string $studentId)
         {
             $this->RetrieveData();
 
