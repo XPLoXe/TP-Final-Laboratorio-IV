@@ -460,7 +460,7 @@
             }
         }
 
-        public function GetJobOfferById($jobOfferList,$jobOfferId): JobOffer
+        public function GetJobOfferById($jobOfferList,$jobOfferId)
         {
 
             foreach($jobOfferList as $jobOffer){

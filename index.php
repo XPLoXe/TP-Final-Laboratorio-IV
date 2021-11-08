@@ -7,6 +7,7 @@
 	require "Config/Autoload.php";
 	require "Config/Config.php";
 	require "Config/Message.php";
+	require "fpdf.php";
 
 	use Config\Autoload as Autoload;
 	use Config\Router 	as Router;
