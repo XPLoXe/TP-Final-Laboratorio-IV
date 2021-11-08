@@ -128,6 +128,9 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <label><?php echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Cancelar Postulación</button>';?></label>
+                                            <!-- <input type="hidden" value="<?php echo $jobOffer->getUserId()?>" name="userId" form="deleteApplicant"> -->
+                                            <?php echo '<input type="hidden" value='.$jobOffer->getUserId().' name="userId" form="deleteApplicant">' ?>
+                                            
                                         </div>
                                         <div class="col-md-6">
                                             <button class="btn-success mx-2 btn" type="submit" name="id" form="info" value="<?php echo $jobOffer->getCompanyId() ?>">Detalles de la Compañía</button>

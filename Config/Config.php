@@ -21,3 +21,4 @@ define("ROLE_COMPANY", "Company");
 define("UPDATE_FILE_PATH", ROOT . "last-update.log");
 define("FILTER_ALL",1);
 define("FILTER_STUDENT",2);
+/* define('FPDF_FONTPATH',"../fonts/"); */
