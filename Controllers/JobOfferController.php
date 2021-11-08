@@ -160,10 +160,11 @@ class JobOfferController
         {
             
             $userController = new UserController;
-            $user = $userController->GetUserById($parameters["userId"]);
+        
             $this->jobOfferDAO->DeleteApplication($parameters["jobOfferId"]);
 
             if (Utils::isAdmin()) {
+                $user = $userController->GetUserById($parameters["userId"]);
                 $to_email = $user->getEmail();
                 $subject = APPLY_DELETE_EMAIL_SUBJECT;
                 $body = APPLY_DELETE_EMAIL;
