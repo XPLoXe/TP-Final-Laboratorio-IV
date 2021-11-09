@@ -1,11 +1,9 @@
 <?php
     namespace Interfaces;
 
-    use Models\Student as Student;
+    use Models\JobPosition as JobPosition;
 
-    interface IStudentDAO
+    interface IJobPositionDAO
     {
-        //function Add(Student $student);
         function GetAll();
     }
-?>

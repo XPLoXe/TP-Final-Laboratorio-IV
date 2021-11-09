@@ -9,8 +9,21 @@
 
 <main class="py-5">
     <section id="listado" class="mb-5">
-        <div class="container">
+        <div class="container" style="max-width:1360px">
             <h2 class="mb-4">Estudiantes</h2>
+
+            <div class="mb-4">
+                <form action="<?php echo FRONT_ROOT ?>Student/FilterByLastName" method="post" class="bg-light-alpha p-4">
+                    <div class="input-group input-group-lg col-md-6 mx-auto">
+                        <input type="text"  name="nameToFilter" class="form-control mx-3" placeholder="Ingrese apellido del estudiante">
+                        <button type="submit" name="button" class="btn btn-dark d-block ">Filtrar</button>
+                    </div>
+                    <div style="text-align: center;">
+                    <?php if (!empty($message)) echo $message;  ?>
+                    </div>
+                </form>
+            </div>
+
             <table class="table bg-light-alpha">
                 <thead>
                     <th>Legajo</th>

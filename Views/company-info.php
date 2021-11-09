@@ -5,36 +5,45 @@
     require_once('nav.php');
 ?>
 
-<!DOCTYPE html>
-<html>
-<title>Detalles de Compañía</title>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
+<main class="py-5">
+  <section id="listado">
+    <div class="container bg-light-alpha p-4" >
 
-<div class="container">
-  <div class="row align-items-start ">
-    <div class="col">
-    <div>
-      <h1><b><?php echo $company->getName() ?></b></h1>
-      <img src="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>" style="width:500px; height:400px" > 
-      <br>
-      <br><h2 style="padding: 1%;"><b>Contacto</b></h2>
-      <p>
-        <img src="<?php echo FRONT_ROOT.IMG_PATH ?>tel.png">
-        <?php echo $company->getPhoneNumber(). ""?>
-        <br>
-        <img src="<?php echo FRONT_ROOT.IMG_PATH ?>email.png"> <?php echo $company->getEmail()?>
-      </p>
+      <div class="row">
+
+        <div class="col-6">
+            <div class="row justify-content-center mb-4 ">
+              <h1><b><?php echo $company->getName() ?></b></h1>
+            </div>
+            <div class="row justify-content-center">
+              <figure class="figure">
+                <img src="data:image/png;base64, <?php echo $company->getLogo() ?>" class="figure-img img-fluid rounded" style="width:450px; height:350px">
+              </figure>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="row d-flex justify-content-md-center">
+              <h4 class="text-center"> 
+                <strong>Fundada en:&nbsp</strong><?php echo $company->getYearOfFoundation() ?> <br><br>
+                <strong>Radicada en:&nbsp</strong> <?php echo $company->getCity() ?> <br> 
+              </h4>
+            </div>
+            <div class="row d-flex  ">
+              <strong class="text-center  justify-content-md-center mt-4"><?php echo $company->getDescription() ?></strong>
+            </div>
+        </div>
+
+      </div>
+
+      <div class="row d-flex justify-content-around font-weight-bold">
+        <div class="col-6"><h5> <img src="<?php echo FRONT_ROOT.IMG_PATH ?>tel.png">&nbsp&nbsp&nbsp<?php echo $company->getPhoneNumber()?></h5></div>
+        <div class="col-6"><h5> <img src="<?php echo FRONT_ROOT.IMG_PATH ?>email.png">&nbsp&nbsp&nbsp<?php echo $company->getEmail()?></h5></div>
+      </div>
+        
+      </div>
+
     </div>
-    </div>
-    <div class="col" style="font-size: x-large; text-align:center; margin-top: 35px">
-      <br>
-      <b>Fundada en:</b> <?php echo $company->getYearFoundation() ?> <br>
-      <b>Radicada en:</b> <?php echo $company->getCity() ?> <br> 
-      <br>
-      <p><strong><?php echo $company->getDescription() ?></strong></p>
-    </div>
-  </div>
-</div>
+  </section>
+</main>
+

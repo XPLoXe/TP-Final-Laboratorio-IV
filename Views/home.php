@@ -10,9 +10,11 @@
           <link rel="stylesheet" type="text/css" href="css\estilos.css">
      </head>
      <body>
+          
           <main class="d-flex align-items-center justify-content-center height-100">
                <div class="content">
                     <header class="text-center">
+                         <?php echo $message ?>
                          <h1>Bienvenido <?php echo Utils::getLoggedUserFullName() ?> <br> Bolsa de Trabajo</h1>
                     </header>
                </div>
@@ -23,4 +25,3 @@
 
 <?php
     require_once('footer.php');
-?>

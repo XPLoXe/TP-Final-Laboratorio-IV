@@ -1,27 +1,42 @@
 <?php
     namespace Utils;
 
-    use Controllers\CompanyController;
     use DateTime;
 
     class Utils
-    {
-        public static function isAdmin(): bool
-        {
-            return isset($_SESSION['isAdmin']) ? $_SESSION['isAdmin'] : false;
-        }
-
-        
+    {        
         public static function isUserLoggedIn(): bool
         {
-            return Utils::isAdmin() || isset($_SESSION['loggedUser']);
+            return isset($_SESSION['loggedUser']);
+        }
+
+
+        public static function isAdmin(): bool
+        {
+            if (isset($_SESSION['loggedUser']))
+            {
+                if($_SESSION['loggedUser']->getUserRoleDescription() == ROLE_ADMIN)
+                    return true;
+                else
+                    return false;
+            }
+
+            return false;
+        }
+
+
+        public static function isStudent(): bool
+        {
+            if (self::isUserLoggedIn())
+                return $_SESSION['loggedUser']->getUserRoleDescription() == ROLE_STUDENT;
+
+            return false;
         }
 
         
         public static function getLoggedUserFullName(): string
         {
-            $name = (Utils::isAdmin()) ? "Admin" : $_SESSION['loggedUser']->getFirstName() . " " . $_SESSION['loggedUser']->getLastName();
-            return $name;
+            return $_SESSION['loggedUser']->getFirstName() . " " . $_SESSION['loggedUser']->getLastName();
         }
 
 
@@ -40,9 +55,9 @@
                 header("location: ../index.php");
         }
 
+        
         public static function dateTimeToString(DateTime $date): string
         {
-            return $date->format('d-m-Y');
+            return $date->format('Y-m-d');
         }
     }
-?>

@@ -5,7 +5,6 @@
 
     interface ICareerDAO
     {
-        //function Add(Career $career);
+        function Add(Career $career);
         function GetAll();
     }
-?>

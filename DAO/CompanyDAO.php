@@ -2,228 +2,248 @@
 
     namespace DAO;
 
-    use Interfaces\ICompanyDAO as ICompanyDAO;
     use Models\Company as Company;
+    use Exception;
 
-    class CompanyDAO implements ICompanyDAO
+    class CompanyDAO
     {
         private $companyList = array();
+        private $tableName = "Companies";
+
 
         public function Add(Company $company)
         {
-            $this->RetrieveData();
-
-            if ($this->checkIfCompanyExists($company->getName()))
+            try
             {
-                array_push($this->companyList, $company);
+                $query = "INSERT INTO ".$this->tableName." (name, year_of_foundation, city, description, logo, email, phone_number) VALUES (:name, :year_of_foundation, :city, :description, :logo, :email, :phone_number);";
 
-                $this->SaveData();
+                $parameters["name"] = $company->getName();
+                $parameters["year_of_foundation"] = $company->getYearOfFoundation();
+                $parameters["city"] = $company->getCity();
+                $parameters["description"] = $company->getDescription();
+                $parameters["logo"] = $company->getLogo();
+                $parameters["email"] = $company->getEmail();
+                $parameters["phone_number"] = $company->getPhoneNumber();
+                
+                $this->connection = Connection::GetInstance();
+    
+                $this->connection->ExecuteNonQuery($query, $parameters);
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
             }
         }
 
-        
-        public function getCompanyList()
+
+        public function Delete(int $companyId): void
         {
-            return $this->companyList;
+            try
+            {
+                $query = "UPDATE ".$this->tableName." SET active = :active WHERE company_id = :company_id;";
+
+                $parameters['company_id'] = $companyId;
+                $parameters['active'] = 0;
+
+                $this->connection = Connection::GetInstance();
+
+                $this->connection->ExecuteNonQuery($query, $parameters);
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
         }
 
-        public function checkIfCompanyExists($companyName){
 
-            $this->RetrieveData();
+        public function Edit(int $companyId, string $name, string $yearOfFoundation, string $city, string $description, string $logo_tmp_path, string $email, string $phoneNumber)
+        {
+            try
+            {
+                if ($logo_tmp_path !== '')
+                {
+                    $logo = 'logo = :logo,';
+                    $parameters['logo'] = base64_encode(file_get_contents($logo_tmp_path));
+                } else
+                    $logo = ' ';
 
-            foreach($this->companyList as $company){
+                $query = "UPDATE ".$this->tableName.' 
+                          SET name = :name, year_of_foundation = :year_of_foundation, city = :city, description = :description,'. $logo .'email = :email, phone_number = :phone_number WHERE company_id = :company_id;';
 
-                if( strcasecmp ($company->getName(), $companyName ) === 0 )
+                $parameters['company_id'] = $companyId;
+                $parameters['name'] = $name;
+                $parameters['year_of_foundation'] = $yearOfFoundation;
+                $parameters['city'] = $city;
+                $parameters['description'] = $description;
+                $parameters['email'] = $email;
+                $parameters['phone_number'] = $phoneNumber;
+
+                $this->connection = Connection::GetInstance();
+
+                $this->connection->ExecuteNonQuery($query, $parameters);
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
+        public function IsNameInBD(string $name): bool
+        {
+            try
+            {
+                $query = "SELECT name FROM ".$this->tableName." WHERE name = :name ;";
+
+                $parameters['name'] = $name;
+ 
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query,$parameters);
+                
+                if (!empty($resultSet))
+                    return true;
+                else
                     return false;
             }
-
-            return true;
-
-        }
-        
-        public function GetAll()
-        {
-            $this->RetrieveData();
-            
-            return $this->companyList;
-        }
-
-        public function getCompanyByEmail($email)
-        {
-            $this->RetrieveData();
-
-            foreach ($this->companyList as $$company) {
-
-                if ($email == $company->getEmail()) {
-                    return $company;
-                }
-            }
-
-            return null;
-        }
-
-        public function getCompanyById($id)
-        {
-            $this->RetrieveData();
-
-            foreach ($this->companyList as $company) {
-
-                if ($company->getCompanyId() == $id)
-                    return $company;
-            }
-
-            return null;
-        }
-
-        public function isNameinCompanyName($companyName,$name)
-        {
-            if (stripos($companyName,$name) === false)
-                return false;
-            else
-                return true;
-        }
-
-        public function getCompaniesFilterByName($name)
-        {
-            $this->RetrieveData();
-
-            $filterCompanies = array();
-
-            foreach ($this->companyList as $company)
+            catch (Exception $ex)
             {
-                if ( $this->isNameinCompanyName($company->getName(),$name) && $company->isActive() )
-                    array_push($filterCompanies, $company);
+                throw $ex;
             }
+        }
 
-            if (!empty($filterCompanies)) 
+
+        public function IsEmailInBD(string $email): bool
+        {
+            try
             {
-                $this->companyList = $filterCompanies;
+                $query = "SELECT email FROM ".$this->tableName." WHERE email = :email ;";
 
-                return true;
+                $parameters['email'] = $email;
+ 
+                $this->connection = Connection::GetInstance();
 
-            } else
-
-                return false;
+                $resultSet = $this->connection->Execute($query,$parameters);
+                
+                if(!empty($resultSet))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
         }
 
-        public function deleteCompany($id)
+
+        public function GetAll(): array
         {
-            $this->RetrieveData();
+            try
+            {
+                $companyList = array();
 
-            $company = $this->getCompanyById($id);
-            $company->setActive(false);
+                $query = 'SELECT * FROM '.$this->tableName.' WHERE active = :active;';
+                
+                $parameters['active'] = true;
 
-            $this->SaveData();
-        }
+                $this->connection = Connection::GetInstance();
 
-        public function editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber): Company
-        {
-            $this->RetrieveData();
-
-            foreach ($this->companyList as $company) {
-
-                if ($company->getCompanyId() == $companyId) 
+                $resultSet = $this->connection->Execute($query, $parameters);
+                
+                foreach ($resultSet as $row)
                 {
-                    $company->setName($name);
-                    $company->setYearFoundation($yearFoundation);
-                    $company->setCity($city);
-                    $company->setDescription($description);
-                    $company->setEmail($email);
-                    $company->setPhoneNumber($phoneNumber);
+                    $company = new Company($row["company_id"]);
 
-                    #die(var_dump($tmp_name));
+                    $company->setName($row["name"]);
+                    $company->setYearOfFoundation($row["year_of_foundation"]);
+                    $company->setCity($row["city"]);
+                    $company->setDescription($row["description"]);
+                    $company->setLogo($row["logo"]);
+                    $company->setEmail($row["email"]);
+                    $company->setPhoneNumber($row["phone_number"]);
+                    $company->setActive($row["active"]);
 
-                    if (!empty($tmp_name))
+                    $companyList[$company->getCompanyId()] = $company;
+                }
+                
+                return $companyList;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+        
+        public function GetCompanyById(int $companyId): Company
+        {
+            try
+            {
+                $query = "SELECT * FROM ".$this->tableName." WHERE company_id = :company_id;";
+
+                $parameters['company_id'] = $companyId;
+
+                $this->connection = Connection::GetInstance();
+
+                $row = $this->connection->Execute($query, $parameters)[0];
+
+                $company = new Company($row["company_id"]);
+                $company->setName($row["name"]);
+                $company->setYearOfFoundation($row["year_of_foundation"]);
+                $company->setCity($row["city"]);
+                $company->setDescription($row["description"]);
+                $company->setLogo($row["logo"]);
+                $company->setEmail($row["email"]);
+                $company->setPhoneNumber($row["phone_number"]);
+                $company->setActive($row["active"]);
+               
+                return $company;  
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
+        public function GetCompaniesFilteredByName(string $name): array
+        {
+            try
+            {    
+                $query = "SELECT * FROM ".$this->tableName." WHERE name LIKE '%$name%' AND active = :active;";
+                // Can't use binded parameters because of the framework
+                $parameters['active'] = true;
+                
+                $this->connection = Connection::GetInstance();
+    
+                $filteredCompanies = $this->connection->Execute($query, $parameters);
+
+                $companyList = array();
+
+                if (!empty($filteredCompanies))
+                {
+                    foreach ($filteredCompanies as $row)
                     {
-                        echo "No estoy vacío";
-                        #die(var_dump($tmp_name, $logo));
-                        $this->SaveImage($tmp_name, $logo);
-                        $company->setLogo($logo);
+                        $company = new Company($row["company_id"]);
+
+                        $company->setName($row["name"]);
+                        $company->setYearOfFoundation($row["year_of_foundation"]);
+                        $company->setCity($row["city"]);
+                        $company->setDescription($row["description"]);
+                        $company->setLogo($row["logo"]);
+                        $company->setEmail($row["email"]);
+                        $company->setPhoneNumber($row["phone_number"]);
+                        $company->setActive($row["active"]);
+
+                        array_push($companyList,$company);
                     }
-                    $this->SaveData();
-
-                    return $company;
                 }
+                return $companyList;
             }
-
-            return null;
-        }
-
-        public function getActiveCompanies()
-        {
-            $this->RetrieveData();
-
-            $activeCompanies = array();
-
-            foreach ($this->companyList as $company) {
-
-                if ($company->isActive()) {
-                    array_push($activeCompanies, $company);
-                }
-            }
-
-            return $activeCompanies;
-        }
-
-        private function RetrieveData()
-        {
-            $this->companyList = array();
-
-            if (file_exists('Data/companies.json')) {
-
-                $jsonContent = file_get_contents('Data/companies.json');
-
-                $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
-
-                foreach ($arrayToDecode as $valuesArray) {
-
-                    $company = new Company();
-
-                    $company->setCompanyId($valuesArray["companyId"]);
-                    $company->setName($valuesArray["name"]);
-                    $company->setYearFoundation($valuesArray["yearFoundation"]);
-                    $company->setCity($valuesArray["city"]);
-                    $company->setDescription($valuesArray["description"]);
-                    $company->setLogo($valuesArray["logo"]); //check this
-                    $company->setEmail($valuesArray["email"]);
-                    $company->setPhoneNumber($valuesArray["phoneNumber"]);
-                    $company->setActive($valuesArray["active"]);
-
-                    array_push($this->companyList, $company);
-                }
+            catch (Exception $ex)
+            {
+                throw $ex;
             }
         }
-
-        public function SaveImage($tmp, $target)
-        {
-            move_uploaded_file($tmp, IMG_PATH.$target);
-        }
-
-        public function getCompanyPositionInArray($company)
-        {
-            return array_search($company,$this->companyList); //TODO: Rewrite this to avoid edge case where a company is deleted
-        }                                                     // and every id is now offset from array index
-
-        private function SaveData()
-        {
-            $arrayToEncode = array();
-
-            foreach ($this->companyList as $company) {
-
-                $valuesArray['companyId'] = $this->getCompanyPositionInArray($company);
-                $valuesArray['name'] = $company->getName();
-                $valuesArray['yearFoundation'] = $company->getYearFoundation();
-                $valuesArray['city'] = $company->getCity();
-                $valuesArray['description'] = $company->getDescription();
-                $valuesArray['logo'] = $company->getLogo();
-                $valuesArray['email'] = $company->getEmail();
-                $valuesArray['phoneNumber'] = $company->getPhoneNumber();
-                $valuesArray['active'] = $company->isActive();
-
-                array_push($arrayToEncode, $valuesArray);
-            }
-
-            $jsonContent = json_encode($arrayToEncode, JSON_PRETTY_PRINT);
-            file_put_contents(JSON_PATH . 'companies.json', $jsonContent);
-        }    
     }

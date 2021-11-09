@@ -9,19 +9,20 @@
 
 <main class="py-5">
     <section id="listado" class="mb-5">
-        <div class="container">
+        <div class="container bg-light-alpha p-5" style="max-width:1470px">
+           
             <h2 class="mb-4">Compañías</h2>
-            <form action="<?php echo FRONT_ROOT ?>Company/FilterByName" method="post" class="bg-light-alpha p-5">
-                <div class="row">
-                    <div class="col-lg-4">
-                        <div class="form-group">
-                            <input type="text" name="nameToFilter" class="form-control" placeholder="Ingrese nombre de la compañia">
-                        </div>
+
+            <div class="mb-4">
+                <form action="<?php echo FRONT_ROOT ?>Company/FilterByName" method="post" class="bg-light-alpha p-4">
+                    <div class="input-group input-group-lg col-md-6 mx-auto">
+                        <input type="text"  name="nameToFilter" class="form-control mx-3" placeholder="Ingrese nombre de la compañía">
+                        <button type="submit" name="button" class="btn btn-dark d-block ">Filtrar</button>
                     </div>
-                </div>
-                <button type="submit" name="button" class="btn btn-dark d-block">Filtrar</button>
-            </form>
-            <?php if (isset($msgErrorFilter)) echo $msgErrorFilter;  ?>
+                </form>
+            </div>
+
+            <?php if (!empty($message)) echo $message;  ?>
             <script type="text/javascript">
                 function confirmDelete() {
 
@@ -42,7 +43,6 @@
                     <th>Teléfono</th>
                     <th>E-mail</th>
                     <th>Acciones</th>
-                    <!-- <th>Delete</th> -->
                 </thead>
                 <tbody>
                     <?php
@@ -55,25 +55,23 @@
                         </form>
                         <?php
                         foreach ($companyList as $company) 
-                        {
-                            if ($company->isActive()) 
-                            { ?>
-                                <tr>
-                                    <td><img style="max-height: 50px" src=<?php echo FRONT_ROOT . IMG_PATH . $company->getLogo() ?> alt="image logo"></img></td>
-                                    <td><?php echo $company->getName() ?></td>
-                                    <td><?php echo $company->getCity() ?></td>
-                                    <td><?php echo $company->getPhoneNumber(); ?></td>
-                                    <td><?php echo $company->getEmail() ?></td>
-                                    <td><button class="btn btn-dark" type="submit" name="id" form="info" value='<?php echo $company->getCompanyId() ?>'>Detalles</button>
-                                        <?php
-                                        if (Utils::isAdmin()) 
-                                        {
-                                            echo '<button class="btn btn-dark" type= "submit" name="edit" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
-                                            echo '<button class="btn btn-dark" type="submit" onclick="return confirmDelete()" name="delete" form="delete" value=' . $company->getCompanyId() . '>Eliminar</button>';
-                                        } ?></td>
-                                    </form>
-                                </tr> <?php 
-                            }
+                        {?>
+                            <tr class="p-4">
+                                <td ><img src="data:image/png;base64,<?php echo $company->getLogo() ?>" alt="image logo" height=50px width=80px></img></td>
+                                <td><?php echo $company->getName() ?></td>
+                                <td><?php echo $company->getCity() ?></td>
+                                <td><?php echo $company->getPhoneNumber(); ?></td>
+                                <td style="max-width:300px" ><?php echo $company->getEmail() ?></td>
+                                <td><button class="btn btn-dark" type="submit" name="id" form="info" value='<?php echo $company->getCompanyId() ?>'>Detalles</button>
+                                    <?php
+                                    if (Utils::isAdmin()) 
+                                    {
+                                        echo '<button class="btn btn-success" type= "submit" name="companyId" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
+                                        echo '<button class="btn btn-danger" type="submit" onclick="return confirmDelete()" name="companyId" form="delete" value='.$company->getCompanyId().'>Eliminar</button>';
+                                    } ?></td>
+                                </form>
+                            </tr> 
+                        <?php 
                         } 
                     } else 
                     { ?>        <tr>
