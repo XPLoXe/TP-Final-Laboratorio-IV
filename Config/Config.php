@@ -11,6 +11,7 @@ define("IMG_PATH", VIEWS_PATH."img/");
 define("JS_PATH", FRONT_ROOT.VIEWS_PATH . "js/");
 define('API_KEY','4f3bceed-50ba-4461-a910-518598664c08');
 define('API_URL','https://utn-students-api.herokuapp.com/api/');
+define('BINANCE_URL','https://api.binance.com/api/v3/ticker/price');
 define("DB_HOST", "localhost");
 define("DB_NAME", "University");
 define("DB_USER", "root");
@@ -21,4 +22,3 @@ define("ROLE_COMPANY", "Company");
 define("UPDATE_FILE_PATH", ROOT . "last-update.log");
 define("FILTER_ALL",1);
 define("FILTER_STUDENT",2);
-/* define('FPDF_FONTPATH',"../fonts/"); */
