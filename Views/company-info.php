@@ -8,7 +8,6 @@
 <main class="py-5">
   <section id="listado">
     <div class="container bg-light-alpha p-4" >
-
       <div class="row">
 
         <div class="col-6">
