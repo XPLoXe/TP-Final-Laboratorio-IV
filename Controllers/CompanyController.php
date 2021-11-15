@@ -17,7 +17,7 @@
         }
 
 
-        public function Add(array $parameters)
+        public function Add(array $parameters, bool $flag = true)
         {
             Utils::checkAdmin();
 
@@ -35,14 +35,30 @@
                 $company->setLogo(base64_encode(file_get_contents($parameters['logo']["tmp_name"])));
                 $company->setEmail($parameters['email']);
                 $company->setPhoneNumber($parameters['phoneNumber']);
-                $company->setActive(true);
+
+                if ($flag) {
+                    $company->setActive(true);
+                }
+                else
+                {
+                    $company->setActive(false);
+                }
+               
 
                 $this->companyDAO->Add($company);
             }
 
-            $companyList = $this->companyDAO->GetAll();
+            if ($flag) {
+                $companyList = $this->companyDAO->GetAll();
 
-            require_once(VIEWS_PATH."company-list.php");
+                require_once(VIEWS_PATH."company-list.php");
+            }
+            else
+            {
+                $message = COMPANY_REGISTERED;
+                require_once(VIEWS_PATH."login.php");
+            }
+            
         }
 
 
@@ -119,6 +135,13 @@
 
             require_once(VIEWS_PATH."company-edit.php");
         }
+
+        public function ShowPendingView() //under construction
+        {
+            Utils::checkAdmin();
+            $companyList = $this->companyDAO->GetAll(false);
+            require_once(VIEWS_PATH."company-list.php");
+        }
         
 
         public function FilterByName(array $parameters): void
@@ -145,8 +168,25 @@
             }
         }
 
-        public function Register()  //under construction
+        public function RegisterNewCompany(array $parameters)  
         {
+            $this->Add($parameters, false);
+        }
+
+        public function RegisterExistingCompany(array $parameters)
+        {
+            Utils::checkAdmin();
+            $company = $this->companyDAO->GetCompanyById($parameters['companyId']);
+            $password = $company->getName() . $company->getYearOfFoundation();      //generated password
+            $password = str_replace(' ', '', $password);
+            
+            mail($company->getEmail(), COMPANY_REGISTER_EMAIL_SUBJECT, COMPANY_REGISTER_EMAIL_BODY); //mail notificando
+            $this->companyDAO->Delete($company->getCompanyId(), true);
+            $message = COMPANY_REGISTER_SUCCESS;
+            
+            require_once(VIEWS_PATH."home.php");
             
         }
+
+        
     }

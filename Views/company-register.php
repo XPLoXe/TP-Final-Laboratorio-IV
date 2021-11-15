@@ -2,7 +2,7 @@
      <section id="listado" class="mb-5">
           <div class="container">
                <h2 class="mb-4">Registrar compañía</h2>
-               <form enctype="multipart/form-data" action="<?php echo FRONT_ROOT ?>Company/Register" method="post" class="bg-light-alpha p-5" style="text-align: center;">
+               <form enctype="multipart/form-data" action="<?php echo FRONT_ROOT ?>Company/RegisterNewCompany" method="post" class="bg-light-alpha p-5" style="text-align: center;">
                     <div class="row">                         
                          <div class="col-lg-4">
                               <div class="form-group">

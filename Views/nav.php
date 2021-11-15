@@ -18,6 +18,7 @@
         <div class="nav-item dropdown-menu mt-1" style="background-color: #343a40">
           <a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/ShowListView">Listar</a>
           <a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/ShowAddView">Agregar</a>
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/ShowPendingView">Pendientes</a>
         </div>
       </li>
 

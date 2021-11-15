@@ -14,7 +14,6 @@
                 <input type="password" name="password" class="form-control form-control-lg" placeholder="Ingrese su contraseña" required>
             </div>
             <button class="btn btn-dark btn-block btn-lg" type="submit">Iniciar Sesión</button>
-            <a class="btn btn-dark btn-block btn-lg" href="<?php echo FRONT_ROOT ?>Login/ShowSignupView">Registrarse</a>
             <a class="btn btn-dark btn-block btn-lg" href="<?php echo FRONT_ROOT ?>Login/ShowSignupView">Registrarse como Usuario</a>
             <a class="btn btn-dark btn-block btn-lg" href="<?php echo FRONT_ROOT ?>Login/ShowSignupCompanyView">Registrarse como Compañía</a>
         </form>
