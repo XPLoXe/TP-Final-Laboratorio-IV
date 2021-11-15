@@ -139,7 +139,7 @@
         public function ShowPendingView() //under construction
         {
             Utils::checkAdmin();
-            $companyList = $this->companyDAO->GetAll(false);
+            $companyList = $this->companyDAO->GetAll(false); //it will only bring the inactive companies (those who are pending for registering)
             require_once(VIEWS_PATH."company-list.php");
         }
         
@@ -183,7 +183,7 @@
             mail($company->getEmail(), COMPANY_REGISTER_EMAIL_SUBJECT, COMPANY_REGISTER_EMAIL_BODY); //mail notificando
             $this->companyDAO->Delete($company->getCompanyId(), true);
             $message = COMPANY_REGISTER_SUCCESS;
-            
+            //we need to persist the new user in our data base here (using the $password generated)
             require_once(VIEWS_PATH."home.php");
             
         }
