@@ -15,7 +15,7 @@
                <div class="content">
                     <header class="text-center">
                          <?php echo $message ?>
-                         <h1 class="display-1"><Strong>Bienvenido <?php echo Utils::getLoggedUserFullName() ?> <br> Bolsa de Trabajo</Strong></h1>
+                         <h1><Strong>Bienvenido <?php echo Utils::getLoggedUserFullName() ?> <br> Bolsa de Trabajo</Strong></h1>
                     </header>
                </div>
           </main>
