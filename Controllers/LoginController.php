@@ -112,7 +112,10 @@
             require_once(VIEWS_PATH."signup.php");
         }
 
-
+        public function ShowSignupCompanyView(): void
+        {
+            require_once(VIEWS_PATH."company-register.php");
+        }
 
         private function GetPricesFromBinance()
         {
