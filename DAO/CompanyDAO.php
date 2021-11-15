@@ -36,14 +36,21 @@
         }
 
 
-        public function Delete(int $companyId): void
+        public function Delete(int $companyId, bool $flag = false): void
         {
             try
             {
                 $query = "UPDATE ".$this->tableName." SET active = :active WHERE company_id = :company_id;";
 
                 $parameters['company_id'] = $companyId;
-                $parameters['active'] = 0;
+                if ($flag)
+                {
+                    $parameters['active'] = 1;
+                }
+                else
+                {
+                    $parameters['active'] = 0;
+                }
 
                 $this->connection = Connection::GetInstance();
 
@@ -137,7 +144,7 @@
         }
 
 
-        public function GetAll(): array
+        public function GetAll(bool $flag = true): array
         {
             try
             {
@@ -145,8 +152,14 @@
 
                 $query = 'SELECT * FROM '.$this->tableName.' WHERE active = :active;';
                 
-                $parameters['active'] = true;
-
+                if ($flag) {
+                   $parameters['active'] = true;
+                }
+                else
+                {
+                    $parameters['active'] = false;
+                }
+                
                 $this->connection = Connection::GetInstance();
 
                 $resultSet = $this->connection->Execute($query, $parameters);
