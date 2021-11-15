@@ -11,17 +11,19 @@
      </head>
      <body>
           <br>
-          <h2 style="text-align: center;">BTC PRICE: <?php echo $btc?></h2>
-          <h2 style="text-align: center;">ETH PRICE: <?php echo $eth?></h2>
-          <h2 style="text-align: center;">LTC PRICE: <?php echo $ltc?></h2>
-          <main class="d-flex align-items-center justify-content-center height-100">
+          <main class="d-flex align-items-center justify-content-center height-99">
                <div class="content">
                     <header class="text-center">
                          <?php echo $message ?>
-                         <h1>Bienvenido <?php echo Utils::getLoggedUserFullName() ?> <br> Bolsa de Trabajo</h1>
+                         <h1><Strong>Bienvenido <?php echo Utils::getLoggedUserFullName() ?> <br> Bolsa de Trabajo</Strong></h1>
                     </header>
                </div>
           </main>
+          <br>
+          <h2 style="text-align: center;">BTC PRICE: <?php echo $btc?></h2>
+          <h2 style="text-align: center;">ETH PRICE: <?php echo $eth?></h2>
+          <h2 style="text-align: center;">LTC PRICE: <?php echo $ltc?></h2>
+          
      </body>
      
 </html>
