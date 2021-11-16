@@ -42,6 +42,13 @@ require_once('nav.php');
                     </div>
                     <div class="col-lg-4">
                         <div class="form-group">
+                            <label for="">Flyer</label>
+                            <img style="max-height: 50px" src="data:image/png;base64,<?php echo $jobOffer->getFlyer()?>" ></img>
+                            <input type="file" name="flyer" accept=".jpg, jpeg, image/png, image/gif" class="form-control" value="<?php echo FRONT_ROOT.IMG_PATH.$jobOffer->getFlyer() ?>">
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="form-group">
                             <label for="">Descripción</label>
                             <textarea id="bio" name="description" class="form-control" required><?php echo $jobOffer->getDescription() ?></textarea>
                         </div>

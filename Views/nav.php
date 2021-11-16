@@ -3,8 +3,8 @@
 
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <!-- Brand -->
-  <a class="navbar-brand" href="<?php echo FRONT_ROOT ?>Home/Index"><?php echo utils::getLoggedUserFullName()?></a>
-
+  <img src="<?php echo FRONT_ROOT . IMG_PATH?>utn.jpg" style="height: 50px; width: 50px;">
+  <a class="navbar-brand" href="<?php echo FRONT_ROOT ?>Home/Index" >  &emsp; <?php echo utils::getLoggedUserFullName()?></a>
   <?php if (Utils::isAdmin()) { ?>
     <ul class="navbar-nav">
       <li class="nav-item">
@@ -18,6 +18,7 @@
         <div class="nav-item dropdown-menu mt-1" style="background-color: #343a40">
           <a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/ShowListView">Listar</a>
           <a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/ShowAddView">Agregar</a>
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/ShowPendingView">Pendientes</a>
         </div>
       </li>
 

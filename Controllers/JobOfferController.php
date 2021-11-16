@@ -13,6 +13,8 @@
     use Utils\Utils as Utils;
     use DateTime;
     use FPDF;
+use Models\Car;
+use tFPDF;
 
 class JobOfferController
     {
@@ -49,6 +51,8 @@ class JobOfferController
             $jobOffer->setDescription($parameters["description"]);
             $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
             $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
+            if(!empty($parameters['flyer']['tmp_name']))
+                $jobOffer->setFlyer(base64_encode(file_get_contents($parameters['flyer']["tmp_name"])));
             
             $this->jobOfferDAO->Add($jobOffer);
 
@@ -119,7 +123,12 @@ class JobOfferController
             $jobOffer->setCompanyId($parameters['companyId']);      
             $jobOffer->setExpirationDate(new DateTime($parameters['expirationDate']));
             $jobOffer->setDescription($parameters['description']);
-            
+            if(!empty($parameters['flyer']['tmp_name']))
+                $jobOffer->setFlyer($parameters['flyer']["tmp_name"]);
+            else
+            {
+                $jobOffer->setFlyer("");
+            }
             $this->jobOfferDAO->Edit($jobOffer);
 
             $jobOfferList = $this->GetAll();
@@ -160,10 +169,11 @@ class JobOfferController
         {
             
             $userController = new UserController;
-            $user = $userController->GetUserById($parameters["userId"]);
+            
             $this->jobOfferDAO->DeleteApplication($parameters["jobOfferId"]);
 
             if (Utils::isAdmin()) {
+                $user = $userController->GetUserById((int) $parameters["userId"]);
                 $to_email = $user->getEmail();
                 $subject = APPLY_DELETE_EMAIL_SUBJECT;
                 $body = APPLY_DELETE_EMAIL;
@@ -327,8 +337,10 @@ class JobOfferController
             $pdf->SetFont('Arial', '', 12);
             $pdf->Cell(60,20,$jobOffer->getDescription());
 
+
             $pdf->Output();
         }
+
 
     }
 ?>

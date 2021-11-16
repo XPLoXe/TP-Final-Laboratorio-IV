@@ -18,6 +18,26 @@
         {
             $jobOfferDAO = new JobOfferDAO;
             
+            $prices = $this->GetPricesFromBinance();
+
+            foreach ($prices as $k => $v)
+            {
+                if ($v['symbol'] == 'BTCUSDT')
+                {
+                    $btc = (double)$v['price'];
+                }
+                
+                if ($v['symbol'] == 'ETHUSDT')
+                {
+                    $eth = (double)$v['price'];
+                }
+                
+                if ($v['symbol'] == 'LTCUSDT')
+                {
+                    $ltc = (double)$v['price'];
+                }
+            }
+
             if ($_SERVER['REQUEST_METHOD'] == "POST")
             {
                 $email = $_POST["email"];
@@ -36,7 +56,7 @@
                     {                        
                         if ($user->getUserRole()->getDescription() == ROLE_ADMIN)
                         {
-                            /* $jobOfferDAO->TryDatabaseUpdate(); */
+                            $jobOfferDAO->TryDatabaseUpdate(); 
 
                             $_SESSION["loggedUser"] = $user;   
                             require_once(VIEWS_PATH."home.php");
@@ -45,8 +65,9 @@
                         {
                             if ($studentController->GetStudentByEmail($email)->isActive())  //checks if user is active in the API 
                             {
-                                /* $jobOfferDAO->TryDatabaseUpdate();*/
+                                $jobOfferDAO->TryDatabaseUpdate();
                                 $_SESSION["loggedUser"] = $user;
+
                                 require_once(VIEWS_PATH."home.php");
                             }
                             else
@@ -91,5 +112,20 @@
             require_once(VIEWS_PATH."signup.php");
         }
 
-       
+        public function ShowSignupCompanyView(): void
+        {
+            require_once(VIEWS_PATH."company-register.php");
+        }
+
+        private function GetPricesFromBinance()
+        {
+            $data = file_get_contents(BINANCE_URL);
+            $json = json_decode($data, true);
+
+            return $json;
+        }
+
+
+
+
     }
