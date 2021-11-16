@@ -64,6 +64,7 @@ class JobOfferController
         {
             Utils::checkAdmin();
 
+            //Al eliminar una JobOffer, deberiamos eliminar todas las postulaciones de la misma
             $this->jobOfferDAO->Delete($parameters['jobOfferId']);
 
             $this->ShowListView();
@@ -167,7 +168,9 @@ class JobOfferController
 
         public function DeleteApplicant(array $parameters): void
         {
-            
+            // Ahora deleteApplicant elimina registros de studentsJobOffers
+            //el delete me tiene q direccionar a la oferta de trabajo q estaba detallando
+
             $userController = new UserController;
             
             $this->jobOfferDAO->DeleteApplication($parameters["jobOfferId"]);
@@ -218,6 +221,23 @@ class JobOfferController
             $jobOfferList = $this->GetAll();
 
             require_once(VIEWS_PATH."job-offer-list.php");
+        }
+
+        public function ShowInfoView(array $parameters): void
+        {
+            Utils::checkUserLoggedIn();
+            
+            $jobOfferList = $this->jobOfferDAO->GetJobOfferById($this->GetAll(),$parameters['id']);
+
+            //Si soy admin necesito la lista de Students q estan inscriptos a esta JobOffer
+            //getStudentsByJobOffer(JobOffer $jobOffer): array me devuelve id's, solo postulaciones activas
+            //con los id's necesito los objetos de Students
+            //el array con Students se llama $studentsInJobOffer
+            //tmb necesito la variable Booleana $isStudentInTheJobOffer
+            //hacer un metodo donde le paso el id del student logeado y busco su id en la tabla StudentsJobOffers
+
+            require_once(VIEWS_PATH."job-offer-info.php");
+
         }
 
 

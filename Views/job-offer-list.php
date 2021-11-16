@@ -63,9 +63,7 @@ require_once('nav.php');
             if (!empty($jobOfferList)) { ?>
                 <form id="edit" action="<?php echo FRONT_ROOT ?>JobOffer/ShowEditView" name='edit' method='POST'></form>
                 <form id="delete" action="<?php echo FRONT_ROOT ?>JobOffer/Delete" name='delete' method='POST'></form>
-                <form id="apply" action="<?php echo FRONT_ROOT ?>JobOffer/Apply" name='apply' method='POST'></form>
-                <form id="deleteApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='deleteApplicant' method='POST'></form>
-                <form id="generatePDF" action="<?php echo FRONT_ROOT ?>JobOffer/GeneratePDF" name='generatePDF' method='POST' target='_blank'></form>
+                <form id="info" action="<?php echo FRONT_ROOT ?>JobOffer/ShowInfoView" name='info' method='POST'></form>
                 <?php
                 foreach ($jobOfferList as $jobOffer) {
                 ?>
@@ -98,37 +96,16 @@ require_once('nav.php');
 
                         <tr>
                             <td>
-                                <div class="col">
-                                    <?php echo $jobOffer->getDescription() ?>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <div class="float-left ml-3 h5">
-                                    <?php 
-                                        if(!is_null($jobOffer->getUserId()))
-                                        {
-                                            echo '<strong style="color: green;">Ha sido tomado</strong>';
-                                            ?><input type="hidden" form="deleteApplicant" value="<?php echo $jobOffer->getUserId() ?>" name="userId"><?php
-                                            echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Eliminar Postulante</button>';
-                                        }
-                                        if(!empty($jobOffer->getFlyer()))
-                                            echo '<a class="btn btn-success" href="data:image/png;base64,'.$jobOffer->getFlyer().'"  alt="image flyer" download>Descargar Flyer</a>';
-                                    ?>
-                                </div>
-
                                 <div class="float-right">
                                     <?php
-                                    if (Utils::isStudent() && $isLookingForJob)
-                                        echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="apply" value=' . $jobOffer->getJobOfferId() . '>Postularse</button>';
+
+                                    echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="info" value=' . $jobOffer->getJobOfferId() . '>Detalles</button>';
 
                                     if (Utils::isAdmin()) {
-                                        echo '<button class="btn btn-warning mx-2" type= "submit" name="jobOfferId" form="generatePDF" value=' . $jobOffer->getJobOfferId() . '>Generar PDF</button> ';
                                         echo '<button class="btn btn-success mx-2" type= "submit" name="jobOfferId" form="edit" value=' . $jobOffer->getJobOfferId() . '>Editar</button> ';
                                         echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDelete()" name="jobOfferId" form="delete" value=' . $jobOffer->getJobOfferId() . '>Eliminar</button>';
                                     }
+                                    
                                     ?>
                                 </div>
                             </td>

@@ -4,10 +4,26 @@ CREATE DATABASE IF NOT EXISTS University;
 
 USE University;
 
+CREATE TABLE Careers (
+	career_id INT AUTO_INCREMENT,
+	description VARCHAR(100),
+	active BOOL NOT NULL,
+	PRIMARY KEY (career_id)
+);
+
+CREATE TABLE JobPositions (
+	job_position_id INT AUTO_INCREMENT,
+	career_id INT  NOT NULL,
+	description VARCHAR(50) NOT NULL,
+	active BOOL NOT NULL,
+	PRIMARY KEY (job_position_id),
+	FOREIGN KEY (career_id) REFERENCES Careers (career_id)
+);
+
 CREATE TABLE UserRoles (
 	user_role_id INT AUTO_INCREMENT,
 	description VARCHAR(50),
-	active BOOL NOT NULL DEFAULT true,
+	active BOOL NOT NULL,
 	PRIMARY KEY (user_role_id)
 );
 
@@ -16,56 +32,52 @@ CREATE TABLE Users (
 	user_role_id INT,
 	email NVARCHAR(50) NOT NULL,
 	user_password NVARCHAR(64) NOT NULL,
-	associated_id INT,
-	first_name NVARCHAR(50),
-	last_name NVARCHAR(50),
 	active BOOL NOT NULL DEFAULT true,
 	PRIMARY KEY (user_id),
 	FOREIGN KEY (user_role_id) REFERENCES UserRoles (user_role_id)
 );
 
 CREATE TABLE Companies (
-	company_id INT AUTO_INCREMENT,
+	user_company_id INT NOT NULL,
 	name NVARCHAR(50) NOT NULL,
 	year_of_foundation YEAR NOT NULL,
 	city VARCHAR(100) NOT NULL,
 	description NVARCHAR(1000) NOT NULL,
-	logo MEDIUMTEXT DEFAULT NULL,
-	email NVARCHAR(50) NOT NULL,
+	logo VARCHAR(255) DEFAULT NULL,
 	phone_number VARCHAR(20) NOT NULL,
-	active BOOL NOT NULL DEFAULT true,
-	PRIMARY KEY (company_id)
-);
-
-CREATE TABLE Careers (
-	career_id INT,
-	description VARCHAR(100),
+	approved BOOL NOT NULL,
 	active BOOL NOT NULL,
-	PRIMARY KEY (career_id)
+	FOREIGN KEY (user_company_id) REFERENCES Users(user_id)
 );
 
-CREATE TABLE JobPositions (
-	job_position_id INT,
-	description VARCHAR(50) NOT NULL,
-    career_id INT NOT NULL,
-	active BOOL NOT NULL DEFAULT true,
-	PRIMARY KEY (job_position_id),
-    FOREIGN KEY (career_id) REFERENCES Careers (career_id)
+CREATE TABLE Students (
+	user_student_id INT NOT NULL,
+	api_student_id INT NOT NULL,
+	api_active BOOL NOT NULL,
+	FOREIGN KEY (user_student_id) REFERENCES Users (user_id)
 );
 
 CREATE TABLE JobOffers (
 	job_offer_id INT AUTO_INCREMENT,
-	company_id INT NOT NULL,
 	job_position_id INT,
-	user_id INT DEFAULT NULL,
+	user_company_id INT NOT NULL,
 	description NVARCHAR(3000) NOT NULL,
+	flyer VARCHAR(255) DEFAULT NULL,
 	publication_date DATE NOT NULL,
 	expiration_date DATE,
-	active BOOL NOT NULL DEFAULT true,
+	active BOOL NOT NULL,
 	PRIMARY KEY (job_offer_id),
-	FOREIGN KEY (company_id) REFERENCES Companies (company_id),
 	FOREIGN KEY (job_position_id) REFERENCES JobPositions (job_position_id),
-	FOREIGN KEY (user_id) REFERENCES Users (user_id)
+	FOREIGN KEY (user_company_id) REFERENCES Companies (user_company_id)
+);
+
+CREATE TABLE StudentsJobOffers (
+	user_student_id INT NOT NULL,
+	job_offer_id INT NOT NULL,
+	active BOOL NOT NULL,
+	PRIMARY KEY (user_student_id,job_offer_id),
+	FOREIGN KEY (user_student_id) REFERENCES Students (user_student_id),
+	FOREIGN KEY (job_offer_id) REFERENCES JobOffers (job_offer_id)
 );
 
 INSERT INTO UserRoles (user_role_id, description, active) VALUES 
@@ -105,15 +117,18 @@ INSERT INTO JobPositions (job_position_id, career_id, description, active) VALUE
  (21,7,'Environmental management specialist',true),
  (22,7,'Environmental management coordinator',true),
  (23,8,'Received technician',true);
-INSERT INTO Users (user_id, email, user_password, user_role_id, associated_id, first_name, last_name) VALUES
-(1, 'admin@admin.com', 'admin99', 1, null, 'Juan Carlos', 'Administradorio'),
-(2, 'ddouthwaite0@goo.gl', 123, 2, 1, 'Devlen', 'Douthwaite'),
-(3, 'wlorant1@sbwire.com', 123, 2, 2, 'Wyatan', 'Lorant'),
-(4, 'aseemmonds2@upenn.edu', 321, 2, 3, 'Alanson', 'Seemmonds'),
-(5, 'fgorvetteg@list-manage.com', 54321, 2, 17, 'Frayda', 'Gorvette');
-INSERT INTO Companies (company_id, name, year_of_foundation, city, description, logo, email, phone_number) VALUES
-(1,'Efreint Dominios',1983,'Capital Federal','Efreint Dominios es una empresa de dominios donde las Empresas registran dominios para promocionarse o para relacionarse estrechamente con los usuarios, gracias al uso de plataformas especialmente creadas para ello.','Efreint.png','efreint@dom.com','0800-323-2413'),
-(2,'Ñ''s Club',2000,'Barcelona','Fundada en 2000, la historia de la música en Barcelona es sinónimo del nombre Ñ''s Club, un lugar de referencia nacional e internacional para la cultura y el entretenimiento. ubicado en un edificio singular vinculado al paisaje industrial de la ciudad, y con una fachada que es en sí misma icónica. En Ñ''s Club han tocado grandes y menos conocidos artistas y bandas, ya que sus sesiones de club pueden albergar grupos de cualquier tipo, pequeños conjuntos incluidos, pero todos con un denominador común: su calidad.','ñ.png','n@club.com','34 936 67 55 59'),
+INSERT INTO Users (user_id, email, user_password, user_role_id) VALUES
+(1, 'admin@admin.com', 'admin99', 1),
+(2, 'ddouthwaite0@goo.gl', 123, 2),
+(3, 'wlorant1@sbwire.com', 123, 2),
+(4, 'aseemmonds2@upenn.edu', 321, 2),
+(5, 'fgorvetteg@list-manage.com', 54321, 2),
+(6, 'efreint@dom.com', 'efre99', 3),
+(7, 'n@club.com', 'n99', 3);
+INSERT INTO Companies (user_company_id, name, year_of_foundation, city, description, logo, phone_number, approved) VALUES
+(6,'Efreint Dominios',1983,'Capital Federal','Efreint Dominios es una empresa de dominios donde las Empresas registran dominios para promocionarse o para relacionarse estrechamente con los usuarios, gracias al uso de plataformas especialmente creadas para ello.','Efreint.png','0800-323-2413',1),
+(7,'Ñ''s Club',2000,'Barcelona','Fundada en 2000, la historia de la música en Barcelona es sinónimo del nombre Ñ''s Club, un lugar de referencia nacional e internacional para la cultura y el entretenimiento. ubicado en un edificio singular vinculado al paisaje industrial de la ciudad, y con una fachada que es en sí misma icónica. En Ñ''s Club han tocado grandes y menos conocidos artistas y bandas, ya que sus sesiones de club pueden albergar grupos de cualquier tipo, pequeños conjuntos incluidos, pero todos con un denominador común: su calidad.','ñ.png','34 936 67 55 59',1);
+
 (3,'Alejandro''s Spa',1997,'Mar del Plata','En Alejandro''s Spa tenemos como objetivo prioritario la seguridad y el bienestar de nuestros clientes y empleados. Cuidamos cada detalle para que disfrutes al máximo de tu experiencia. Aunado a los altos estándares de salud e higiene de Alejandro''s Spa, firmemente establecidos en nuestros Spas, hemos reforzado nuestros protocolos trabajando estrechamente con ISPA (Asociación Internacional de Spas) y con la asociación de Spas y Centros de Belleza \"Spa BCN Connect\" para conseguir el sello Spa Quality Certificate. Asimismo, todas nuestras terapeutas han tomado los Cursos recomendados por la Organización Mundial de la Salud (OMS) y cuentan con los diplomas que lo certifican.','alejandro.png','aleb2800@gmail.com','02233019208'),
 (4,'Biskuits Roover',2016,'Berlin','Biskuits Roover se creó en 2016 como resultado de la combinación entre Poult (el líder francés) y Banketgroep (Países Bajos). Como plataforma de consolidación líder de la industria en Europa, el grupo adquirió en 2018: A&W (Alemania), Stroopwafel & Co (Países Bajos), Northumbrian Fine Foods (Reino Unido), Arluy (España), en 2019 Aviateur (Países Bajos) y en 2021 Dan Cake (Portugal) para convertirse en el líder europeo en el mercado de galletas dulces de marca privada. Biskuits Roover está indirectamente controlada por ciertos fondos de inversión de capital privado asesorados por Platinum Equity Advisors, LLC (\"Asesores\", y dichos fondos colectivamente \"Platinum\").','biskuitspng.png','biskuits@roover.com','0810-232-1113'),
 (5,'Joraca',1998,'Capital Federal','Creemos en un mundo donde tienes total libertad para ser tú mismo, sin juzgar. Para experimentar. Para expresarse. Ser valiente y tomar la vida como una aventura extraordinaria. Por lo tanto, nos aseguramos de que todos tengan las mismas oportunidades de descubrir todas las cosas increíbles de las que son capaces, sin importar quiénes son, de dónde son o qué aspecto les gusta al jefe. Existimos para darte la confianza de ser quien quieras ser.','Joraca.png','joraca@gmail.com','555-351-3341'),
