@@ -10,22 +10,30 @@
     class CompanyDAO
     {
         private $tableName = "Companies";
+        private $userDAO;
+
+        public function construct__ ()
+        {
+            $this->userDAO = new UserDAO();
+        }
 
 
         public function Add(Company $company)
         {
             try
             {
-                $query = "INSERT INTO ".$this->tableName." (name, year_of_foundation, city, description, logo, email, phone_number) VALUES (:name, :year_of_foundation, :city, :description, :logo, :email, :phone_number);";
+                $query = "INSERT INTO ".$this->tableName." (user_company_id, name, year_of_foundation, city, description, logo, email, phone_number) VALUES (:user_company_id, :name, :year_of_foundation, :city, :description, :logo, :email, :phone_number);";
 
-                
+                $this->userDAO->Add($company->getUser());
+
+                $parameters["user_company_id"] = $this->userDAO->GetLastId();
                 $parameters["name"] = $company->getName();
                 $parameters["year_of_foundation"] = $company->getYearOfFoundation();
                 $parameters["city"] = $company->getCity();
                 $parameters["description"] = $company->getDescription();
                 $parameters["logo"] = $company->getLogo();
-                $parameters["email"] = $company->getEmail();
                 $parameters["phone_number"] = $company->getPhoneNumber();
+                $parameters["approved"] = $company->isApproved();
                 
                 $this->connection = Connection::GetInstance();
     
@@ -38,25 +46,11 @@
         }
 
 
-        public function Delete(int $companyId, bool $flag = false): void
+        public function Delete(int $companyId): void
         {
             try
             {
-                $query = "UPDATE ".$this->tableName." SET active = :active WHERE company_id = :company_id;";
-
-                $parameters['company_id'] = $companyId;
-                if ($flag)
-                {
-                    $parameters['active'] = 1;
-                }
-                else
-                {
-                    $parameters['active'] = 0;
-                }
-
-                $this->connection = Connection::GetInstance();
-
-                $this->connection->ExecuteNonQuery($query, $parameters);
+                $this->userDAO->Delete($companyId);
             }
             catch (Exception $ex)
             {
@@ -65,27 +59,29 @@
         }
 
 
-        public function Edit(int $companyId, string $name, string $yearOfFoundation, string $city, string $description, string $logo_tmp_path, string $email, string $phoneNumber)
+        public function Edit($company)
         {
             try
             {
-                if ($logo_tmp_path !== '')
+                if ($company->getLogo() !== '')
                 {
                     $logo = 'logo = :logo,';
-                    $parameters['logo'] = base64_encode(file_get_contents($logo_tmp_path));
+                    $parameters['logo'] = base64_encode(file_get_contents($company->getLogo()));
                 } else
                     $logo = ' ';
 
-                $query = "UPDATE ".$this->tableName.' 
-                          SET name = :name, year_of_foundation = :year_of_foundation, city = :city, description = :description,'. $logo .'email = :email, phone_number = :phone_number WHERE company_id = :company_id;';
+                $this->userDAO->Edit($company->getUser());
 
-                $parameters['company_id'] = $companyId;
+                $query = "UPDATE ".$this->tableName.' 
+                          SET name = :name, year_of_foundation = :year_of_foundation, city = :city, description = :description,'. $logo .', phone_number = :phone_number, approved = :approved WHERE company_id = :company_id;';
+
+                $parameters['company_id'] = $company->getUserId();//Hace falta el companyId del modelo Company ?
                 $parameters['name'] = $name;
                 $parameters['year_of_foundation'] = $yearOfFoundation;
                 $parameters['city'] = $city;
                 $parameters['description'] = $description;
-                $parameters['email'] = $email;
                 $parameters['phone_number'] = $phoneNumber;
+                $parameters['approved'] = $approved;
 
                 $this->connection = Connection::GetInstance();
 
@@ -98,7 +94,7 @@
         }
 
 
-        public function IsNameInBD(string $name): bool
+        public function IsNameInDB(string $name): bool
         {
             try
             {
@@ -122,22 +118,11 @@
         }
 
 
-        public function IsEmailInBD(string $email): bool
+        public function IsEmailInDB(string $email): bool
         {
             try
             {
-                $query = "SELECT email FROM ".$this->tableName." WHERE email = :email ;";
-
-                $parameters['email'] = $email;
- 
-                $this->connection = Connection::GetInstance();
-
-                $resultSet = $this->connection->Execute($query,$parameters);
-                
-                if(!empty($resultSet))
-                    return true;
-                else
-                    return false;
+                return $this->userDAO->IsEmailInDB($email);
             }
             catch (Exception $ex)
             {
@@ -146,30 +131,40 @@
         }
 
 
-        public function GetAll(bool $flag = true): array
+        public function GetAll( $onlyApproved = true ): array
         {
             try
             {
+                $userCompanyList = $this->userDAO->GetAll(ROLE_COMPANY);
+
                 $companyList = array();
 
-                $query = 'SELECT * FROM '.$this->tableName.' WHERE active = :active;';
-                
-                if ($flag) {
-                   $parameters['active'] = true;
+                $queryOnlyApproved = array();
+
+                if($onlyApproved == true){
+                    $queryOnlyApproved = "AND approved = :approved";
+                    $parameters['approved'] = true;
                 }
-                else
-                {
-                    $parameters['active'] = false;
-                }
-                
+
+                $query = 'SELECT * FROM '.$this->tableName.'  WHERE active = :active '.$queryOnlyApproved.' ORDER BY approved ;';
+
+                $parameters['active'] = true;
+
                 $this->connection = Connection::GetInstance();
 
                 $resultSet = $this->connection->Execute($query, $parameters);
                 
                 foreach ($resultSet as $row)
                 {
-                    $company = new Company($row["company_id"]);
+                    $user = $this->userDAO->GetSpecificUser($userCompanyList,$row["company_id"]);
 
+                    $company = new Company($user->getUserId());
+
+                    $company->setEmail($user->getEmail());
+                    $company->setPassword($user->getPassword());
+                    $company->setUserRole($user->getUserRole());
+                    $company->setActive($user->getActive());
+                    
                     $company->setName($row["name"]);
                     $company->setYearOfFoundation($row["year_of_foundation"]);
                     $company->setCity($row["city"]);
@@ -177,9 +172,9 @@
                     $company->setLogo($row["logo"]);
                     $company->setEmail($row["email"]);
                     $company->setPhoneNumber($row["phone_number"]);
-                    $company->setActive($row["active"]);
+                    $company->setApproved($row["approved"]);
 
-                    $companyList[$company->getCompanyId()] = $company;
+                    array_push($companyList,$company);
                 }
                 
                 return $companyList;
@@ -195,6 +190,8 @@
         {
             try
             {
+                $userCompany = $this->userDAO->GetUserById($companyId);
+
                 $query = "SELECT * FROM ".$this->tableName." WHERE company_id = :company_id;";
 
                 $parameters['company_id'] = $companyId;
@@ -209,9 +206,13 @@
                 $company->setCity($row["city"]);
                 $company->setDescription($row["description"]);
                 $company->setLogo($row["logo"]);
-                $company->setEmail($row["email"]);
                 $company->setPhoneNumber($row["phone_number"]);
-                $company->setActive($row["active"]);
+                $company->setApproved($row['approved']);
+
+                $company->setEmail($userCompany->getEmail());
+                $company->setPassword($userCompany->getPassword());
+                $company->setUserRole($userCompany->getUserRole());
+                $company->setActive($userCompany->isActive());
                
                 return $company;  
             }
@@ -227,7 +228,7 @@
             try
             {    
                 $query = "SELECT * FROM ".$this->tableName." WHERE name LIKE '%$name%' AND active = :active;";
-                // Can't use binded parameters because of the framework
+
                 $parameters['active'] = true;
                 
                 $this->connection = Connection::GetInstance();
@@ -240,16 +241,21 @@
                 {
                     foreach ($filteredCompanies as $row)
                     {
-                        $company = new Company($row["company_id"]);
+                        $userCompany = $this->userDAO->GetUserById($companyId);
 
+                        $company = new Company($row["company_id"]);
                         $company->setName($row["name"]);
                         $company->setYearOfFoundation($row["year_of_foundation"]);
                         $company->setCity($row["city"]);
                         $company->setDescription($row["description"]);
                         $company->setLogo($row["logo"]);
-                        $company->setEmail($row["email"]);
                         $company->setPhoneNumber($row["phone_number"]);
-                        $company->setActive($row["active"]);
+                        $company->setApproved($row['approved']);
+
+                        $company->setEmail($userCompany->getEmail());
+                        $company->setPassword($userCompany->getPassword());
+                        $company->setUserRole($userCompany->getUserRole());
+                        $company->setActive($userCompany->isActive());
 
                         array_push($companyList,$company);
                     }

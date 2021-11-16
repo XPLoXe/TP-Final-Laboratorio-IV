@@ -5,13 +5,14 @@
 
     class Company extends User
     {
-        private int $companyId;
+        private int $companyId;// se tendria que ir ?
         private string $name;
         private int $yearOfFoundation;
         private string $city;
         private string $description;
         private string $logo; // base64 encode of the image
         private string $phoneNumber;
+        private bool $approved;
         private bool $active;
 
 
@@ -126,5 +127,15 @@
         public function setActive(bool $active): void
         {
             $this->active = $active;
+        }
+
+        public function isApproved()
+        {
+            return $this->approved;
+        }
+
+        public function setApproved($approved)
+        {
+            $this->approved = $approved;
         }
     }

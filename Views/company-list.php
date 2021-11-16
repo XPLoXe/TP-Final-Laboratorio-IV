@@ -60,8 +60,7 @@
                     <?php
                     if (!empty($companyList)) 
                     { ?>
-                        <form id="info" action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='info' method='POST' class="bg-light-alpha p-5">
-                        </form>
+                        <form id="info" action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='info' method='POST' class="bg-light-alpha p-5"></form>
                         <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowEditView" name='edit' method='POST' class="bg-light-alpha p-5"></form>
                         <form id="register" action="<?php echo FRONT_ROOT ?>Company/RegisterExistingCompany" name='register' method='POST' class="bg-light-alpha p-5"></form>
                         <form id="delete" action="<?php echo FRONT_ROOT ?>Company/Delete" name='delete' method='POST' class="bg-light-alpha p-5"></form>

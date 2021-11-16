@@ -110,13 +110,26 @@
         }
 
 
-        public function GetAll(): array
+        public function GetAll( $userRoleDescription = NULL ): array
         {
             try
             {
                 $userList = array();
 
-                $query = "SELECT * FROM ".$this->tableName." u INNER JOIN UserRoles ur ON u.user_role_id = ur.user_role_id WHERE u.active = :active ;";
+                $queryRoleDescription = array();
+
+                if($userRoleDescription != NULL)
+                {
+                    $queryRoleDescription = "AND ur.description = :description ";
+
+                    if($userRoleDescription == ROLE_STUDENT)
+                        $parameters["description"] = ROLE_STUDENT;
+
+                    else if ($userRoleDescription == ROLE_COMPANY)
+                        $parameters["description"] = ROLE_COMPANY;
+                }
+
+                $query = "SELECT * FROM ".$this->tableName." u INNER JOIN UserRoles ur ON u.user_role_id = ur.user_role_id ".$queryRoleDescription." WHERE u.active = :active ;";
 
                 $parameters['active'] = true;
 
@@ -206,4 +219,60 @@
                 throw $ex;
             }
         }
+
+        public function GetLastId(): int
+        {
+            try
+            {
+                $query = "SELECT @@identity;";
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query);
+                
+                return $resultSet;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+        public function GetSpecificUser($userList, $id): User
+        {
+
+            foreach($userList as $user)
+            {
+                if($user->getUserId() == $id)
+                    return $user;
+            }
+
+            return null;
+        } 
+
+        public function IsEmailInDB($email): bool
+        {
+            try
+            {
+                $query = "SELECT email FROM ".$this->tableName." WHERE email = :email ;";
+
+                $parameters['email'] = $email;
+ 
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query,$parameters);
+                
+                if(!empty($resultSet))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
+
     }

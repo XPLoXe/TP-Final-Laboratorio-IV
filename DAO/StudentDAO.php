@@ -12,6 +12,12 @@
         private $connection;
         private $tableName = "Students";
         private $studentList;
+        private $userDAO;
+
+        public function construct__ ()
+        {
+            $this->userDAO = new UserDAO();
+        }
 
 
         public function GetAll(): array

@@ -111,4 +111,28 @@
                 throw $ex;
             }
         }
+
+        public function GetUserRoleByDescription(int $description): UserRole
+        {
+            try
+            {
+                $query = "SELECT * FROM ".$this->tableName.' WHERE description = :description;';
+
+                $parameters['description'] = $description;
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query, $parameters);
+                
+                $userRole = new UserRole($userRoleId);
+                $userRole->setDescription($resultSet[0]['description']);
+                $userRole->setActive($resultSet[0]['active']);
+
+                return $userRole;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
     }

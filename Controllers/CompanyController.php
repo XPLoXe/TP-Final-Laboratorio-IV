@@ -17,39 +17,37 @@
         }
 
 
-        public function Add(array $parameters, bool $flag = true)
+        public function Add(array $parameters)
         {
             Utils::checkAdmin();
 
-            if ($this->companyDAO->IsNameInBD($parameters['name']) || $this->companyDAO->IsEmailInBD($parameters['email']))
+            if ($this->companyDAO->IsNameInDB($parameters['name']) || $this->companyDAO->IsEmailInDB($parameters['email']))
             {
                 $message = ERROR_COMPANY_DUPLICATE ;
             }
             else
             {
-                $company = new Company();
+                $userRoleDAO = new UserRoleDAO();
+                $company = new Company();//que le pongo al constructor ?
+                //$company->setUserId() va vacio al DAO
+                $company->setEmail($parameters['email']);
+                $company->setPassword($parameters['password']);
+                $company->setUserRole($userRoleDAO->GetUserRoleByDescription(ROLE_COMPANY));
+                $company->setActive(true);
+
                 $company->setName($parameters['name']);
                 $company->setYearOfFoundation($parameters['yearOfFoundation']);
                 $company->setCity($parameters['city']);
                 $company->setDescription($parameters['description']);
                 $company->setLogo(base64_encode(file_get_contents($parameters['logo']["tmp_name"])));
-                $company->setEmail($parameters['email']);
                 $company->setPhoneNumber($parameters['phoneNumber']);
-
-                if ($flag) {
-                    $company->setActive(true);
-                }
-                else
-                {
-                    $company->setActive(false);
-                }
-               
 
                 $this->companyDAO->Add($company);
             }
 
-            if ($flag) {
-                $companyList = $this->companyDAO->GetAll();
+            /*if ($flag) {
+               
+                $companyList = $this->companyDAO->GetAll();//solo aprobadas
 
                 require_once(VIEWS_PATH."company-list.php");
             }
@@ -57,7 +55,9 @@
             {
                 $message = COMPANY_REGISTERED;
                 require_once(VIEWS_PATH."login.php");
-            }
+            }*/
+
+            $this->ShowListView();
             
         }
 
@@ -75,23 +75,26 @@
         public function Edit(array $parameters)
         {
             Utils::checkAdmin();
-            
-            $companyId = $parameters['id'];
-            $name = $parameters['name'];
-            $yearOfFoundation = $parameters['yearOfFoundation'];
-            $city = $parameters['city'];
-            $description = $parameters['description'];           
-            $logo_tmp_path = $parameters['logo']['tmp_name'];
-            $email = $parameters['email'];
-            $phoneNumber = $parameters['phoneNumber'];
 
-            $this->companyDAO->Edit($companyId, $name, $yearOfFoundation, $city, $description, $logo_tmp_path, $email, $phoneNumber);
+            $company = new Company($parameters['id']);
+
+            $company->setName($parameters['name']);
+            $company->setYearOfFundation($parameters['yearOfFoundation']);
+            $company->setCity($parameters['city']);
+            $company->setDescription($parameters['description']);
+            $company->setLogo($parameters['logo']['tmp_name']);
+            $company->setEmail($parameters['email']);
+            $company->setPassword($parameters['password']);//agregar a la vista
+            $company->setPhoneNumber($parameters['phoneNumber']);
+            $company->setApproved($parameters['approved']);//agregar a la vista
+
+            $this->companyDAO->Edit($company);
 
             $this->ShowInfo($parameters);
         }
 
 
-        public function GetAll(): array
+        public function GetAll(): array//no le veo un buen uso por ahora
         {
             $companyList = $this->companyDAO->GetAll();
             
@@ -99,7 +102,7 @@
         }
 
 
-        public function ShowAddView(): void
+        public function ShowAddView(): void//esto no solo lo hace el admin lo hace la compania tmb
         {
             Utils::checkAdmin();
 
@@ -111,7 +114,10 @@
         {
             Utils::checkUserLoggedIn();
 
-            $companyList = $this->companyDAO->GetAll();
+            if(Utils::isAdmin())
+                $companyList = $this->companyDAO->GetAll(false);//todas
+            else
+                $companyList = $this->companyDAO->GetAll();//solo aprobadas
 
             require_once(VIEWS_PATH."company-list.php");
         }
@@ -136,6 +142,7 @@
             require_once(VIEWS_PATH."company-edit.php");
         }
 
+        //estas van a aparecer primeras en company list,no necesito un metodo
         public function ShowPendingView() //under construction
         {
             Utils::checkAdmin();
@@ -143,7 +150,7 @@
             require_once(VIEWS_PATH."company-list.php");
         }
         
-
+        //me faltaria verlo y editarlo para q ande con la nueva BD
         public function FilterByName(array $parameters): void
         {
             Utils::checkUserLoggedIn();
@@ -168,11 +175,13 @@
             }
         }
 
+        //La tengo q ver
         public function RegisterNewCompany(array $parameters)  
         {
             $this->Add($parameters, false);
         }
 
+        //Esta tmb
         public function RegisterExistingCompany(array $parameters)
         {
             Utils::checkAdmin();
