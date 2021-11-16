@@ -11,25 +11,22 @@
             {
                 $message = "";
                 $prices = $this->GetPricesFromBinance();
-                $btc = '';
-                $eth = '';
-                $ltc = '';
 
                 foreach ($prices as $k => $v)
                 {
                     if ($v['symbol'] == 'BTCUSDT')
                     {
-                        $btc = $v['price'];
+                        $btc = (double)$v['price'];
                     }
                     
                     if ($v['symbol'] == 'ETHUSDT')
                     {
-                        $eth = $v['price'];
+                        $eth = (double)$v['price'];
                     }
                     
                     if ($v['symbol'] == 'LTCUSDT')
                     {
-                        $ltc = $v['price'];
+                        $ltc = (double)$v['price'];
                     }
                 }
                 
@@ -48,30 +45,5 @@
             $json = json_decode($data, true);
 
             return $json;
-
-            /* $btc = '';
-            $eth = '';
-            $ltc = '';
-
-            foreach ($json as $k => $v)
-            {
-                if ($v['symbol'] == 'BTCUSDT')
-                {
-                    $btc = $v['price'];
-                }
-                
-                if ($v['symbol'] == 'ETHUSDT')
-                {
-                    $eth = $v['price'];
-                }
-                
-                if ($v['symbol'] == 'LTCUSDT')
-                {
-                    $ltc = $v['price'];
-                }
-                
-
-            } */
-
         }
     }

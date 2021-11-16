@@ -35,6 +35,18 @@
                 }
             </script>
 
+            <script type="text/javascript">
+                function confirmRegister() {
+
+                    var response = confirm('¿Está seguro de que desea Registrar la compañia ?');
+
+                    if (response == true)
+                        return true;
+                    else
+                        return false;
+                }
+            </script>
+
             <table class="table bg-light-alpha">
                 <thead>
                     <th></th>
@@ -51,8 +63,9 @@
                         <form id="info" action="<?php echo FRONT_ROOT ?>Company/ShowInfo" name='info' method='POST' class="bg-light-alpha p-5">
                         </form>
                         <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowEditView" name='edit' method='POST' class="bg-light-alpha p-5"></form>
-                        <form id="delete" action="<?php echo FRONT_ROOT ?>Company/Delete" name='delete' method='POST' class="bg-light-alpha p-5">
-                        </form>
+                        <form id="register" action="<?php echo FRONT_ROOT ?>Company/RegisterExistingCompany" name='register' method='POST' class="bg-light-alpha p-5"></form>
+                        <form id="delete" action="<?php echo FRONT_ROOT ?>Company/Delete" name='delete' method='POST' class="bg-light-alpha p-5"></form>
+                        
                         <?php
                         foreach ($companyList as $company) 
                         {?>
@@ -67,7 +80,15 @@
                                     if (Utils::isAdmin()) 
                                     {
                                         echo '<button class="btn btn-success" type= "submit" name="companyId" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
-                                        echo '<button class="btn btn-danger" type="submit" onclick="return confirmDelete()" name="companyId" form="delete" value='.$company->getCompanyId().'>Eliminar</button>';
+                                        if ($company->isActive())
+                                        {
+                                            echo '<button class="btn btn-danger" type="submit" onclick="return confirmDelete()" name="companyId" form="delete" value='.$company->getCompanyId().'>Eliminar</button>';
+                                        }
+                                        else
+                                        {
+                                            echo '<button class="btn btn-warning" type="submit" onclick="return confirmRegister()" name="companyId" form="register" value='.$company->getCompanyId().'>Registrar</button>';
+                                        }
+
                                     } ?></td>
                                 </form>
                             </tr> 

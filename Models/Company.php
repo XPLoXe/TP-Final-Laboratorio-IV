@@ -1,7 +1,9 @@
 <?php
     namespace Models;
 
-    class Company
+    use Models\User as User;
+
+    class Company extends User
     {
         private int $companyId;
         private string $name;
@@ -9,7 +11,6 @@
         private string $city;
         private string $description;
         private string $logo; // base64 encode of the image
-        private string $email;
         private string $phoneNumber;
         private bool $active;
 

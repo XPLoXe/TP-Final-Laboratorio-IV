@@ -11,6 +11,7 @@
     {
         private $connection;
         private $tableName = "Students";
+        private $studentList;
 
 
         public function GetAll(): array
