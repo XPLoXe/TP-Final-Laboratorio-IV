@@ -2,7 +2,9 @@
     namespace Controllers;
 
     use DAO\CompanyDAO as CompanyDAO;
+    use DAO\UserDAO as UserDAO;
     use Models\Company as Company;
+    use Models\User as User;
 
     use Utils\Utils as Utils;
 
@@ -19,7 +21,7 @@
 
         public function Add(array $parameters)
         {
-            Utils::checkAdmin();
+            Utils::checkUserLoggedIn();
 
             if ($this->companyDAO->IsNameInDB($parameters['name']) || $this->companyDAO->IsEmailInDB($parameters['email']))
             {
@@ -28,8 +30,8 @@
             else
             {
                 $userRoleDAO = new UserRoleDAO();
-                $company = new Company();//que le pongo al constructor ?
-                //$company->setUserId() va vacio al DAO
+                $company = new Company();
+                
                 $company->setEmail($parameters['email']);
                 $company->setPassword($parameters['password']);
                 $company->setUserRole($userRoleDAO->GetUserRoleByDescription(ROLE_COMPANY));
@@ -42,20 +44,13 @@
                 $company->setLogo(base64_encode(file_get_contents($parameters['logo']["tmp_name"])));
                 $company->setPhoneNumber($parameters['phoneNumber']);
 
+                if(Utils::isAdmin())
+                    $company->setApproved(true);
+                else
+                    $company->setApproved(false);
+
                 $this->companyDAO->Add($company);
             }
-
-            /*if ($flag) {
-               
-                $companyList = $this->companyDAO->GetAll();//solo aprobadas
-
-                require_once(VIEWS_PATH."company-list.php");
-            }
-            else
-            {
-                $message = COMPANY_REGISTERED;
-                require_once(VIEWS_PATH."login.php");
-            }*/
 
             $this->ShowListView();
             
@@ -94,9 +89,12 @@
         }
 
 
-        public function GetAll(): array//no le veo un buen uso por ahora
+        public function GetAll(): array
         {
-            $companyList = $this->companyDAO->GetAll();
+            if(Utils::isAdmin())
+                $companyList = $this->companyDAO->GetAll(false);//todas
+            else
+                $companyList = $this->companyDAO->GetAll();//solo aprobadas
             
             return $companyList;
         }
@@ -110,14 +108,11 @@
         }
 
 
-        public function ShowListView():void
+        public function ShowListView($message = ""):void
         {
             Utils::checkUserLoggedIn();
 
-            if(Utils::isAdmin())
-                $companyList = $this->companyDAO->GetAll(false);//todas
-            else
-                $companyList = $this->companyDAO->GetAll();//solo aprobadas
+            $companyList = $this->GetAll();
 
             require_once(VIEWS_PATH."company-list.php");
         }
@@ -142,15 +137,14 @@
             require_once(VIEWS_PATH."company-edit.php");
         }
 
-        //estas van a aparecer primeras en company list,no necesito un metodo
         public function ShowPendingView() //under construction
         {
             Utils::checkAdmin();
             $companyList = $this->companyDAO->GetAll(false); //it will only bring the inactive companies (those who are pending for registering)
+            //filtro de no aprobadas
             require_once(VIEWS_PATH."company-list.php");
         }
         
-        //me faltaria verlo y editarlo para q ande con la nueva BD
         public function FilterByName(array $parameters): void
         {
             Utils::checkUserLoggedIn();
@@ -168,7 +162,7 @@
                     if (empty($companyList))
                     {
                         $message = ERROR_COMPANY_FILTER;
-                        $companyList = $this->companyDAO->GetAll();
+                        $this->ShowListView($message);
                     } 
                     require_once(VIEWS_PATH."company-list.php");
                 }
@@ -190,11 +184,16 @@
             $password = str_replace(' ', '', $password);
             
             mail($company->getEmail(), COMPANY_REGISTER_EMAIL_SUBJECT, COMPANY_REGISTER_EMAIL_BODY); //mail notificando
-            $this->companyDAO->Delete($company->getCompanyId(), true);
+            $this->companyDAO->Delete($company->getCompanyId(), true);// setApprovedById($companyId)
             $message = COMPANY_REGISTER_SUCCESS;
             //we need to persist the new user in our data base here (using the $password generated)
             require_once(VIEWS_PATH."home.php");
             
+        }
+
+        public function GetCompanyByUser(User $user): Company
+        {
+            return $this->companyDAO->GetCompanyByUser($user);
         }
 
         

@@ -15,6 +15,8 @@
         private string $dni;
         private string $gender;
         private string $phoneNumber;
+        private int $apiId;
+        private bool $apiActive;
         
 
         public function getStudentId()
@@ -122,5 +124,25 @@
         public function setPhoneNumber($phoneNumber): void
         {
             $this->phoneNumber = $phoneNumber;
+        }
+
+        public function getApiId()
+        {
+            return $this->apiId;
+        }
+
+        public function setApiId($apiId)
+        {
+            $this->apiId = $apiId;
+        }
+
+        public function isApiActive()
+        {
+            return $this->apiActive;
+        }
+
+        public function setApiActive($apiActive)
+        {
+            $this->apiActive = $apiActive;
         }
     }

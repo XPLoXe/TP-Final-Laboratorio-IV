@@ -74,9 +74,9 @@
 
         public function IsEmailInDataBase(string $email): bool
         {
-            if ($this->userDAO->IsEmailInDataBase($email))
+            if ($this->userDAO->IsEmailInDB($email))
             {
-                $this->message = ERROR_VERIFY_EMAIL_DATABASE;
+                $this->message = ERROR_VERIFY_EMAIL_DATABASE;//error para el register
                 return true;
             } 
             return false;

@@ -88,9 +88,13 @@
         }
 
 
-        public function setLogo(string $logo): void
+        public function setLogo( $logo ): void
         {
-            $this->logo = $logo;
+            if(empty($logo) || is_null($logo))
+                $this->logo = " ";
+            else
+                $this->logo = $logo;
+            
         }      
 
         

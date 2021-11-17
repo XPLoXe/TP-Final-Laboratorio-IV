@@ -6,6 +6,7 @@
     use DAO\StudentDAO as StudentDAO;
     use Models\Student as Student;
     use Utils\Utils as Utils;
+    use Models\User as User;
 
     class StudentController
     {
@@ -18,7 +19,6 @@
             $this->careerDAO = new CareerDAO;
             
         }
-
 
         public function GetStudentByEmail(string $email)
         {
@@ -94,5 +94,10 @@
                     require_once(VIEWS_PATH."student-list.php");
                 }
             }
+        }
+
+        public function GetStudentByUser(User $userStudent): Student
+        {
+            return $this->studentDAO->GetStudentByUser($userStudent);
         }
     }

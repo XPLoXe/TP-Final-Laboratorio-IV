@@ -36,8 +36,15 @@
         
         public static function getLoggedUserFullName(): string
         {
-            return $_SESSION['loggedUser']->getFirstName() . " " . $_SESSION['loggedUser']->getLastName();
-        }
+            if(self::isStudent())//solo para debuggear
+                return $_SESSION['loggedUser']->getFirstName() . " " . $_SESSION['loggedUser']->getLastName();
+            if(self::isAdmin())
+                return "Admin";
+            // if(self::isCompany())
+            //     return $_SESSION['loggedUser']->getName();
+            return "Compañía";//Hasta q se haga isCompany
+            
+        }        
 
 
         public static function checkUserLoggedIn(): void

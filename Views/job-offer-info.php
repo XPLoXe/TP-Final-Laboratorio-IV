@@ -122,7 +122,7 @@ require_once('nav.php');
                                     {
                                         echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="apply" value=' . $jobOffer->getJobOfferId() . '>Postularse</button>';
                                     }
-                                    if(Utils::isAdmin()){
+                                    if(Utils::isAdmin()){//or isCompany
                                        
                                         if (!empty($studentsInJobOffer))
                                         {
@@ -135,7 +135,7 @@ require_once('nav.php');
                                                     <strong class="float-left">
                                                         <?php echo $student->getLastName()." ".$student->getName()." | ".$student->getEmail(); ?>
                                                     </strong>
-                                                    <div class="float-right">
+                                                    <div class="float-right"> <!-- Boton de info del estudiante -->
                                                         <button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' <?php echo $student->getUserId()?>'>Eliminar</button>
                                                     </div>
                                                 </div>

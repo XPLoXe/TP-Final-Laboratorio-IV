@@ -79,14 +79,10 @@
                                     if (Utils::isAdmin()) 
                                     {
                                         echo '<button class="btn btn-success" type= "submit" name="companyId" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
-                                        if ($company->isActive())
-                                        {
-                                            echo '<button class="btn btn-danger" type="submit" onclick="return confirmDelete()" name="companyId" form="delete" value='.$company->getCompanyId().'>Eliminar</button>';
-                                        }
-                                        else
-                                        {
+                                        echo '<button class="btn btn-danger" type="submit" onclick="return confirmDelete()" name="companyId" form="delete" value='.$company->getCompanyId().'>Eliminar</button>';
+
+                                        if (!$company->isApproved())
                                             echo '<button class="btn btn-warning" type="submit" onclick="return confirmRegister()" name="companyId" form="register" value='.$company->getCompanyId().'>Registrar</button>';
-                                        }
 
                                     } ?></td>
                                 </form>

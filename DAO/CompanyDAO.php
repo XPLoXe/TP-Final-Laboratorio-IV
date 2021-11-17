@@ -12,7 +12,7 @@
         private $tableName = "Companies";
         private $userDAO;
 
-        public function construct__ ()
+        public function __construct()
         {
             $this->userDAO = new UserDAO();
         }
@@ -22,7 +22,7 @@
         {
             try
             {
-                $query = "INSERT INTO ".$this->tableName." (user_company_id, name, year_of_foundation, city, description, logo, email, phone_number) VALUES (:user_company_id, :name, :year_of_foundation, :city, :description, :logo, :email, :phone_number);";
+                $query = "INSERT INTO ".$this->tableName." (user_company_id, name, year_of_foundation, city, description, logo, email, phone_number, approved) VALUES (:user_company_id, :name, :year_of_foundation, :city, :description, :logo, :email, :phone_number, :approved);";
 
                 $this->userDAO->Add($company->getUser());
 
@@ -139,14 +139,13 @@
 
                 $companyList = array();
 
-                $queryOnlyApproved = array();
-
-                if($onlyApproved == true){
-                    $queryOnlyApproved = "AND approved = :approved";
+                if($onlyApproved == true)
                     $parameters['approved'] = true;
-                }
+                else
+                    $parameters['approved'] = false;
 
-                $query = 'SELECT * FROM '.$this->tableName.'  WHERE active = :active '.$queryOnlyApproved.' ORDER BY approved ;';
+
+                $query = 'SELECT * FROM '.$this->tableName.'  WHERE active = :active AND approved = :approved ORDER BY user_company_id ;';
 
                 $parameters['active'] = true;
 
@@ -156,7 +155,7 @@
                 
                 foreach ($resultSet as $row)
                 {
-                    $user = $this->userDAO->GetSpecificUser($userCompanyList,$row["company_id"]);
+                    $user = $this->userDAO->GetSpecificUser($userCompanyList,$row["user_company_id"]);
 
                     $company = new Company($user->getUserId());
 
@@ -170,7 +169,6 @@
                     $company->setCity($row["city"]);
                     $company->setDescription($row["description"]);
                     $company->setLogo($row["logo"]);
-                    $company->setEmail($row["email"]);
                     $company->setPhoneNumber($row["phone_number"]);
                     $company->setApproved($row["approved"]);
 
@@ -266,5 +264,47 @@
             {
                 throw $ex;
             }
+        }
+
+        public function GetCompanyByUser($user): Company
+        {
+            try
+            {
+                $userCompany= $this->userDAO->GetUserById($user->getUserId());
+
+                $query = 'SELECT * FROM '.$this->tableName.' WHERE user_company_id = :user_company_id;';
+
+                $parameters['user_company_id'] = $userCompany->getUserId();
+
+                $this->connection = Connection::GetInstance();
+
+                $row = $this->connection->Execute($query, $parameters)[0];
+                
+                if (!empty($row))
+                {
+                    $company = new Company();
+
+                    $company->setCompanyId($userCompany->getUserId());
+                    $company->setEmail($userCompany->getEmail());
+                    $company->setPassword($userCompany->getPassword());
+                    $company->setUserRole($userCompany->getUserRole());
+                    $company->setActive($userCompany->isActive());
+
+                    $company->setName($row["name"]);
+                    $company->setYearOfFoundation($row["year_of_foundation"]);
+                    $company->setCity($row["city"]);
+                    $company->setDescription($row["description"]);
+                    $company->setLogo($row["logo"]);
+                    $company->setPhoneNumber($row["phone_number"]);
+                    $company->setApproved($row["approved"]);                    
+                }
+                
+                return $company;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+
         }
     }

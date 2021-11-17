@@ -4,10 +4,13 @@
     use Config\Message as Message;
     use Controllers\StudentController as StudentController;
     use Controllers\UserController as UserController;
+    use Controllers\CompanyController as CompanyController;
     use DAO\JobOfferDAO as JobOfferDAO;
     use DAO\UserDAO as UserDAO;
     use Models\User as User;
     use Utils\Utils as Utils;
+    use Models\Student as Student;
+    use Models\Company as Company;
 
     class LoginController
     {
@@ -44,30 +47,29 @@
                 $password = $_POST["password"];
                 $message = "";
 
-                $studentController = new StudentController;
-                $userController = new UserController;
-                $user = new User;
+                $userController = new UserController();
                 
                 if ($userController->IsEmailInDataBase($email)) 
                 {
                     $user = $userController->GetUserByEmail($email);
                     
-                    if ($password == $user->getPassword())
+                    if ($user->getPassword() == $password)
                     {                        
                         if ($user->getUserRole()->getDescription() == ROLE_ADMIN)
                         {
-                            $jobOfferDAO->TryDatabaseUpdate(); 
-
-                            $_SESSION["loggedUser"] = $user;   
+                            //$jobOfferDAO->TryDatabaseUpdate(); 
+                            $_SESSION["loggedUser"] = $user;//admin
                             require_once(VIEWS_PATH."home.php");
-                        } 
-                        else
+                        }
+                        else if($user->getUserRole()->getDescription() == ROLE_STUDENT)
                         {
-                            if ($studentController->GetStudentByEmail($email)->isActive())  //checks if user is active in the API 
-                            {
-                                $jobOfferDAO->TryDatabaseUpdate();
-                                $_SESSION["loggedUser"] = $user;
+                            $studentController = new StudentController();
+                            $studentToLogged = $studentController->GetStudentByUser($user);
 
+                            if ($studentToLogged->isApiActive())
+                            {
+                                //$jobOfferDAO->TryDatabaseUpdate();
+                                $_SESSION["loggedUser"] = $studentToLogged;
                                 require_once(VIEWS_PATH."home.php");
                             }
                             else
@@ -76,6 +78,24 @@
                                 require_once(VIEWS_PATH."login.php");
                             }
                         }
+                        else if($user->getUserRole()->getDescription() == ROLE_COMPANY)
+                        {
+                            $companyController = new CompanyController();
+                            $companyToLogged = $companyController->GetCompanyByUser($user);
+
+                            if ($companyToLogged->isApproved())
+                            {
+                                //$jobOfferDAO->TryDatabaseUpdate();
+                                $_SESSION["loggedUser"] = $companyToLogged;
+                                require_once(VIEWS_PATH."home.php");
+                            }
+                            else
+                            {
+                                $message = COMPANY_NOT_APPROVED;
+                                require_once(VIEWS_PATH."login.php");
+                            }
+                        }
+
                     }
                     else
                     {
@@ -84,7 +104,7 @@
                     }
                 } else
                 {
-                    $message = WRONG_EMAIL;
+                    $message = WRONG_EMAIL;// el mail no esta en la bd, no se puede logear
                     require_once(VIEWS_PATH."login.php");
                 }
             } else

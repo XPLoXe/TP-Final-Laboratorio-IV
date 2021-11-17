@@ -83,33 +83,7 @@
             }
         }
 
-
-        public function IsEmailInDataBase(string $email): bool
-        {
-            try
-            {
-                $query = "SELECT * FROM ". $this->tableName . " WHERE email = :email;";
-
-                $parameters['email'] = $email;
-
-                $this->connection = Connection::GetInstance();
-
-                $resultSet = $this->connection->Execute($query, $parameters);
-
-                if (!empty($resultSet))                         
-                {   
-                    if (strcmp($email, $resultSet[0]["email"]) == 0)
-                        return true;
-                }
-            }
-            catch (Exception $ex)
-            {
-                throw $ex;
-            }
-            return false;
-        }
-
-
+        
         public function GetAll( $userRoleDescription = NULL ): array
         {
             try
@@ -165,9 +139,7 @@
         {
             try
             {
-                $userList = array();
-
-                $query = "SELECT * FROM ".$this->tableName.' WHERE email=:email ';
+                $query = "SELECT * FROM ".$this->tableName.' WHERE email = :email ';
 
                 $parameters["email"] = $email;
 
@@ -195,8 +167,6 @@
         {
             try
             {
-                $userList = array();
-
                 $query = "SELECT * FROM ".$this->tableName." WHERE user_id = :user_id ;";
 
                 $parameters['user_id'] = $userId;
