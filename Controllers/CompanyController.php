@@ -58,6 +58,7 @@
             if(Utils::isAdmin())
             {
                 $message = COMPANY_REGISTER_SUCCESS;
+                mail($company->getEmail(), COMPANY_REGISTER_EMAIL_SUBJECT, COMPANY_REGISTER_EMAIL_BODY);
                 require_once(VIEWS_PATH."home.php");
             }
             else
@@ -137,7 +138,7 @@
         {
             Utils::checkUserLoggedIn();
 
-            $companyList = $this->GetAll(FILTER_ALL);
+            $companyList = $this->GetAll(FILTER_TRUE);
 
             require_once(VIEWS_PATH."company-list.php");
         }
