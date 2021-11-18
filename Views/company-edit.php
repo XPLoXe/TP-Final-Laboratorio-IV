@@ -1,5 +1,8 @@
 <?php
-    if (!isset($_SESSION["loggedUser"])) 
+
+use Utils\Utils;
+
+if (!isset($_SESSION["loggedUser"])) 
         header("location: ../index.php");
 
     require_once('nav.php');
@@ -54,6 +57,32 @@
                               </div>
                          </div>
                     </div>
+                    <?php if (Utils::isAdmin()){?>
+                         <br>
+                         <div class="row">
+                              <div class="col-lg-4">
+                                   <div class="form-group">
+                                        <label for=""><strong>Contraseña</strong></label>
+                                        <input type="text" name="phoneNumber" class="form-control" value="<?php echo $company->getPassword() ?>">
+                                   </div>
+                              </div>
+                              <div class="col-lg-4">
+                                   <div class="form-group">
+                                        <label for=""><strong>Estado</strong></label>
+                                        <div>
+                                             <input type="radio" id="Aprobada" value="true" checked>
+                                             <label>Aprobada</label>
+                                        </div>
+                                        <div>
+                                             <input type="radio" id="Desaprobada" value="false">
+                                             <label>Desaprobada</label>
+                                        </div>
+                                   </div>
+                              </div>
+                              
+                         </div>
+                    <?php }?>
+                    
                     <button type="submit" name="id" value="<?php echo $company->getCompanyId() ?>" class="btn btn-dark ml-auto d-block">Aceptar</button>
                </form>
           </div>
