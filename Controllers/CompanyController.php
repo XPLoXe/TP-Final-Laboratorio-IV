@@ -157,7 +157,7 @@
 
         public function ShowInfo(array $parameters): void
         {
-            Utils::checkCompany();
+            Utils::checkUserLoggedIn();
 
             $company = $this->companyDAO->GetCompanyById((int)$parameters['id']);
 
@@ -167,7 +167,7 @@
 
         public function ShowEditView(array $parameters): void
         {
-            Utils::checkAdmin();
+            Utils::checkUserLoggedIn();
 
             $company = $this->companyDAO->GetCompanyById($parameters['companyId']);
 

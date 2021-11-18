@@ -1,5 +1,8 @@
 <?php
-    if (!isset($_SESSION["loggedUser"])) 
+
+use Utils\Utils;
+
+if (!isset($_SESSION["loggedUser"])) 
         header("location: ../index.php");
 
     require_once('nav.php');
@@ -38,8 +41,19 @@
       <div class="row d-flex justify-content-around font-weight-bold">
         <div class="col-6"><h5> <img src="<?php echo FRONT_ROOT.IMG_PATH ?>tel.png">&nbsp&nbsp&nbsp<?php echo $company->getPhoneNumber()?></h5></div>
         <div class="col-6"><h5> <img src="<?php echo FRONT_ROOT.IMG_PATH ?>email.png">&nbsp&nbsp&nbsp<?php echo $company->getEmail()?></h5></div>
+        <?php 
+        if (Utils::isCompany() || Utils::isAdmin())
+        {
+          ?> 
+          <?php
+          echo '<button class="btn btn-primary btn-lg btn-success" type= "submit" name="companyId" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
+        }                                        
+        ?>
       </div>
         
+      
+      <form id="edit" action="<?php echo FRONT_ROOT ?>Company/ShowEditView" name='edit' method='POST'></form>
+
       </div>
 
     </div>
