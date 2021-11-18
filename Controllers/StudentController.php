@@ -2,9 +2,10 @@
     namespace Controllers;
 
     use Controllers\JobOfferController as JobOfferController;
-    use DAO\CareerDAO;
+    use DAO\CareerDAO as CareerDAO;
     use DAO\StudentDAO as StudentDAO;
     use Models\Student as Student;
+    use Models\User as User;
     use Utils\Utils as Utils;
 
     class StudentController
@@ -18,7 +19,6 @@
             $this->careerDAO = new CareerDAO;
             
         }
-
 
         public function GetStudentByEmail(string $email)
         {
@@ -94,5 +94,17 @@
                     require_once(VIEWS_PATH."student-list.php");
                 }
             }
+        }
+
+
+        public function GetStudentByUserId(int $userId): Student
+        {
+            return $this->studentDAO->GetStudentByUserId($userId);
+        }
+
+
+        public function GetApplicants(int $jobOfferId): array
+        {
+            return $this->studentDAO->GetApplicants($jobOfferId);
         }
     }

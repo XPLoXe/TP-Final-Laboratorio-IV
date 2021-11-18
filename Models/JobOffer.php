@@ -7,7 +7,6 @@
     {
         private int $jobOfferId;
         private JobPosition $jobPosition;
-        private $user_id;
         private Company $company;
         private string $description;
         private DateTime $publicationDate;

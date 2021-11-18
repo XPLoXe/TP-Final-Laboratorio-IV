@@ -25,15 +25,12 @@
         {
             try
             {
-                $query = "INSERT INTO ".$this->tableName." (email, user_password, user_role_id, associated_id, first_name, last_name) 
-                VALUES (:email, :user_password, :user_role_id, :associated_id, :first_name, :last_name);";
+                $query = "INSERT INTO ".$this->tableName." (email, user_password, user_role_id) 
+                VALUES (:email, :user_password, :user_role_id);";
 
                 $parameters["email"] = $user->getEmail();
                 $parameters["user_password"] = $user->getPassword();
                 $parameters["user_role_id"] = $user->getUserRoleId();
-                $parameters["associated_id"] = $user->getAssociatedId();
-                $parameters["first_name"] = $user->getFirstName();
-                $parameters["last_name"] = $user->getLastName();
 
                 $this->connection = Connection::GetInstance();
 
@@ -50,7 +47,7 @@
         {
             try
             {
-                $query =   "UPDATE ".$this->tableName." SET active = false WHERE user_id = :user_id ;";
+                $query = "UPDATE ".$this->tableName." SET active = false WHERE user_id = :user_id ;";
 
                 $parameters['user_id'] = $userId;
 
@@ -69,15 +66,12 @@
         {
             try
             {
-                $query =   "UPDATE ".$this->tableName." SET email = :email , user_password = :user_password , first_name = :first_name , last_name = :last_name , user_role_id = :user_role_id , associated_id = :associated_id WHERE user_id = :user_id ;";
+                $query =   "UPDATE ".$this->tableName." SET email = :email , user_password = :user_password , user_role_id = :user_role_id WHERE user_id = :user_id ;";
 
                 $parameters['user_id'] = $user->getUserId();
                 $parameters['email'] = $user->getEmail();
                 $parameters['user_password'] = $user->getPassword();
-                $parameters['first_name'] = $user->getFirstName();
-                $parameters['last_name'] = $user->getLastName();
                 $parameters['user_role_id'] = $user->getUserRoleId();
-                $parameters['associated_id'] = $user->getAssociatedId();
 
                 $this->connection = Connection::GetInstance();
 
@@ -89,40 +83,27 @@
             }
         }
 
-
-        public function IsEmailInDataBase(string $email): bool
-        {
-            try
-            {
-                $query = "SELECT * FROM ". $this->tableName . " WHERE email = :email;";
-
-                $parameters['email'] = $email;
-
-                $this->connection = Connection::GetInstance();
-
-                $resultSet = $this->connection->Execute($query, $parameters);
-
-                if (!empty($resultSet))                         
-                {   
-                    if (strcmp($email, $resultSet[0]["email"]) == 0)
-                        return true;
-                }
-            }
-            catch (Exception $ex)
-            {
-                throw $ex;
-            }
-            return false;
-        }
-
-
-        public function GetAll(): array
+        
+        public function GetAll( $userRoleDescription = NULL ): array
         {
             try
             {
                 $userList = array();
 
-                $query = "SELECT * FROM ".$this->tableName." u INNER JOIN UserRoles ur ON u.user_role_id = ur.user_role_id WHERE u.active = :active ;";
+                $queryRoleDescription = array();
+
+                if($userRoleDescription != NULL)
+                {
+                    $queryRoleDescription = "AND ur.description = :description ";
+
+                    if($userRoleDescription == ROLE_STUDENT)
+                        $parameters["description"] = ROLE_STUDENT;
+
+                    else if ($userRoleDescription == ROLE_COMPANY)
+                        $parameters["description"] = ROLE_COMPANY;
+                }
+
+                $query = "SELECT * FROM ".$this->tableName." u INNER JOIN UserRoles ur ON u.user_role_id = ur.user_role_id ".$queryRoleDescription." WHERE u.active = :active ;";
 
                 $parameters['active'] = true;
 
@@ -136,14 +117,11 @@
                     $user->setUserId($row["user_id"]);
                     $user->setEmail($row["email"]);
                     $user->setPassword($row["user_password"]);
-                    $user->setFirstName($row["first_name"]);
-                    $user->setLastName($row["last_name"]);
 
                     $userRole = new UserRole($row['user_role_id']);
                     $userRole->setDescription($row['description']);
                     $user->setUserRole($userRole);
 
-                    $user->setAssociatedId($row["associated_id"]);
                     $user->setActive($row["active"]);
 
                     array_push($userList, $user);
@@ -161,22 +139,19 @@
         {
             try
             {
-                $userList = array();
+                $query = "SELECT * FROM ".$this->tableName.' WHERE email = :email ';
 
-                $query = "SELECT * FROM ".$this->tableName.' WHERE email="'.$email.'"';
+                $parameters["email"] = $email;
 
                 $this->connection = Connection::GetInstance();
 
-                $resultSet = $this->connection->Execute($query);
+                $resultSet = $this->connection->Execute($query,$parameters);
 
                 $user = new User();
                 $user->setUserId($resultSet[0]["user_id"]);
                 $user->setEmail($resultSet[0]["email"]);
                 $user->setPassword($resultSet[0]["user_password"]);
-                $user->setFirstName($resultSet[0]["first_name"]);
-                $user->setLastName($resultSet[0]["last_name"]);
                 $user->setUserRole($this->userRoleDAO->GetUserRoleById($resultSet[0]["user_role_id"])); // TODO: use INNER JOIN
-                $user->setAssociatedId($resultSet[0]["associated_id"]);
                 $user->setActive($resultSet[0]["active"]);
 
                 return $user;
@@ -192,8 +167,6 @@
         {
             try
             {
-                $userList = array();
-
                 $query = "SELECT * FROM ".$this->tableName." WHERE user_id = :user_id ;";
 
                 $parameters['user_id'] = $userId;
@@ -206,11 +179,9 @@
                 $user->setUserId($resultSet[0]["user_id"]);
                 $user->setEmail($resultSet[0]["email"]);
                 $user->setPassword($resultSet[0]["user_password"]);
-                $user->setFirstName($resultSet[0]["first_name"]);
-                $user->setLastName($resultSet[0]["last_name"]);
                 $user->setUserRole($this->userRoleDAO->GetUserRoleById($resultSet[0]["user_role_id"])); // TODO: use INNER JOIN
-                $user->setAssociatedId($resultSet[0]["associated_id"]);
                 $user->setActive($resultSet[0]["active"]);
+                
                 return $user;
             }
             catch (Exception $ex)
@@ -218,4 +189,60 @@
                 throw $ex;
             }
         }
+
+        public function GetLastId(): int
+        {
+            try
+            {
+                $query = "SELECT @@identity;";
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query);
+                
+                return $resultSet;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+        public function GetSpecificUser($userList, $id): User
+        {
+
+            foreach($userList as $user)
+            {
+                if($user->getUserId() == $id)
+                    return $user;
+            }
+
+            return null;
+        } 
+
+        public function IsEmailInDB($email): bool
+        {
+            try
+            {
+                $query = "SELECT email FROM ".$this->tableName." WHERE email = :email ;";
+
+                $parameters['email'] = $email;
+ 
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query,$parameters);
+                
+                if(!empty($resultSet))
+                    return true;
+                else
+                    return false;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
+
     }

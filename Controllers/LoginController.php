@@ -4,39 +4,28 @@
     use Config\Message as Message;
     use Controllers\StudentController as StudentController;
     use Controllers\UserController as UserController;
+    use Controllers\CompanyController as CompanyController;
     use DAO\JobOfferDAO as JobOfferDAO;
     use DAO\UserDAO as UserDAO;
     use Models\User as User;
     use Utils\Utils as Utils;
+    use Models\Student as Student;
+    use Models\Company as Company;
 
     class LoginController
     {
         private $message;
 
-        
+
+        public function ShowLoginView(array $parameters): void
+        {
+            $message = $parameters['message'];
+            require_once(VIEWS_PATH."login.php");
+        }
+
         public function Login(): void
         {
             $jobOfferDAO = new JobOfferDAO;
-            
-            $prices = $this->GetPricesFromBinance();
-
-            foreach ($prices as $k => $v)
-            {
-                if ($v['symbol'] == 'BTCUSDT')
-                {
-                    $btc = (double)$v['price'];
-                }
-                
-                if ($v['symbol'] == 'ETHUSDT')
-                {
-                    $eth = (double)$v['price'];
-                }
-                
-                if ($v['symbol'] == 'LTCUSDT')
-                {
-                    $ltc = (double)$v['price'];
-                }
-            }
 
             if ($_SERVER['REQUEST_METHOD'] == "POST")
             {
@@ -44,35 +33,50 @@
                 $password = $_POST["password"];
                 $message = "";
 
-                $studentController = new StudentController;
-                $userController = new UserController;
-                $user = new User;
+                $userController = new UserController();
                 
-                if ($userController->IsEmailInDataBase($email)) 
+                if ($userController->IsEmailInDataBase($email)) //TODO: rewrite
                 {
                     $user = $userController->GetUserByEmail($email);
                     
-                    if ($password == $user->getPassword())
+                    if ($user->getPassword() == $password)
                     {                        
-                        if ($user->getUserRole()->getDescription() == ROLE_ADMIN)
+                        if ($user->getUserRoleDescription() == ROLE_ADMIN)
                         {
-                            $jobOfferDAO->TryDatabaseUpdate(); 
+                            //$jobOfferDAO->TryDatabaseUpdate(); 
+                            $_SESSION["loggedUser"] = $user;//admin
+                            header('location:'.FRONT_ROOT.'Home/Index');
+                        }
+                        else if ($user->getUserRoleDescription() == ROLE_STUDENT)
+                        {
+                            $studentController = new StudentController();
+                            $student = $studentController->GetStudentByUserId($user->getUserId());
 
-                            $_SESSION["loggedUser"] = $user;   
-                            require_once(VIEWS_PATH."home.php");
-                        } 
-                        else
-                        {
-                            if ($studentController->GetStudentByEmail($email)->isActive())  //checks if user is active in the API 
+                            if ($student->isApiActive())
                             {
-                                $jobOfferDAO->TryDatabaseUpdate();
-                                $_SESSION["loggedUser"] = $user;
-
-                                require_once(VIEWS_PATH."home.php");
+                                //$jobOfferDAO->TryDatabaseUpdate();
+                                $_SESSION["loggedUser"] = $student;
+                                header('location:'.FRONT_ROOT.'Home/Index');
                             }
                             else
                             {
-                                $message = STUDENT_INACTIVE;
+                                header('location:'.FRONT_ROOT.'Login/ShowLoginView?message='.STUDENT_INACTIVE);
+                            }
+                        }
+                        else if ($user->getUserRole()->getDescription() == ROLE_COMPANY)
+                        {
+                            $companyController = new CompanyController();
+                            $company = $companyController->GetCompanyByUser($user);
+
+                            if ($company->isApproved())
+                            {
+                                //$jobOfferDAO->TryDatabaseUpdate();
+                                $_SESSION["loggedUser"] = $company;
+                                header('location:'.FRONT_ROOT.'Home/Index');
+                            }
+                            else
+                            {
+                                $message = COMPANY_NOT_APPROVED;
                                 require_once(VIEWS_PATH."login.php");
                             }
                         }
@@ -84,7 +88,7 @@
                     }
                 } else
                 {
-                    $message = WRONG_EMAIL;
+                    $message = WRONG_EMAIL;// el mail no esta en la bd, no se puede logear
                     require_once(VIEWS_PATH."login.php");
                 }
             } else
@@ -112,20 +116,9 @@
             require_once(VIEWS_PATH."signup.php");
         }
 
+
         public function ShowSignupCompanyView(): void
         {
             require_once(VIEWS_PATH."company-register.php");
         }
-
-        private function GetPricesFromBinance()
-        {
-            $data = file_get_contents(BINANCE_URL);
-            $json = json_decode($data, true);
-
-            return $json;
-        }
-
-
-
-
     }

@@ -3,7 +3,7 @@
 
     use Controllers\CompanyController as CompanyController;
     use Controllers\JobPositionController as JobPositionController;
-    use Controllers\userController as userController;
+    use Controllers\UserController as UserController;
     use DAO\CompanyDAO as CompanyDAO;
     use DAO\JobOfferDAO as JobOfferDAO;
     use DAO\JobPositionDAO as JobPositionDAO;
@@ -13,26 +13,24 @@
     use Utils\Utils as Utils;
     use DateTime;
     use FPDF;
-use Models\Car;
-use tFPDF;
+    use tFPDF;
 
-class JobOfferController
+    class JobOfferController
     {
-        private $jobPositionController;
-        private $companyDAO;
-        private $jobOfferDAO;
-        private $jobPositionDAO;
-        private $userController;
-
+        private JobPositionController $jobPositionController;
+        private StudentController $studentController;
+        private UserController $userController;
+        private CompanyDAO $companyDAO;
+        private JobOfferDAO $jobOfferDAO;
+        private JobPositionDAO $jobPositionDAO;
 
 
         public function __construct()
         {
-            $this->jobOfferDAO = new JobOfferDAO();// SACAR
-            $this->companyDAO = new CompanyDAO();// SACAR
-            $this->jobPositionDAO = new JobPositionDAO();// SACAR
-            $this->jobPositionController = new JobPositionController();
-            $this->userController = new UserController();
+            $this->jobPositionController = new JobPositionController;
+            $this->studentController = new StudentController;
+            $this->userController = new UserController;
+            $this->jobOfferDAO = new JobOfferDAO;
         }
 
 
@@ -64,6 +62,7 @@ class JobOfferController
         {
             Utils::checkAdmin();
 
+            //Al eliminar una JobOffer, deberiamos eliminar todas las postulaciones de la misma
             $this->jobOfferDAO->Delete($parameters['jobOfferId']);
 
             $this->ShowListView();
@@ -138,23 +137,26 @@ class JobOfferController
         
         public function GetAll(): array
         {
-            if(Utils::isAdmin())
+            if (Utils::isAdmin())
                 $jobOffers = $this->jobOfferDAO->GetAll(FILTER_ALL);
-            else if(Utils::isStudent())
+            else // TODO: filter more cases
                 $jobOffers = $this->jobOfferDAO->GetAll(FILTER_STUDENT);
 
             return $jobOffers;
         }
+
         
-        public function GetJobOfferById($jobOfferId)
+        public function GetJobOfferById(int $jobOfferId): JobOffer
         {
-            return $this->jobOfferDAO->GetJobOfferById($this->jobOfferDAO->GetAll(FILTER_ALL),$jobOfferId);
+            return $this->jobOfferDAO->GetJobOfferById($jobOfferId);
         }
 
-        public function GetJobOfferByUserId($id)
+
+        public function GetJobOfferByUserId(int $userId): JobOffer
         {
-            return $this->jobOfferDAO->GetJobOfferByUserID($id);
+            return $this->jobOfferDAO->GetJobOfferByUserID($userId);
         }
+
 
         public function Apply(array $parameters): void
         {
@@ -162,12 +164,14 @@ class JobOfferController
                 $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId());
 
             $message = APPLY_SUCCESS;
-            require_once(VIEWS_PATH."home.php");
+            header("location:".FRONT_ROOT."Home/Index");
         }
+
 
         public function DeleteApplicant(array $parameters): void
         {
-            
+            // Ahora deleteApplicant elimina registros de studentsJobOffers
+            //el delete me tiene q direccionar a la oferta de trabajo q estaba detallando
             $userController = new UserController;
             
             $this->jobOfferDAO->DeleteApplication($parameters["jobOfferId"]);
@@ -186,7 +190,6 @@ class JobOfferController
                     echo "Envio de email fallido";
                 } */
             }
-
             $message = APPLY_DELETE;
             require_once(VIEWS_PATH."home.php");
         }
@@ -209,15 +212,25 @@ class JobOfferController
         public function ShowListView(): void
         {
             Utils::checkUserLoggedIn();
-        
-            if (Utils::isStudent())
-            {
-                $isLookingForJob = $this->jobOfferDAO->isUserIdInOffer($_SESSION["loggedUser"]->getUserId());
-            }
             
             $jobOfferList = $this->GetAll();
 
             require_once(VIEWS_PATH."job-offer-list.php");
+        }
+
+
+        public function ShowInfoView(array $parameters): void
+        {
+            Utils::checkUserLoggedIn();
+            
+            $jobOffer = $this->jobOfferDAO->GetJobOfferById($parameters['jobOfferId']);
+
+            if (Utils::isAdmin())
+                $applicants = $this->studentController->GetApplicants($jobOffer->getJobOfferId());
+            else if (Utils::isStudent())
+                $applications = $this->GetStudentApplications($_SESSION['loggedUser']->getUserId());
+
+            require_once(VIEWS_PATH."job-offer-info.php");
         }
 
 
@@ -277,6 +290,7 @@ class JobOfferController
             require_once(VIEWS_PATH."job-offer-edit.php");
         }
 
+
         public function ShowApplicationsView()
         {
             $jobOfferListAll = $this->GetAll();
@@ -291,11 +305,10 @@ class JobOfferController
                     array_push($jobOfferList, $jobOffer);
                     array_push($userList, $this->userController->getUserById($jobOffer->getUserId()));
                 }
-                
             }
-            
             require_once(VIEWS_PATH."student-application.php");
         }
+
 
         public function GeneratePDF(array $parameters)
         {
@@ -305,6 +318,7 @@ class JobOfferController
 
             require_once(VIEWS_PATH."job-offer-list.php");
         }
+
 
         public function CreatePDF(JobOffer $jobOffer): void //must be created in another function because of how FPDF works
         {
@@ -342,5 +356,9 @@ class JobOfferController
         }
 
 
+        public function GetStudentApplications(int $userId): array
+        {
+            return $this->jobOfferDAO->GetStudentApplications($userId);
+        }
     }
 ?>

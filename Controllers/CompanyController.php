@@ -2,7 +2,9 @@
     namespace Controllers;
 
     use DAO\CompanyDAO as CompanyDAO;
+    use DAO\UserDAO as UserDAO;
     use Models\Company as Company;
+    use Models\User as User;
 
     use Utils\Utils as Utils;
 
@@ -17,47 +19,40 @@
         }
 
 
-        public function Add(array $parameters, bool $flag = true)
+        public function Add(array $parameters)
         {
-            Utils::checkAdmin();
+            Utils::checkUserLoggedIn();
 
-            if ($this->companyDAO->IsNameInBD($parameters['name']) || $this->companyDAO->IsEmailInBD($parameters['email']))
+            if ($this->companyDAO->IsNameInDB($parameters['name']) || $this->companyDAO->IsEmailInDB($parameters['email']))
             {
                 $message = ERROR_COMPANY_DUPLICATE ;
             }
             else
             {
+                $userRoleDAO = new UserRoleDAO();
                 $company = new Company();
+                
+                $company->setEmail($parameters['email']);
+                $company->setPassword($parameters['password']);
+                $company->setUserRole($userRoleDAO->GetUserRoleByDescription(ROLE_COMPANY));
+                $company->setActive(true);
+
                 $company->setName($parameters['name']);
                 $company->setYearOfFoundation($parameters['yearOfFoundation']);
                 $company->setCity($parameters['city']);
                 $company->setDescription($parameters['description']);
                 $company->setLogo(base64_encode(file_get_contents($parameters['logo']["tmp_name"])));
-                $company->setEmail($parameters['email']);
                 $company->setPhoneNumber($parameters['phoneNumber']);
 
-                if ($flag) {
-                    $company->setActive(true);
-                }
+                if(Utils::isAdmin())
+                    $company->setApproved(true);
                 else
-                {
-                    $company->setActive(false);
-                }
-               
+                    $company->setApproved(false);
 
                 $this->companyDAO->Add($company);
             }
 
-            if ($flag) {
-                $companyList = $this->companyDAO->GetAll();
-
-                require_once(VIEWS_PATH."company-list.php");
-            }
-            else
-            {
-                $message = COMPANY_REGISTERED;
-                require_once(VIEWS_PATH."login.php");
-            }
+            $this->ShowListView();
             
         }
 
@@ -75,17 +70,20 @@
         public function Edit(array $parameters)
         {
             Utils::checkAdmin();
-            
-            $companyId = $parameters['id'];
-            $name = $parameters['name'];
-            $yearOfFoundation = $parameters['yearOfFoundation'];
-            $city = $parameters['city'];
-            $description = $parameters['description'];           
-            $logo_tmp_path = $parameters['logo']['tmp_name'];
-            $email = $parameters['email'];
-            $phoneNumber = $parameters['phoneNumber'];
 
-            $this->companyDAO->Edit($companyId, $name, $yearOfFoundation, $city, $description, $logo_tmp_path, $email, $phoneNumber);
+            $company = new Company($parameters['id']);
+
+            $company->setName($parameters['name']);
+            $company->setYearOfFundation($parameters['yearOfFoundation']);
+            $company->setCity($parameters['city']);
+            $company->setDescription($parameters['description']);
+            $company->setLogo($parameters['logo']['tmp_name']);
+            $company->setEmail($parameters['email']);
+            $company->setPassword($parameters['password']);//agregar a la vista
+            $company->setPhoneNumber($parameters['phoneNumber']);
+            $company->setApproved($parameters['approved']);//agregar a la vista
+
+            $this->companyDAO->Edit($company);
 
             $this->ShowInfo($parameters);
         }
@@ -93,13 +91,16 @@
 
         public function GetAll(): array
         {
-            $companyList = $this->companyDAO->GetAll();
+            if(Utils::isAdmin())
+                $companyList = $this->companyDAO->GetAll(false);//TODO: fix
+            else
+                $companyList = $this->companyDAO->GetAll();//solo aprobadas
             
             return $companyList;
         }
 
 
-        public function ShowAddView(): void
+        public function ShowAddView(): void//esto no solo lo hace el admin lo hace la compania tmb
         {
             Utils::checkAdmin();
 
@@ -107,11 +108,11 @@
         }
 
 
-        public function ShowListView():void
+        public function ShowListView($message = ""):void
         {
             Utils::checkUserLoggedIn();
 
-            $companyList = $this->companyDAO->GetAll();
+            $companyList = $this->GetAll();
 
             require_once(VIEWS_PATH."company-list.php");
         }
@@ -140,10 +141,10 @@
         {
             Utils::checkAdmin();
             $companyList = $this->companyDAO->GetAll(false); //it will only bring the inactive companies (those who are pending for registering)
+            //filtro de no aprobadas
             require_once(VIEWS_PATH."company-list.php");
         }
         
-
         public function FilterByName(array $parameters): void
         {
             Utils::checkUserLoggedIn();
@@ -161,19 +162,22 @@
                     if (empty($companyList))
                     {
                         $message = ERROR_COMPANY_FILTER;
-                        $companyList = $this->companyDAO->GetAll();
+                        $this->ShowListView($message);
                     } 
                     require_once(VIEWS_PATH."company-list.php");
                 }
             }
         }
 
-        public function RegisterNewCompany(array $parameters)  
+        //La tengo q ver
+        public function RegisterNewCompany(array $parameters): void
         {
             $this->Add($parameters, false);
         }
 
-        public function RegisterExistingCompany(array $parameters)
+
+        //Esta tmb
+        public function RegisterExistingCompany(array $parameters): void
         {
             Utils::checkAdmin();
             $company = $this->companyDAO->GetCompanyById($parameters['companyId']);
@@ -181,12 +185,15 @@
             $password = str_replace(' ', '', $password);
             
             mail($company->getEmail(), COMPANY_REGISTER_EMAIL_SUBJECT, COMPANY_REGISTER_EMAIL_BODY); //mail notificando
-            $this->companyDAO->Delete($company->getCompanyId(), true);
+            $this->companyDAO->Delete($company->getCompanyId(), true);// setApprovedById($companyId)
             $message = COMPANY_REGISTER_SUCCESS;
-            //we need to persist the new user in our data base here (using the $password generated)
+            //TODO: we need to persist the new user in our data base here (using the $password generated)
             require_once(VIEWS_PATH."home.php");
-            
         }
-
         
+
+        public function GetCompanyByUser(User $user): Company
+        {
+            return $this->companyDAO->GetCompanyByUser($user);
+        }        
     }

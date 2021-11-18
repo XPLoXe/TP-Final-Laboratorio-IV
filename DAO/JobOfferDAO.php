@@ -140,29 +140,28 @@
             }
         }
 
-        public function GetAll( $filter )
+        public function GetAll($filter)
         {
             try
-            {                
-                $query = "SELECT jo.user_id, jo.description as job_offer_description ,jo.publication_date,jo.expiration_date,
-                                    jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description,
-                                    cr.description as career_description, cp.active as company_active, jp.job_position_id,
-                                    cr.career_id, cp.company_id, jp.career_id, jo.flyer
+            {
+                $query = "SELECT jo.description as job_offer_description ,jo.publication_date,jo.expiration_date,
+                        jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description,
+                        cr.description as career_description, jp.job_position_id,
+                        cr.career_id, cp.user_company_id, jp.career_id, jo.flyer
                         FROM JobOffers jo
-                        INNER JOIN Companies cp on jo.company_id = cp.company_id
+                        INNER JOIN Companies cp on jo.user_company_id = cp.user_company_id
                         INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
                         INNER JOIN Careers cr on jp.career_id = cr.career_id
                         WHERE jo.active = :active ";
 
-                if($filter == FILTER_ALL){
-
+                if ($filter == FILTER_ALL)
+                {
                     $query .=";";
-
-                }else if($filter == FILTER_STUDENT){
-
-                    $query .="AND jo.expiration_date > curdate() AND cr.career_id = :career_id AND user_id IS NULL ;";
+                } else if ($filter == FILTER_STUDENT)
+                {
+                    $query .="AND jo.expiration_date > curdate() AND cr.career_id = :career_id ;";
                     $studentDAO = new StudentDAO();
-                    $parameters["career_id"] = $studentDAO->GetCareerIdByStudentId($_SESSION["loggedUser"]->getAssociatedId());
+                    $parameters["career_id"] = $_SESSION["loggedUser"]->getCareerId();
                 }
 
                 $parameters["active"] = true;
@@ -179,8 +178,6 @@
                     foreach ($resultSet as $row)
                     {
                         $jobOffer = new JobOffer();
-
-                        $jobOffer->setUserId($row['user_id']);
                         
                         $jobOffer->setJobOfferId($row["job_offer_id"]);
 
@@ -189,17 +186,17 @@
                         $jobPosition->setCareerId($row['career_id']);
                         $jobOffer->setJobPosition($jobPosition);
 
-                        $company = new Company($row['company_id']);
+                        $company = new Company($row['user_company_id']);
                         $company->setName($row['name']);
                         $company->setCity($row['city']);
-                        $company->setActive($row['company_active']);
                         $jobOffer->setCompany($company);
 
-                        $jobOffer->setDescription($row["job_offer_description"]);
-                        $jobOffer->setPublicationDate(new DateTime($row["publication_date"]));
-                        $jobOffer->setExpirationDate(new DateTime($row["expiration_date"]));
-                        $jobOffer->setActive($row["active"]);
-                        $jobOffer->setFlyer($row["flyer"]);
+                        $jobOffer->setDescription($row['job_offer_description']);
+                        $jobOffer->setPublicationDate(new DateTime($row['publication_date']));
+                        $jobOffer->setExpirationDate(new DateTime($row['expiration_date']));
+                        $jobOffer->setActive($row['active']);
+                        if (!empty($row['flyer']))
+                            $jobOffer->setFlyer($row['flyer']);
 
                         array_push($jobOfferList ,$jobOffer);
                     }
@@ -217,14 +214,15 @@
         {
             try
             {
-                $query = "UPDATE ".$this->tableName." SET user_id = :user_id WHERE job_offer_id = :job_offer_id ;";
-                $parameters["user_id"] = $userId;
+                $query = "INSERT INTO Applications (user_student_id, job_offer_id, application_date) VALUES
+                (:user_student_id, :job_offer_id, curdate())";
+
+                $parameters["user_student_id"] = $userId;
                 $parameters["job_offer_id"] = $jobOfferId;
 
                 $this->connection = Connection::GetInstance();
 
                 $this->connection->ExecuteNonQuery($query, $parameters);
-                
             }
             catch (Exception $ex)
             {
@@ -255,13 +253,13 @@
         } 
 
 
-        public function IsUserIdInOffer(int $userId): bool
+        public function IsUserIdInOffer(int $jobOfferId, int $userId): bool
         {
             try
             {
-                $query = "SELECT 'user_id' FROM ".$this->tableName." WHERE user_id = :user_id ;";
+                $query = "SELECT 'job_offer_id' FROM Applications WHERE user_student_id = :user_student_id ;";
 
-                $parameters["user_id"] = $userId;
+                $parameters["user_student_id"] = $userId;
 
                 $this->connection = Connection::GetInstance();
 
@@ -359,16 +357,74 @@
             }
         }
 
-        public function GetJobOfferById($jobOfferList,$jobOfferId)
+
+        public function GetJobOfferById(int $jobOfferId): JobOffer
         {
+            $query = "SELECT jo.description as job_offer_description ,jo.publication_date,jo.expiration_date,
+            jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description,
+            cr.description as career_description, jp.job_position_id,
+            cr.career_id, cp.user_company_id, jp.career_id, jo.flyer
+            FROM JobOffers jo
+            INNER JOIN Companies cp on jo.user_company_id = cp.user_company_id
+            INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
+            INNER JOIN Careers cr on jp.career_id = cr.career_id
+            WHERE jo.job_offer_id = :job_offer_id ";
 
-            foreach($jobOfferList as $jobOffer){
+            $parameters['job_offer_id'] = $jobOfferId;
 
-                if($jobOffer->getJobOfferId() == $jobOfferId)
-                    return $jobOffer;
+            $this->connection = Connection::GetInstance();
 
+            $result = $this->connection->Execute($query, $parameters)[0];
+
+            if (!empty($result))
+            {
+                $jobOffer = new JobOffer();
+                        
+                $jobOffer->setJobOfferId($result["job_offer_id"]);
+
+                $jobPosition = new JobPosition($result['job_position_id']);
+                $jobPosition->setDescription($result['job_position_description']);
+                $jobPosition->setCareerId($result['career_id']);
+                $jobOffer->setJobPosition($jobPosition);
+
+                $company = new Company($result['user_company_id']);
+                $company->setName($result['name']);
+                $company->setCity($result['city']);
+                $jobOffer->setCompany($company);
+
+                $jobOffer->setDescription($result['job_offer_description']);
+                $jobOffer->setPublicationDate(new DateTime($result['publication_date']));
+                $jobOffer->setExpirationDate(new DateTime($result['expiration_date']));
+                $jobOffer->setActive($result['active']);
+                if (!empty($result['flyer']))
+                    $jobOffer->setFlyer($result['flyer']);
+                else
+                    $jobOffer->setFlyer("");
+
+                return $jobOffer;
+            } else
+                return false;
+        }
+
+
+        public function GetStudentApplications(int $userId): array
+        {
+            $query = "SELECT job_offer_id FROM Applications WHERE user_student_id = :user_student_id ;";
+
+            $parameters['user_student_id'] = $userId;
+
+            $this->connection = Connection::GetInstance();
+            $resultSet = $this->connection->Execute($query, $parameters);
+            $applications = array();
+
+            if (!empty($resultSet))
+            {
+                foreach ($resultSet as $row)
+                {
+                    $jobOfferId = $row['job_offer_id'];
+                    array_push($applications, $jobOfferId);
+                }
             }
-
-            return false;
+            return $applications;
         }
     }   
