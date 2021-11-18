@@ -45,7 +45,7 @@
     </ul>
 
 
-  <?php  } else {?>
+  <?php  } else if (Utils::isStudent()) {?>
     <ul class="navbar-nav">
       <li class="nav-item">
         <a class="nav-link" href="<?php echo FRONT_ROOT ?>Home/Index">Inicio</a>
@@ -66,8 +66,29 @@
 
     </ul>
 
-  <?php }?>
+  <?php } else if (Utils::isCompany()) {?>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="<?php echo FRONT_ROOT ?>Home/Index">Inicio</a>
+      </li>
 
+      <li class="nav-item">
+        <a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/ShowInfo?id=<?php echo $_SESSION["loggedUser"]->getCompanyId()?>" id="companyID">Perfil de Compañía</a>
+        
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+          Ofertas Laborales
+        </a>
+        <div class="dropdown-menu mt-1" style="background-color: #343a40">
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/ShowAddView">Añadir</a>
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/ShowOwnJobOffersListView">Listar Propias</a>
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/ShowListView">Listar Todas</a>
+        </div>
+      </li>
+    </ul>
+  <?php }?>
   <div class="btn mx-2 ml-auto d-block">
     <a href="<?php echo FRONT_ROOT ?>Login/Logout" class="btn mx-2 ml-auto d-block" style="color: white;"> Cerrar Sesión </a>
   </div>

@@ -33,6 +33,15 @@
             return false;
         }
 
+        public static function isCompany(): bool
+        {
+            if (self::isUserLoggedIn())
+                return $_SESSION['loggedUser']->getUserRoleDescription() == ROLE_COMPANY;
+
+            return false;
+        }
+
+
         
         public static function getLoggedUserFullName(): string
         {
@@ -40,9 +49,8 @@
                 return $_SESSION['loggedUser']->getFirstName() . " " . $_SESSION['loggedUser']->getLastName();
             if(self::isAdmin())
                 return "Admin";
-            // if(self::isCompany())
-            //     return $_SESSION['loggedUser']->getName();
-            return "Compañía";//Hasta q se haga isCompany
+            if(self::isCompany())
+                return $_SESSION['loggedUser']->getName();
             
         }        
 
@@ -62,36 +70,24 @@
                 header("location: ../index.php");
         }
 
+
+        public static function checkCompany(): void
+        {
+            if(!Utils::isCompany())
+                header("location: ../index.php");
+        }
+
+
+        public static function checkStudent(): void
+        {
+            if(!Utils::isStudent())
+                header("location: ../index.php");
+        }
+
         
         public static function dateTimeToString(DateTime $date): string
         {
             return $date->format('Y-m-d');
         }
 
-        public static function binanceHome()
-        {
-            $data = file_get_contents(BINANCE_URL);
-            $prices = json_decode($data, true);
-
-            foreach ($prices as $k => $v)
-            {
-                if ($v['symbol'] == 'BTCUSDT')
-                {
-                    $btc = (double)$v['price'];
-                }
-                
-                if ($v['symbol'] == 'ETHUSDT')
-                {
-                    $eth = (double)$v['price'];
-                }
-                
-                if ($v['symbol'] == 'LTCUSDT')
-                {
-                    $ltc = (double)$v['price'];
-                }
-            }
-
-            require_once(VIEWS_PATH."home.php");
-
-        }
     }
