@@ -190,22 +190,28 @@
             }
         }
 
-        public function GetLastId(): int
+        public function GetLastId()
         {
             try
             {
-                $query = "SELECT @@identity;";
+                /* $query = "SELECT @@identity;"; */
+                $query = "SELECT LAST_INSERT_ID();";
+
 
                 $this->connection = Connection::GetInstance();
 
                 $resultSet = $this->connection->Execute($query);
                 
-                return $resultSet;
+                $id = (int)$resultSet[0][0];
+                
+                return $id;
             }
             catch (Exception $ex)
             {
                 throw $ex;
             }
+
+
         }
 
         public function GetSpecificUser($userList, $id): User

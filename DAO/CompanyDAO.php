@@ -22,11 +22,13 @@
         {
             try
             {
-                $query = "INSERT INTO ".$this->tableName." (user_company_id, name, year_of_foundation, city, description, logo, email, phone_number, approved) VALUES (:user_company_id, :name, :year_of_foundation, :city, :description, :logo, :email, :phone_number, :approved);";
+                $query = "INSERT INTO ".$this->tableName." (user_company_id, name, year_of_foundation, city, description, logo, phone_number, approved) VALUES (:user_company_id, :name, :year_of_foundation, :city, :description, :logo, :phone_number, :approved);";
 
+                
                 $this->userDAO->Add($company->getUser());
-
-                $parameters["user_company_id"] = $this->userDAO->GetLastId();
+                
+                $parameters["user_company_id"] = (string)$this->userDAO->GetLastId();
+                
                 $parameters["name"] = $company->getName();
                 $parameters["year_of_foundation"] = $company->getYearOfFoundation();
                 $parameters["city"] = $company->getCity();
@@ -140,9 +142,9 @@
                 $companyList = array();
 
                 if($onlyApproved == true)
-                    $parameters['approved'] = true;
+                    $parameters['approved'] = 1;
                 else
-                    $parameters['approved'] = false;
+                    $parameters['approved'] = 0;
 
 
                 $query = 'SELECT * FROM '.$this->tableName.'  WHERE approved = :approved ORDER BY user_company_id ;';
@@ -169,7 +171,7 @@
                     $company->setDescription($row["description"]);
                     $company->setLogo($row["logo"]);
                     $company->setPhoneNumber($row["phone_number"]);
-                    $company->setApproved($row["approved"]);
+                    $company->setApproved((bool)$row["approved"]);
 
                     array_push($companyList,$company);
                 }
@@ -299,6 +301,35 @@
                 }
                 
                 return $company;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+
+        }
+
+        public function setApprovedStatus(int $companyId, bool $flag): void
+        {
+            
+            try
+            {
+                $query =   "UPDATE ".$this->tableName." SET approved = :approved WHERE user_company_id = :user_company_id ;";
+
+                $parameters['user_company_id'] = $companyId;
+
+                if ($flag) 
+                {
+                    $parameters['approved'] = 1;
+                }
+                else
+                {
+                    $parameters['approved'] = 0;    
+                }
+                
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->ExecuteNonQuery($query, $parameters);
             }
             catch (Exception $ex)
             {
