@@ -21,8 +21,8 @@
         {
             try
             {
-                $query = "INSERT INTO ".$this->tableName." (job_position_id, company_id, description, publication_date, expiration_date, flyer) VALUES (:job_position_id, :company_id, :description, :publication_date, :expiration_date, :flyer) ;";
-
+                $query = "INSERT INTO ".$this->tableName." (job_position_id, user_company_id, description, publication_date, expiration_date, flyer) VALUES (:job_position_id, :company_id, :description, :publication_date, :expiration_date, :flyer) ;";
+                
                 $parameters["job_position_id"] = $jobOffer->getJobPositionId();
                 $parameters["company_id"] = $jobOffer->getCompanyId();
                 $parameters["description"] = $jobOffer->getDescription();
@@ -31,8 +31,10 @@
                 if(!empty($jobOffer->getFlyer()))
                     $parameters["flyer"] = $jobOffer->getFlyer();
 
+                    
                 $this->connection = Connection::GetInstance();
-
+                
+            
                 $this->connection->ExecuteNonQuery($query, $parameters);
             }
             catch (Exception $ex)
@@ -162,6 +164,11 @@
                     $query .="AND jo.expiration_date > curdate() AND cr.career_id = :career_id ;";
                     $studentDAO = new StudentDAO();
                     $parameters["career_id"] = $_SESSION["loggedUser"]->getCareerId();
+                }
+                else if ($filter == FILTER_COMPANY)
+                {
+                    $query .="AND jo.user_company_id = :user_company_id ;";
+                    $parameters["user_company_id"] = $_SESSION["loggedUser"]->getCompanyId();
                 }
 
                 $parameters["active"] = true;

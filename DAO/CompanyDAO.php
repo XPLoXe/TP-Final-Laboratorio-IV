@@ -145,9 +145,8 @@
                     $parameters['approved'] = false;
 
 
-                $query = 'SELECT * FROM '.$this->tableName.'  WHERE active = :active AND approved = :approved ORDER BY user_company_id ;';
+                $query = 'SELECT * FROM '.$this->tableName.'  WHERE approved = :approved ORDER BY user_company_id ;';
 
-                $parameters['active'] = true;
 
                 $this->connection = Connection::GetInstance();
 
@@ -162,7 +161,7 @@
                     $company->setEmail($user->getEmail());
                     $company->setPassword($user->getPassword());
                     $company->setUserRole($user->getUserRole());
-                    $company->setActive($user->getActive());
+                    //$company->setActive($user->getActive());
                     
                     $company->setName($row["name"]);
                     $company->setYearOfFoundation($row["year_of_foundation"]);
@@ -190,7 +189,7 @@
             {
                 $userCompany = $this->userDAO->GetUserById($companyId);
 
-                $query = "SELECT * FROM ".$this->tableName." WHERE company_id = :company_id;";
+                $query = "SELECT * FROM ".$this->tableName." WHERE user_company_id = :company_id;";
 
                 $parameters['company_id'] = $companyId;
 
@@ -198,7 +197,7 @@
 
                 $row = $this->connection->Execute($query, $parameters)[0];
 
-                $company = new Company($row["company_id"]);
+                $company = new Company($row["user_company_id"]);
                 $company->setName($row["name"]);
                 $company->setYearOfFoundation($row["year_of_foundation"]);
                 $company->setCity($row["city"]);

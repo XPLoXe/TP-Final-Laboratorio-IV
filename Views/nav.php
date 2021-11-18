@@ -81,9 +81,9 @@
           Ofertas Laborales
         </a>
         <div class="dropdown-menu mt-1" style="background-color: #343a40">
-          <a class="nav-link" href="<?php echo FRONT_ROOT ?>Student/ShowListView">Añadir</a>
-          <a class="nav-link" href="<?php echo FRONT_ROOT ?>Login/ShowSignupView">Listar Propias</a>
-          <a class="nav-link" href="<?php echo FRONT_ROOT ?>Login/ShowSignupView">Listar Todas</a>
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/ShowAddView">Añadir</a>
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/ShowOwnJobOffersListView">Listar Propias</a>
+          <a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/ShowListView">Listar Todas</a>
         </div>
       </li>
     </ul>

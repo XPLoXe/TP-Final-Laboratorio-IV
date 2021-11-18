@@ -3,6 +3,7 @@
 
     use DAO\CompanyDAO as CompanyDAO;
     use DAO\UserDAO as UserDAO;
+    use DAO\UserRoleDAO as UserRoleDAO;
     use Models\Company as Company;
     use Models\User as User;
 
@@ -89,12 +90,16 @@
         }
 
 
-        public function GetAll(): array
+        public function GetAll($filter): array
         {
-            if(Utils::isAdmin())
-                $companyList = $this->companyDAO->GetAll(false);//TODO: fix
-            else
-                $companyList = $this->companyDAO->GetAll();//solo aprobadas
+            if($filter == FILTER_ALL)   //brings both approved false and true
+                $companyList1 = $this->companyDAO->GetAll(false);//TODO: fix
+                $companyList2 = $this->companyDAO->GetAll(true);
+                $companyList = array_merge($companyList1, $companyList2);
+            if ($filter)    //bool true
+                $companyList = $this->companyDAO->GetAll(true);//only approved
+            if (!$filter)   //bool false
+                $companyList = $this->companyDAO->GetAll(false);//only not approved
             
             return $companyList;
         }
@@ -196,4 +201,9 @@
         {
             return $this->companyDAO->GetCompanyByUser($user);
         }        
+
+        public function GetCompanyById(int $companyId): Company
+        {
+            return $this->companyDAO->GetCompanyById($companyId);
+        }
     }

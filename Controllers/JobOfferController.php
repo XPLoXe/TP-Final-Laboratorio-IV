@@ -36,22 +36,24 @@
 
         public function Add(array $parameters)
         {
-            Utils::checkAdmin();
+            
             
             $jobOffer = new JobOffer;
+            $companyDAO = new CompanyDAO;
+            $jobPositionDAO = new JobPositionDAO;
+
             
-            $company = $this->companyDAO->GetCompanyById($parameters["companyId"]);
+            $company = $companyDAO->GetCompanyById($parameters["companyId"]);
             $jobOffer->setCompany($company);
-
-            $jobPosition = $this->jobPositionDAO->GetJobPositionById($parameters["jobPositionId"]);
+            
+            $jobPosition = $jobPositionDAO->GetJobPositionById($parameters["jobPositionId"]);
             $jobOffer->setJobPosition($jobPosition);
-
+        
             $jobOffer->setDescription($parameters["description"]);
             $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
             $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
             if(!empty($parameters['flyer']['tmp_name']))
                 $jobOffer->setFlyer(base64_encode(file_get_contents($parameters['flyer']["tmp_name"])));
-            
             $this->jobOfferDAO->Add($jobOffer);
 
             $this->ShowListView();
@@ -137,11 +139,10 @@
         
         public function GetAll(): array
         {
-            if (Utils::isAdmin())
-                $jobOffers = $this->jobOfferDAO->GetAll(FILTER_ALL);
-            else // TODO: filter more cases
+            if (Utils::isStudent()) // TODO: filter more cases
                 $jobOffers = $this->jobOfferDAO->GetAll(FILTER_STUDENT);
-
+            else
+                $jobOffers = $this->jobOfferDAO->GetAll(FILTER_ALL);
             return $jobOffers;
         }
 
@@ -184,11 +185,6 @@
                 $headers = APPLY_DELETE_EMAIL_HEADER;
                 mail($to_email, $subject, $body, $headers);
 
-                /* if (mail($to_email, $subject, $body, $headers)) {
-                    echo "Email enviado correctamente a $to_email...";
-                } else {
-                    echo "Envio de email fallido";
-                } */
             }
             $message = APPLY_DELETE;
             require_once(VIEWS_PATH."home.php");
@@ -197,14 +193,18 @@
 
         public function ShowAddView(): void
         {
-            Utils::checkAdmin();
             
             $companyController = new CompanyController;
             $jobPositionController = new JobPositionController;
-
-            $companyList = $companyController->GetAll();
+            $companyList = array();
+            
+            if (!Utils::isCompany()) 
+                $companyList = $companyController->GetAll(true);
+            else
+                array_push($companyList, $companyController->GetCompanyById($_SESSION["loggedUser"]->getCompanyId()));
+            
             $jobPositionList = $jobPositionController->GetAll();
-
+            
             require_once(VIEWS_PATH."job-offer-add.php");
         }
 
@@ -231,6 +231,15 @@
                 $applications = $this->GetStudentApplications($_SESSION['loggedUser']->getUserId());
 
             require_once(VIEWS_PATH."job-offer-info.php");
+        }
+
+        public function ShowOwnJobOffersListView(): void
+        {
+            Utils::checkUserLoggedIn();
+            
+            $jobOfferList = $this->jobOfferDAO->GetAll(FILTER_COMPANY);
+
+            require_once(VIEWS_PATH."job-offer-list.php");
         }
 
 
