@@ -17,7 +17,7 @@ define("APPLY_DELETE_EMAIL_SUBJECT", "Tu aplicación a la oferta laboral ha sido
 define("APPLY_DELETE_EMAIL", "Si has recibido este mail es porque tu postulación a la oferta laboral ha sido dada de baja por un administrador, para más información responder este mail o contactarse con la universidad");
 define("APPLY_DELETE_EMAIL_ERROR", "");
 define("APPLY_DELETE_EMAIL_HEADER", "From: MESSIRVE.INC");
-define("COMPANY_REGISTERED", "<h4 class = 'text-center' style='color: greenyellow;'> Registro exitoso, un Administrador se contactará con usted via mail para generar su contraseña </h4>");
+define("COMPANY_REGISTERED", "<h4 class = 'text-center' style='color: greenyellow;'> ¡Registro exitoso! </h4> <p class = 'text-center' style='color: greenyellow;'> Un Administrador se contactará con usted via mail para activar su cuenta </p>");
 define("COMPANY_REGISTER_EMAIL_SUBJECT", "Tu registro de empresa ha sido aprobado por un administrador");
 define("COMPANY_REGISTER_EMAIL_BODY", "¡Gracias por registrarse en nuestro sistema!. Habiendo evaluado la verosimilidad de los datos consideramos que la compañía es apta para logearse en nuestro portal. Podrá logear con su email de empresa y su contraseña provisoria será el nombre de su compañía sin espacios + el año de fundación. Ej: gomonesraul1997. Una vez ingresado al sistema se le pedira generar una contraseña a su antojo.  Saludos Cordiales  ");
 define("COMPANY_REGISTER_EMAIL_HEADER", "¡REGISTRO EXITOSO!");

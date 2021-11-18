@@ -22,7 +22,6 @@
 
         public function Add(array $parameters)
         {
-            Utils::checkUserLoggedIn();
 
             if ($this->companyDAO->IsNameInDB($parameters['name']) || $this->companyDAO->IsEmailInDB($parameters['email']))
             {
@@ -55,8 +54,18 @@
 
                 $this->companyDAO->Add($company);
             }
-
-            $this->ShowListView();
+            
+            if(Utils::isAdmin())
+            {
+                $message = COMPANY_REGISTER_SUCCESS;
+                require_once(VIEWS_PATH."home.php");
+            }
+            else
+            {
+                $message = COMPANY_REGISTERED;
+                require_once(VIEWS_PATH."login.php");
+            }
+            
             
         }
 
@@ -78,7 +87,7 @@
             $company = new Company($parameters['id']);
 
             $company->setName($parameters['name']);
-            $company->setYearOfFundation($parameters['yearOfFoundation']);
+            $company->setYearOfFoundation($parameters['yearOfFoundation']);
             $company->setCity($parameters['city']);
             $company->setDescription($parameters['description']);
             $company->setLogo($parameters['logo']['tmp_name']);
@@ -188,7 +197,7 @@
         //La tengo q ver
         public function RegisterNewCompany(array $parameters): void
         {
-            $this->Add($parameters, false);
+            $this->Add($parameters);
         }
 
 
