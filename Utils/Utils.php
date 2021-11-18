@@ -70,6 +70,20 @@
                 header("location: ../index.php");
         }
 
+
+        public static function checkCompany(): void
+        {
+            if(!Utils::isCompany())
+                header("location: ../index.php");
+        }
+
+
+        public static function checkStudent(): void
+        {
+            if(!Utils::isStudent())
+                header("location: ../index.php");
+        }
+
         
         public static function dateTimeToString(DateTime $date): string
         {

@@ -73,7 +73,8 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/ShowListView">Perfil de Compañía</a>
+        <a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/ShowInfo?id=<?php echo $_SESSION["loggedUser"]->getCompanyId()?>" id="companyID">Perfil de Compañía</a>
+        
       </li>
 
       <li class="nav-item dropdown">

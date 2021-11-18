@@ -125,9 +125,9 @@
 
         public function ShowInfo(array $parameters): void
         {
-            Utils::checkUserLoggedIn();
+            Utils::checkCompany();
 
-            $company = $this->companyDAO->GetCompanyById($parameters['id']);
+            $company = $this->companyDAO->GetCompanyById((int)$parameters['id']);
 
             require_once(VIEWS_PATH."company-info.php");
         }

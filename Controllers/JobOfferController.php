@@ -56,6 +56,9 @@
                 $jobOffer->setFlyer(base64_encode(file_get_contents($parameters['flyer']["tmp_name"])));
             $this->jobOfferDAO->Add($jobOffer);
 
+            if(Utils::isCompany())
+                $this->ShowOwnJobOffersListView();
+
             $this->ShowListView();
         }
 
@@ -235,7 +238,7 @@
 
         public function ShowOwnJobOffersListView(): void
         {
-            Utils::checkUserLoggedIn();
+            Utils::checkCompany();
             
             $jobOfferList = $this->jobOfferDAO->GetAll(FILTER_COMPANY);
 
