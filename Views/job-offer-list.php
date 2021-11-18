@@ -1,74 +1,71 @@
 <?php
+    use Utils\Utils as Utils;
 
+    if (!Utils::isUserLoggedIn())
+        header("location: ../index.php");
+    else
+        $isAdmin = (Utils::isAdmin()) ?: false;
 
-use Utils\Utils as Utils;
+    require_once('nav.php');
+    ?>
 
-if (!Utils::isUserLoggedIn())
-    header("location: ../index.php");
-else
-    $isAdmin = (Utils::isAdmin()) ?: false;
+    <main class="py-5">
+        <section id="listado" class="mb-5">
+            <div class="container bg-light-alpha p-5">
 
-require_once('nav.php');
-?>
+                <h2 class="mb-4">Ofertas laborales</h2>
 
-<main class="py-5">
-    <section id="listado" class="mb-5">
-        <div class="container bg-light-alpha p-5">
+                <div class="mb-4">
+                    <form action="<?php echo FRONT_ROOT ?>JobOffer/FilterByPosition" method="post" class="bg-light-alpha p-4">
+                        <div class="input-group input-group-lg col-md-6 mx-auto">
+                            <input type="text" name="nameToFilter" class="form-control mx-3" placeholder="Ingrese puesto de trabajo">
+                            <button type="submit" name="button" class="btn btn-dark d-block ">Filtrar</button>
+                        </div>
+                    </form>
+                </div>
 
-            <h2 class="mb-4">Ofertas laborales</h2>
-
-            <div class="mb-4">
-                <form action="<?php echo FRONT_ROOT ?>JobOffer/FilterByPosition" method="post" class="bg-light-alpha p-4">
-                    <div class="input-group input-group-lg col-md-6 mx-auto">
-                        <input type="text" name="nameToFilter" class="form-control mx-3" placeholder="Ingrese puesto de trabajo">
-                        <button type="submit" name="button" class="btn btn-dark d-block ">Filtrar</button>
-                    </div>
-                </form>
-            </div>
-
-            <?php
-            if (isset($msgErrorFilter)) echo $msgErrorFilter;
-
-            function daysBetweenDates($initialDay, $finalDay)
-            {
-                $days = (strtotime($initialDay) - strtotime($finalDay)) / 86400;
-                $days = abs($days);
-                $days = floor($days);
-                return $days;
-            }
-            ?>
-            <script>
-                function confirmDelete() {
-
-                    var response = confirm('¿Está seguro de que desea borrar la oferta laboral?');
-
-                    if (response == true)
-                        return true;
-                    else
-                        return false;
-                }
-
-                function confirmDeleteApplicant() {
-
-                    var response = confirm('¿Está seguro de que desea borrar al aplicante?');
-
-                    if (response == true)
-                        return true;
-                    else
-                        return false;
-                }
-            </script>
-
-            <?php
-            if (!empty($jobOfferList)) { ?>
-                <form id="edit" action="<?php echo FRONT_ROOT ?>JobOffer/ShowEditView" name='edit' method='POST'></form>
-                <form id="delete" action="<?php echo FRONT_ROOT ?>JobOffer/Delete" name='delete' method='POST'></form>
-                <form id="info" action="<?php echo FRONT_ROOT ?>JobOffer/ShowInfoView" name='info' method='POST'></form>
                 <?php
-                foreach ($jobOfferList as $jobOffer) {
-                ?>
-                    <table class="table bg-light-alpha">
+                if (isset($msgErrorFilter)) echo $msgErrorFilter;
 
+                function daysBetweenDates($initialDay, $finalDay)
+                {
+                    $days = (strtotime($initialDay) - strtotime($finalDay)) / 86400;
+                    $days = abs($days);
+                    $days = floor($days);
+                    return $days;
+                }
+                ?>
+                <script>
+                    function confirmDelete() {
+
+                        var response = confirm('¿Está seguro de que desea borrar la oferta laboral?');
+
+                        if (response == true)
+                            return true;
+                        else
+                            return false;
+                    }
+
+                    function confirmDeleteApplicant() {
+
+                        var response = confirm('¿Está seguro de que desea borrar al aplicante?');
+
+                        if (response == true)
+                            return true;
+                        else
+                            return false;
+                    }
+                </script>
+
+                <?php
+                if (!empty($jobOfferList)) { ?>
+                    <form id="edit" action="<?php echo FRONT_ROOT ?>JobOffer/ShowEditView" name='edit' method='POST'></form>
+                    <form id="delete" action="<?php echo FRONT_ROOT ?>JobOffer/Delete" name='delete' method='POST'></form>
+                    <form id="info" action="<?php echo FRONT_ROOT ?>JobOffer/ShowInfoView" name='info' method='POST'></form>
+                    <table class="table bg-light-alpha">
+                    <?php
+                    foreach ($jobOfferList as $jobOffer) {
+                    ?>  <table class="table bg-light-alpha">
                         <tr>
                             <td>
                                 <div class="row">
@@ -93,28 +90,25 @@ require_once('nav.php');
                                 </div>
                             </td>
                         </tr>
-
                         <tr>
                             <td>
                                 <div class="float-right">
                                     <?php
-
-                                    echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="info" value=' . $jobOffer->getJobOfferId() . '>Detalles</button>';
+                                    echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="info" value="' . $jobOffer->getJobOfferId() . '">Ver más</button>';
 
                                     if (Utils::isAdmin()) {
-                                        echo '<button class="btn btn-success mx-2" type= "submit" name="jobOfferId" form="edit" value=' . $jobOffer->getJobOfferId() . '>Editar</button> ';
-                                        echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDelete()" name="jobOfferId" form="delete" value=' . $jobOffer->getJobOfferId() . '>Eliminar</button>';
+                                        echo '<button class="btn btn-success mx-2" type= "submit" name="jobOfferId" form="edit" value="' . $jobOffer->getJobOfferId() . '">Editar</button> ';
+                                        echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDelete()" name="jobOfferId" form="delete" value="' . $jobOffer->getJobOfferId() . '">Eliminar</button>';
                                     }
-                                    
                                     ?>
                                 </div>
                             </td>
                         </tr>
                     </table>
-            <?php
-                }
-            }
-            ?>
-        </div>
-    </section>
-</main>
+                    <?php
+                    }
+                ?></table> <?php
+                }?>
+            </div>
+        </section>
+    </main>

@@ -1,7 +1,6 @@
 <?php namespace Config;
 
-define("STUDENT_INACTIVE", "<h4 class = 'text-center' style='color: red;'> El Usuario ha sido dado de baja </h4>
-<p class = 'text-center' style='color: red;'> Para más información contactarse con la universidad </p> ");
+define("STUDENT_INACTIVE", "<h4 class = 'text-center' style='color: red;'> El Usuario ha sido dado de baja </h4><p class = 'text-center' style='color: red;'> Para más información contactarse con la universidad </p> ");
 define("WRONG_PASSWORD", "<h4 class = 'text-center' style='color: red;'> Contraseña incorrecta </h4>");
 define("WRONG_EMAIL", "<h4 class = 'text-center' style='color: red;'> El Email ingresado no existe </h4>");
 define("ERROR_VERIFY_PASSWORD" , "<h4 class = 'text-center' style='color: red;'> las contraseñas ingresadas no son las mismas </h4>");

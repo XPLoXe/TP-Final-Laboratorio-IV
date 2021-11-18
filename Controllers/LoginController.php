@@ -16,30 +16,16 @@
     {
         private $message;
 
-        
+
+        public function ShowLoginView(array $parameters): void
+        {
+            $message = $parameters['message'];
+            require_once(VIEWS_PATH."login.php");
+        }
+
         public function Login(): void
         {
             $jobOfferDAO = new JobOfferDAO;
-            
-            $prices = $this->GetPricesFromBinance();
-
-            foreach ($prices as $k => $v)
-            {
-                if ($v['symbol'] == 'BTCUSDT')
-                {
-                    $btc = (double)$v['price'];
-                }
-                
-                if ($v['symbol'] == 'ETHUSDT')
-                {
-                    $eth = (double)$v['price'];
-                }
-                
-                if ($v['symbol'] == 'LTCUSDT')
-                {
-                    $ltc = (double)$v['price'];
-                }
-            }
 
             if ($_SERVER['REQUEST_METHOD'] == "POST")
             {
@@ -49,45 +35,44 @@
 
                 $userController = new UserController();
                 
-                if ($userController->IsEmailInDataBase($email)) 
+                if ($userController->IsEmailInDataBase($email)) //TODO: rewrite
                 {
                     $user = $userController->GetUserByEmail($email);
                     
                     if ($user->getPassword() == $password)
                     {                        
-                        if ($user->getUserRole()->getDescription() == ROLE_ADMIN)
+                        if ($user->getUserRoleDescription() == ROLE_ADMIN)
                         {
                             //$jobOfferDAO->TryDatabaseUpdate(); 
                             $_SESSION["loggedUser"] = $user;//admin
-                            require_once(VIEWS_PATH."home.php");
+                            header('location:'.FRONT_ROOT.'Home/Index');
                         }
-                        else if($user->getUserRole()->getDescription() == ROLE_STUDENT)
+                        else if ($user->getUserRoleDescription() == ROLE_STUDENT)
                         {
                             $studentController = new StudentController();
-                            $studentToLogged = $studentController->GetStudentByUser($user);
+                            $student = $studentController->GetStudentByUserId($user->getUserId());
 
-                            if ($studentToLogged->isApiActive())
+                            if ($student->isApiActive())
                             {
                                 //$jobOfferDAO->TryDatabaseUpdate();
-                                $_SESSION["loggedUser"] = $studentToLogged;
-                                require_once(VIEWS_PATH."home.php");
+                                $_SESSION["loggedUser"] = $student;
+                                header('location:'.FRONT_ROOT.'Home/Index');
                             }
                             else
                             {
-                                $message = STUDENT_INACTIVE;
-                                require_once(VIEWS_PATH."login.php");
+                                header('location:'.FRONT_ROOT.'Login/ShowLoginView?message='.STUDENT_INACTIVE);
                             }
                         }
-                        else if($user->getUserRole()->getDescription() == ROLE_COMPANY)
+                        else if ($user->getUserRole()->getDescription() == ROLE_COMPANY)
                         {
                             $companyController = new CompanyController();
-                            $companyToLogged = $companyController->GetCompanyByUser($user);
+                            $company = $companyController->GetCompanyByUser($user);
 
-                            if ($companyToLogged->isApproved())
+                            if ($company->isApproved())
                             {
                                 //$jobOfferDAO->TryDatabaseUpdate();
-                                $_SESSION["loggedUser"] = $companyToLogged;
-                                require_once(VIEWS_PATH."home.php");
+                                $_SESSION["loggedUser"] = $company;
+                                header('location:'.FRONT_ROOT.'Home/Index');
                             }
                             else
                             {
@@ -95,7 +80,6 @@
                                 require_once(VIEWS_PATH."login.php");
                             }
                         }
-
                     }
                     else
                     {
@@ -132,20 +116,9 @@
             require_once(VIEWS_PATH."signup.php");
         }
 
+
         public function ShowSignupCompanyView(): void
         {
             require_once(VIEWS_PATH."company-register.php");
         }
-
-        private function GetPricesFromBinance()
-        {
-            $data = file_get_contents(BINANCE_URL);
-            $json = json_decode($data, true);
-
-            return $json;
-        }
-
-
-
-
     }

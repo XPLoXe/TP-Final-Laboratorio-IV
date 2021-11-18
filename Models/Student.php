@@ -6,7 +6,6 @@
 
     class Student extends User
     {
-        private int $studentId;
         private string $fileNumber;
         private int $careerId;
         private string $firstName;
@@ -17,18 +16,6 @@
         private string $phoneNumber;
         private int $apiId;
         private bool $apiActive;
-        
-
-        public function getStudentId()
-        {
-            return $this->studentId;
-        }
-
-
-        public function setStudentId($studentId)
-        {
-            $this->studentId = $studentId;
-        }
 
 
         public function getFileNumber(): string

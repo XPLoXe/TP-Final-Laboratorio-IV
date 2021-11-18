@@ -150,14 +150,16 @@ INSERT INTO Users (user_id, email, user_password, user_role_id) VALUES
 (22, 'f@chat.com', 'fm9240m', 3),
 (23, 'igor@daycare.com', 'ym43khnb', 3),
 (24, 'mirtha@lagrande.com', 'mhkñl2m4w3', 3),
-(25, 'xilofonos@xilofonos.com', 'xilo123', 3);
+(25, 'xilofonos@xilofonos.com', 'xilo123', 3),
+(26, 'jdoringb@un.org', 'jdo123', 2);
 INSERT INTO Students (user_student_id, api_student_id, career_id, first_name, last_name, birth_date, phone_number,api_active) VALUES
 (2, 1, 2, 'Devlen', 'Douthwaite', '2021-06-28', '849-713-4523',0),
 (3, 2, 5, 'Wyatan', 'Lorant', '2021-02-23', '171-448-9062',1),
 (4, 3, 2, 'Alanson', 'Seemmonds', '2021-07-03', '961-404-8720',1),
 (5, 17, 1, 'Frayda', 'Gorvette', '2021-07-05', '152-846-1928',1),
 (6, 7, 3, 'Kienan', 'Whiterford', '2021-09-15', '525-769-1695',0),
-(7, 10, 4, 'Son', 'Forrington', '2021-03-13', '720-205-4748',1);
+(7, 10, 4, 'Son', 'Forrington', '2021-03-13', '720-205-4748',1),
+(26, 12, 3, 'Jori', 'Doring', '2021-04-12', '414-609-3692', 1);
 INSERT INTO Companies (user_company_id, name, year_of_foundation, city, description, phone_number, approved) VALUES
 (8,'Efreint Dominios',1983,'Capital Federal','Efreint Dominios es una empresa de dominios donde las Empresas registran dominios para promocionarse o para relacionarse estrechamente con los usuarios, gracias al uso de plataformas especialmente creadas para ello.','0800-323-2413', 1),
 (9,"Ñ''s Club",2000,'Barcelona',"Fundada en 2000, la historia de la música en Barcelona es sinónimo del nombre Ñ''s Club, un lugar de referencia nacional e internacional para la cultura y el entretenimiento. ubicado en un edificio singular vinculado al paisaje industrial de la ciudad, y con una fachada que es en sí misma icónica. En Ñ''s Club han tocado grandes y menos conocidos artistas y bandas, ya que sus sesiones de club pueden albergar grupos de cualquier tipo, pequeños conjuntos incluidos, pero todos con un denominador común: su calidad.",'34-936-67-55-59', 1),

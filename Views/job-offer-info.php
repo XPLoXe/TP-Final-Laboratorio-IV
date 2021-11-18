@@ -82,7 +82,7 @@ require_once('nav.php');
                                         <h6><?php echo 'Publicado hace ' . daysBetweenDates($jobOffer->getPublicationDate()->format('Y-m-d'), date('Y-m-d')) . ' días' ?></h6>
                                         <?php
 
-                                            if($jobOffer->getExpirationDate()->format('Y-m-d') > date('Y-m-d'))
+                                            if ($jobOffer->getExpirationDate()->format('Y-m-d') > date('Y-m-d'))
                                                 echo '<h6> Vence el día ' . $jobOffer->getExpirationDate()->format('d-m-Y') . '</h6>' ;
                                             else
                                                 echo '<h6 style="color: red"> Vencio el día ' . $jobOffer->getExpirationDate()->format('d-m-Y') . '</h6>' ;
@@ -92,7 +92,6 @@ require_once('nav.php');
                                 </div>
                             </td>
                         </tr>
-
                         <?php if(!empty($jobOffer->getFlyer())) {?>
                         <tr>
                             <td>
@@ -102,7 +101,6 @@ require_once('nav.php');
                             </td>
                         </tr>
                         <?php } ?>
-
                         <tr>
                             <td>
                                 <div class="col">
@@ -110,30 +108,26 @@ require_once('nav.php');
                                 </div>
                             </td>
                         </tr>
-
-                        
                         <tr>
                             <td>
                                 <div class="col">
-
-                                    <?php 
-                                    // no me debe aparecer el postularse cuando el alumno ya esta postulado a esta misma joboffer
-                                    if(Utils::isStudent() && $isStudentInThisJobOffer)
+                                    <?php
+                                    if (Utils::isStudent() && !in_array($jobOffer->getJobOfferId(), $applications))
                                     {
-                                        echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="apply" value=' . $jobOffer->getJobOfferId() . '>Postularse</button>';
+                                        echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="apply" value='.$jobOffer->getJobOfferId().'>Postularse</button>';
                                     }
-                                    if(Utils::isAdmin()){//or isCompany
-                                       
-                                        if (!empty($studentsInJobOffer))
+                                    if(Utils::isAdmin())
+                                    {//or isCompany  
+                                        if (!empty($applicants))
                                         {
                                             ?><form id="deleteApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='deleteApplicant' method='POST'></form><?php
 
-                                            foreach($studentsInJobOffer as $student)
+                                            foreach($applicants as $student)
                                             {
                                             ?>
                                                 <div class="row">
                                                     <strong class="float-left">
-                                                        <?php echo $student->getLastName()." ".$student->getName()." | ".$student->getEmail(); ?>
+                                                        <?php echo $student->getLastName()." ".$student->getFirstName()." | ".$student->getEmail(); ?>
                                                     </strong>
                                                     <div class="float-right"> <!-- Boton de info del estudiante -->
                                                         <button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' <?php echo $student->getUserId()?>'>Eliminar</button>
@@ -151,9 +145,6 @@ require_once('nav.php');
                                 </div>
                             </td>
                         </tr>
-
-
-                        
                     </table>
         </div>
     </section>

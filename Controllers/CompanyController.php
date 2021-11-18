@@ -92,7 +92,7 @@
         public function GetAll(): array
         {
             if(Utils::isAdmin())
-                $companyList = $this->companyDAO->GetAll(false);//todas
+                $companyList = $this->companyDAO->GetAll(false);//TODO: fix
             else
                 $companyList = $this->companyDAO->GetAll();//solo aprobadas
             
@@ -170,13 +170,14 @@
         }
 
         //La tengo q ver
-        public function RegisterNewCompany(array $parameters)  
+        public function RegisterNewCompany(array $parameters): void
         {
             $this->Add($parameters, false);
         }
 
+
         //Esta tmb
-        public function RegisterExistingCompany(array $parameters)
+        public function RegisterExistingCompany(array $parameters): void
         {
             Utils::checkAdmin();
             $company = $this->companyDAO->GetCompanyById($parameters['companyId']);
@@ -186,15 +187,13 @@
             mail($company->getEmail(), COMPANY_REGISTER_EMAIL_SUBJECT, COMPANY_REGISTER_EMAIL_BODY); //mail notificando
             $this->companyDAO->Delete($company->getCompanyId(), true);// setApprovedById($companyId)
             $message = COMPANY_REGISTER_SUCCESS;
-            //we need to persist the new user in our data base here (using the $password generated)
+            //TODO: we need to persist the new user in our data base here (using the $password generated)
             require_once(VIEWS_PATH."home.php");
-            
         }
+        
 
         public function GetCompanyByUser(User $user): Company
         {
             return $this->companyDAO->GetCompanyByUser($user);
-        }
-
-        
+        }        
     }

@@ -151,13 +151,13 @@
             return null;
         }
 
-        public function GetStudentByUser(User $user): Student
+        public function GetStudentByUserId(int $userId): Student
         {
             try
             {
-                $userStudent= $this->userDAO->GetUserById($user->getUserId());
+                $userStudent= $this->userDAO->GetUserById($userId);
 
-                $this->UpdateStudentsFromAPI();//actualizo la api
+                $this->UpdateStudentsFromAPI();
 
                 $query = 'SELECT * FROM '.$this->tableName.' WHERE user_student_id = :user_student_id;';
 
@@ -173,7 +173,7 @@
 
                     $student = new Student();
 
-                    $student->setStudentId($userStudent->getUserId());
+                    $student->setUserId($userStudent->getUserId());
                     $student->setEmail($userStudent->getEmail());
                     $student->setPassword($userStudent->getPassword());
                     $student->setUserRole($userStudent->getUserRole());
@@ -191,7 +191,6 @@
                     $student->setDni($studentAPI->getDni());
                     $student->setGender($studentAPI->getGender());
                 }
-                
                 return $student;
             }
             catch (Exception $ex)
@@ -280,5 +279,38 @@
                     array_push($this->studentList, $student);
                 }
             }
+        }
+
+
+        public function GetApplicants(int $jobOfferId): array
+        {
+            $query = "SELECT s.user_student_id, email, first_name, last_name FROM ".$this->tableName." as s
+                    INNER JOIN Users u ON u.user_id = s.user_student_id
+                    INNER JOIN Applications app ON app.user_student_id = s.user_student_id
+                    WHERE app.job_offer_id = :job_offer_id ;";
+
+            $parameters['job_offer_id'] = $jobOfferId;
+
+            $this->connection = Connection::GetInstance();
+
+            $resultSet = $this->connection->Execute($query, $parameters);
+
+            $applicants = array();
+
+            if (!empty($resultSet))
+            {
+                foreach ($resultSet as $row)
+                {
+                    $student = new Student();
+    
+                    $student->setUserId($row['user_student_id']);
+                    $student->setEmail($row['email']);
+                    $student->setFirstName($row["first_name"]);
+                    $student->setLastName($row["last_name"]);
+    
+                    array_push($applicants, $student);
+                }
+            }
+            return $applicants;
         }
     }
