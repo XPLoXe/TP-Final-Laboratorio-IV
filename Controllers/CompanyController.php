@@ -22,7 +22,6 @@
 
         public function Add(array $parameters)
         {
-            Utils::checkUserLoggedIn();
 
             if ($this->companyDAO->IsNameInDB($parameters['name']) || $this->companyDAO->IsEmailInDB($parameters['email']))
             {
@@ -34,7 +33,10 @@
                 $company = new Company();
                 
                 $company->setEmail($parameters['email']);
-                $company->setPassword($parameters['password']);
+               
+                $company->setPassword($this->GeneratePassword($parameters['name'], $parameters['yearOfFoundation'])); 
+               
+
                 $company->setUserRole($userRoleDAO->GetUserRoleByDescription(ROLE_COMPANY));
                 $company->setActive(true);
 
@@ -52,8 +54,18 @@
 
                 $this->companyDAO->Add($company);
             }
-
-            $this->ShowListView();
+            
+            if(Utils::isAdmin())
+            {
+                $message = COMPANY_REGISTER_SUCCESS;
+                require_once(VIEWS_PATH."home.php");
+            }
+            else
+            {
+                $message = COMPANY_REGISTERED;
+                require_once(VIEWS_PATH."login.php");
+            }
+            
             
         }
 
@@ -75,7 +87,7 @@
             $company = new Company($parameters['id']);
 
             $company->setName($parameters['name']);
-            $company->setYearOfFundation($parameters['yearOfFoundation']);
+            $company->setYearOfFoundation($parameters['yearOfFoundation']);
             $company->setCity($parameters['city']);
             $company->setDescription($parameters['description']);
             $company->setLogo($parameters['logo']['tmp_name']);
@@ -92,15 +104,23 @@
 
         public function GetAll($filter): array
         {
-            if($filter == FILTER_ALL)   //brings both approved false and true
-                $companyList1 = $this->companyDAO->GetAll(false);//TODO: fix
+            if($filter == FILTER_ALL) 
+            {
+                $companyList = $this->companyDAO->GetAll(false);
                 $companyList2 = $this->companyDAO->GetAll(true);
-                $companyList = array_merge($companyList1, $companyList2);
-            if ($filter)    //bool true
+                $companyList = array_merge($companyList, $companyList2); //gets both approved and not approved
+            }  
+
+            if ($filter == FILTER_TRUE)//bool true
+            {
                 $companyList = $this->companyDAO->GetAll(true);//only approved
-            if (!$filter)   //bool false
+            }    
+                
+            if ($filter == FILTER_FALSE )//bool false
+            {
                 $companyList = $this->companyDAO->GetAll(false);//only not approved
-            
+            }   
+                
             return $companyList;
         }
 
@@ -117,7 +137,7 @@
         {
             Utils::checkUserLoggedIn();
 
-            $companyList = $this->GetAll();
+            $companyList = $this->GetAll(FILTER_ALL);
 
             require_once(VIEWS_PATH."company-list.php");
         }
@@ -177,7 +197,7 @@
         //La tengo q ver
         public function RegisterNewCompany(array $parameters): void
         {
-            $this->Add($parameters, false);
+            $this->Add($parameters);
         }
 
 
@@ -186,14 +206,20 @@
         {
             Utils::checkAdmin();
             $company = $this->companyDAO->GetCompanyById($parameters['companyId']);
-            $password = $company->getName() . $company->getYearOfFoundation();      //generated password
-            $password = str_replace(' ', '', $password);
-            
+
             mail($company->getEmail(), COMPANY_REGISTER_EMAIL_SUBJECT, COMPANY_REGISTER_EMAIL_BODY); //mail notificando
-            $this->companyDAO->Delete($company->getCompanyId(), true);// setApprovedById($companyId)
+            
+            $this->companyDAO->setApprovedStatus($company->getCompanyId(), true);
             $message = COMPANY_REGISTER_SUCCESS;
-            //TODO: we need to persist the new user in our data base here (using the $password generated)
+            
             require_once(VIEWS_PATH."home.php");
+        }
+
+        private function GeneratePassword(string $name, int $year)
+        {
+            $password = $name . $year;      //generated password
+            $password = str_replace(' ', '', $password);
+            return $password;
         }
         
 

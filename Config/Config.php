@@ -21,5 +21,7 @@ define("ROLE_STUDENT", "Student");
 define("ROLE_COMPANY", "Company");
 define("UPDATE_FILE_PATH", ROOT . "last-update.log");
 define("FILTER_ALL",1);
+define("FILTER_TRUE",2);
+define("FILTER_FALSE",3);
 define("FILTER_STUDENT",2);
 define("FILTER_COMPANY",3);

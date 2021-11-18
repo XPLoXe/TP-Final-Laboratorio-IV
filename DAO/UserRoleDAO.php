@@ -112,7 +112,7 @@
             }
         }
 
-        public function GetUserRoleByDescription(int $description): UserRole
+        public function GetUserRoleByDescription(string $description): UserRole
         {
             try
             {
@@ -124,7 +124,7 @@
 
                 $resultSet = $this->connection->Execute($query, $parameters);
                 
-                $userRole = new UserRole($userRoleId);
+                $userRole = new UserRole($this->getIdByDescription($description));
                 $userRole->setDescription($resultSet[0]['description']);
                 $userRole->setActive($resultSet[0]['active']);
 
