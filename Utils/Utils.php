@@ -76,30 +76,4 @@
             return $date->format('Y-m-d');
         }
 
-        public static function binanceHome()
-        {
-            $data = file_get_contents(BINANCE_URL);
-            $prices = json_decode($data, true);
-
-            foreach ($prices as $k => $v)
-            {
-                if ($v['symbol'] == 'BTCUSDT')
-                {
-                    $btc = (double)$v['price'];
-                }
-                
-                if ($v['symbol'] == 'ETHUSDT')
-                {
-                    $eth = (double)$v['price'];
-                }
-                
-                if ($v['symbol'] == 'LTCUSDT')
-                {
-                    $ltc = (double)$v['price'];
-                }
-            }
-
-            require_once(VIEWS_PATH."home.php");
-
-        }
     }
