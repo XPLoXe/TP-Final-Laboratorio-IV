@@ -61,10 +61,11 @@
         }
 
 
-        public function Edit($company)
+        public function Edit(company $company)
         {
             try
             {
+
                 if ($company->getLogo() !== '')
                 {
                     $logo = 'logo = :logo,';
@@ -72,18 +73,24 @@
                 } else
                     $logo = ' ';
 
+                
                 $this->userDAO->Edit($company->getUser());
+                $query = "UPDATE ".$this->tableName." 
+                          SET name = :name, 
+                          year_of_foundation = :year_of_foundation, 
+                          city = :city, 
+                          description = :description,
+                          ". $logo ." 
+                          phone_number = :phone_number 
+                          WHERE user_company_id = :company_id;";
 
-                $query = "UPDATE ".$this->tableName.' 
-                          SET name = :name, year_of_foundation = :year_of_foundation, city = :city, description = :description,'. $logo .', phone_number = :phone_number, approved = :approved WHERE company_id = :company_id;';
-
-                $parameters['company_id'] = $company->getUserId();//Hace falta el companyId del modelo Company ?
-                $parameters['name'] = $name;
-                $parameters['year_of_foundation'] = $yearOfFoundation;
-                $parameters['city'] = $city;
-                $parameters['description'] = $description;
-                $parameters['phone_number'] = $phoneNumber;
-                $parameters['approved'] = $approved;
+                $parameters['company_id'] = $company->getCompanyId();//Hace falta el companyId del modelo Company ? --> no se
+                $parameters['name'] = $company->getName();
+                $parameters['year_of_foundation'] = $company->getYearOfFoundation();
+                $parameters['city'] = $company->getCity();
+                $parameters['description'] = $company->getDescription();
+                $parameters['phone_number'] = $company->getPhoneNumber();
+                
 
                 $this->connection = Connection::GetInstance();
 

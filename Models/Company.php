@@ -13,12 +13,12 @@
         private string $logo; // base64 encode of the image
         private string $phoneNumber;
         private bool $approved;
-        private bool $active;
 
 
         public function __construct($companyId = 0)
         {
             $this->companyId = $companyId;
+            parent::setUserId($companyId);
         }
 
         
@@ -31,6 +31,7 @@
         public function setCompanyId(int $companyId): void
         {
             $this->companyId = $companyId;
+            parent::setUserId($companyId);
         }
         
 
@@ -98,7 +99,7 @@
         }      
 
         
-        public function getEmail(): string
+        /* public function getEmail(): string
         {
             return $this->email;
         }
@@ -106,8 +107,9 @@
 
         public function setEmail(string $email): void
         {
+            parent::setEmail($email);
             $this->email = $email;
-        }    
+        }      */
 
         
         public function getPhoneNumber(): string
@@ -122,7 +124,7 @@
         }
 
 
-        public function isActive(): bool
+        /* public function isActive(): bool
         {
             return $this->active;
         }
@@ -130,16 +132,33 @@
 
         public function setActive(bool $active): void
         {
+            parent::setActive($active);
             $this->active = $active;
-        }
+        } */
 
-        public function isApproved()
+        public function isApproved(): bool
         {
             return $this->approved;
         }
 
-        public function setApproved($approved)
+        public function setApproved(bool $approved)
         {
             $this->approved = $approved;
+        }
+
+        public function getUser(): User
+        {
+            $user = new User;
+            $userRole = new UserRole(3);
+            $userRole->setActive(1);
+            
+            $userRole->setDescription("Company");
+
+            $user->setEmail($this->getEmail());
+            $user->setPassword($this->getPassword());
+            $user->setUserId($this->getCompanyId());
+            $user->setUserRole($userRole);
+
+            return $user;
         }
     }

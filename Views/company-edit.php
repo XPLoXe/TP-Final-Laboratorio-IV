@@ -47,7 +47,7 @@ if (!isset($_SESSION["loggedUser"]))
                               <div class="form-group">
                                    <label for=""><strong>Logo</strong></label>
                                    <img style="max-height: 50px" src="data:image/png;base64, <?php echo $company->getLogo() ?>"></img>
-                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control" value="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>">
+                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control" value="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>" required>
                               </div>
                          </div>
                          <div class="col-lg-4">
@@ -63,18 +63,18 @@ if (!isset($_SESSION["loggedUser"]))
                               <div class="col-lg-4">
                                    <div class="form-group">
                                         <label for=""><strong>Contraseña</strong></label>
-                                        <input type="text" name="phoneNumber" class="form-control" value="<?php echo $company->getPassword() ?>">
+                                        <input type="text" name="password" class="form-control" value="<?php echo $company->getPassword() ?>">
                                    </div>
                               </div>
                               <div class="col-lg-4">
                                    <div class="form-group">
                                         <label for=""><strong>Estado</strong></label>
                                         <div>
-                                             <input type="radio" id="Aprobada" value="true" checked>
+                                             <input type="radio" id="Aprobada" name="state" value="1" checked>
                                              <label>Aprobada</label>
                                         </div>
                                         <div>
-                                             <input type="radio" id="Desaprobada" value="false">
+                                             <input type="radio" id="Desaprobada" name="state" value="0">
                                              <label>Desaprobada</label>
                                         </div>
                                    </div>

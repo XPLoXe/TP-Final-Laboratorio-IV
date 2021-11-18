@@ -12,11 +12,14 @@
     class CompanyController
     {
         private $companyDAO;
+        private $userRoleDAO;
+
 
 
         public function __construct()
         {
             $this->companyDAO = new CompanyDAO();
+            $this->userRoleDAO = new UserRoleDAO();
         }
 
 
@@ -29,7 +32,7 @@
             }
             else
             {
-                $userRoleDAO = new UserRoleDAO();
+                
                 $company = new Company();
                 
                 $company->setEmail($parameters['email']);
@@ -37,7 +40,7 @@
                 $company->setPassword($this->GeneratePassword($parameters['name'], $parameters['yearOfFoundation'])); 
                
 
-                $company->setUserRole($userRoleDAO->GetUserRoleByDescription(ROLE_COMPANY));
+                $company->setUserRole($this->userRoleDAO->GetUserRoleByDescription(ROLE_COMPANY));
                 $company->setActive(true);
 
                 $company->setName($parameters['name']);
@@ -85,18 +88,26 @@
         {
             Utils::checkAdmin();
 
-            $company = new Company($parameters['id']);
 
+            $company = new Company($parameters['id']);
+            $userRole = $this->userRoleDAO->GetUserRoleByDescription(ROLE_COMPANY);
+
+            $company->setUserRole($userRole);
             $company->setName($parameters['name']);
             $company->setYearOfFoundation($parameters['yearOfFoundation']);
             $company->setCity($parameters['city']);
             $company->setDescription($parameters['description']);
             $company->setLogo($parameters['logo']['tmp_name']);
             $company->setEmail($parameters['email']);
-            $company->setPassword($parameters['password']);//agregar a la vista
+            $company->setPassword($parameters['password']);
             $company->setPhoneNumber($parameters['phoneNumber']);
-            $company->setApproved($parameters['approved']);//agregar a la vista
+            $company->setApproved((bool)$parameters['state']);
 
+            $this->companyDAO->setApprovedStatus((int)$parameters['id'], $parameters['state']); 
+
+           
+            
+            
             $this->companyDAO->Edit($company);
 
             $this->ShowInfo($parameters);
