@@ -12,6 +12,10 @@
         private UserRole $userRole;
         private bool $active;
 
+        public function __construct()
+        {
+            $this->active = 1;
+        }
 
         public function getUserId(): int
         {
