@@ -260,14 +260,16 @@ class JobOfferDAO
         }
 
 
-        public function DeleteApplication(int $jobOfferId): void
+        public function DeleteApplication(int $jobOfferId, int $user_student_id): void
         {
             try
             {
-                $query = "UPDATE ".$this->tableName." SET user_id = :user_id WHERE job_offer_id = :job_offer_id ;";
+                $tableName = "applications";
+                $query = "UPDATE ".$tableName." SET active = :active WHERE job_offer_id = :job_offer_id AND user_student_id = :user_student_id ;";
 
-                $parameters["user_id"] = NULL;
+                $parameters["active"] = 0;
                 $parameters["job_offer_id"] = $jobOfferId;
+                $parameters["user_student_id"] = $user_student_id;
 
                 $this->connection = Connection::GetInstance();
 
@@ -437,9 +439,10 @@ class JobOfferDAO
 
         public function GetStudentApplications(int $userId): array
         {
-            $query = "SELECT job_offer_id FROM Applications WHERE user_student_id = :user_student_id ;";
+            $query = "SELECT job_offer_id FROM Applications WHERE user_student_id = :user_student_id AND active = :active;";
 
             $parameters['user_student_id'] = $userId;
+            $parameters['active'] = 1;
 
             $this->connection = Connection::GetInstance();
             $resultSet = $this->connection->Execute($query, $parameters);

@@ -120,17 +120,23 @@ require_once('nav.php');
                                     {//or isCompany  
                                         if (!empty($applicants))
                                         {
-                                            ?><form id="deleteApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='deleteApplicant' method='POST'></form><?php
+                                            ?>
+                                           
+                                            
+                                            <?php
 
                                             foreach($applicants as $student)
                                             {
                                             ?>
+                                                <form id="deleteApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='deleteApplicant' method='POST'>
+                                                    <input type="hidden" value="<?php echo $student->getUserId()?>" name="studentId">
+                                                </form>
                                                 <div class="row">
                                                     <strong class="float-left">
                                                         <?php echo $student->getLastName()." ".$student->getFirstName()." | ".$student->getEmail(); ?>
                                                     </strong>
                                                     <div class="float-right"> <!-- Boton de info del estudiante -->
-                                                        <button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' <?php echo $student->getUserId()?>'>Eliminar</button>
+                                                        <button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' <?php echo $jobOffer->getJobOfferId()?>'>Eliminar Postulante</button>
                                                     </div>
                                                 </div>
                                             <?php

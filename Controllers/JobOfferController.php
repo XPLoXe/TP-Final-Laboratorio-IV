@@ -177,18 +177,20 @@
             // Ahora deleteApplicant elimina registros de studentsJobOffers
             //el delete me tiene q direccionar a la oferta de trabajo q estaba detallando
             $userController = new UserController;
-            
-            $this->jobOfferDAO->Delete((int)$parameters["jobOfferId"]);
 
-            /* if (Utils::isAdmin()) {
-                $user = $userController->GetUserById((int) $parameters["userId"]);
+
+            $this->jobOfferDAO->DeleteApplication((int)$parameters["jobOfferId"], (int)$parameters["studentId"]);
+            
+
+            if (Utils::isAdmin()) {
+                $user = $userController->GetUserById((int)$parameters["studentId"]);
                 $to_email = $user->getEmail();
                 $subject = APPLY_DELETE_EMAIL_SUBJECT;
                 $body = APPLY_DELETE_EMAIL;
                 $headers = APPLY_DELETE_EMAIL_HEADER;
                 mail($to_email, $subject, $body, $headers);
+            }
 
-            } */
             $message = APPLY_DELETE;
             require_once(VIEWS_PATH."home.php");
         }
