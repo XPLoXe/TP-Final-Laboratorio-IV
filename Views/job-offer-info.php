@@ -44,6 +44,17 @@ require_once('nav.php');
                     else
                         return false;
                 }
+
+                function confirmAcceptApplicant() {
+
+                    var response = confirm('¿Está seguro de que desea aceptar al aplicante?');
+
+                    if (response == true)
+                        return true;
+                    else
+                        return false;
+                }
+                
             </script>
 
            
@@ -51,6 +62,8 @@ require_once('nav.php');
                 <form id="delete" action="<?php echo FRONT_ROOT ?>JobOffer/Delete" name='delete' method='POST'></form>
                 <form id="apply" action="<?php echo FRONT_ROOT ?>JobOffer/Apply" name='apply' method='POST'></form>
                 <form id="generatePDF" action="<?php echo FRONT_ROOT ?>JobOffer/GeneratePDF" name='generatePDF' method='POST' target='_blank'></form>
+                <form id="studentInfo" action="<?php echo FRONT_ROOT ?>Student/ShowInfoView" name='studentInfo' method='POST' target='_blank'></form>
+                
                    
                 <table class="table bg-light-alpha">
 
@@ -128,12 +141,26 @@ require_once('nav.php');
                                                     <input type="hidden" value="<?php echo $student->getUserId()?>" name="studentId">
                                                 </form>
                                                 <div class="row">
+                                                    <br>
+                                                    <br>
                                                     <strong class="float-left">
                                                         <?php echo $student->getLastName()." ".$student->getFirstName()." | ".$student->getEmail(); ?>
                                                     </strong>
-                                                    <div class="float-right"> <!-- Boton de info del estudiante -->
+                                                    <div class="float-right"> 
                                                         <button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' <?php echo $jobOffer->getJobOfferId()?>'>Eliminar Postulante</button>
                                                     </div>
+                                                    <div class="float-right"> 
+                                                        <button class="btn btn-info mx-2" type="submit" name="studentInfo" form="studentInfo" value=' <?php echo $student->getUserId()?>'>Información</button>
+                                                    </div>
+                                                    <?php if (Utils::isCompany()) {?>
+                                                        <form id="acceptApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/AcceptApplicant" name='acceptApplicant' method='POST'>
+                                                            <input type="hidden" value="<?php echo $student->getUserId()?>" name="studentId">
+                                                            <input type="hidden" value="<?php echo $jobOffer->getCompanyName()?>" name="companyName">
+                                                        </form>
+                                                        <div class="float-right"> 
+                                                            <button class="btn btn-success mx-2" type="submit" onclick="return confirmAcceptApplicant()" name="jobOfferId" form="acceptApplicant" value=' <?php echo $jobOffer->getJobOfferId()?>'>Aceptar Postulante</button>
+                                                        </div>
+                                                    <?php }?>
                                                 </div>
                                             <?php
                                             }

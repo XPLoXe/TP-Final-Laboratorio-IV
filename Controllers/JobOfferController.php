@@ -174,6 +174,9 @@
 
         public function DeleteApplicant(array $parameters): void
         {
+
+            Utils::checkAdminOrCompany();
+
             $userController = new UserController;
 
             $this->jobOfferDAO->DeleteApplication((int)$parameters["jobOfferId"], (int)$parameters["studentId"]);
@@ -189,6 +192,21 @@
             }
             $message = APPLY_DELETE;
             header("location:".FRONT_ROOT."Home/Index");
+        }
+
+        public function AcceptApplicant(array $parameters)
+        {
+            Utils::checkCompany();
+
+
+            $this->jobOfferDAO->Delete((int)$parameters["jobOfferId"]);
+
+            $student = $this->studentController->GetStudentByUserId((int)$parameters["studentId"]);
+
+            mail($student->getEmail(), APPLY_ACCEPT_EMAIL_SUBJECT, APPLY_ACCEPT_EMAIL . $parameters["companyName"] , APPLY_ACCEPT_EMAIL_HEADER); //thanking mail
+
+            $message = "<h4 class = 'text-center' style='color: greenyellow;'> El estudiante " . $student->getFirstName() ." ". $student->getLastName() . " ha sido aceptado </h4>";
+            require_once(VIEWS_PATH."home.php");
         }
 
 
