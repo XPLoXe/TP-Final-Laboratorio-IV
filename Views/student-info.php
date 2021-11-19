@@ -1,6 +1,8 @@
 
 <?php
-    use Utils\Utils as Utils;
+
+use Models\JobOffer;
+use Utils\Utils as Utils;
 
     if (!isset($_SESSION["loggedUser"]))
         header("location: ../index.php");
@@ -101,16 +103,16 @@
                             </div>
                             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                                 <?php 
-                                if (!empty($jobOffers))
+                                if (!empty($applications))
                                 {
-                                    foreach ($jobOffers as $jobOffer)
+                                    foreach ($applications as $application)
                                     { ?>
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <label>Compañía</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p><?php echo $jobOffer->getCompanyName(); ?></p>
+                                                <p><?php echo $application['jobOffer']->getCompanyName(); ?></p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -118,7 +120,7 @@
                                                 <label>Posición</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p><?php echo $jobOffer->getJobPosition()->getDescription(); ?></p>
+                                                <p><?php echo $application['jobOffer']->getJobPosition()->getDescription(); ?></p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -126,24 +128,26 @@
                                                 <label>Descripción</label>
                                             </div>
                                             <div class="col-md-6">
-                                                <p><?php echo $jobOffer->getDescription(); ?></p>
+                                                <p><?php echo $application['jobOffer']->getDescription(); ?></p>
                                             </div>
                                         </div>
                                         
                                         <div class="row">
                                             <?php
-                                                if ($jobOffer->isActive())
+                                                if ($application['jobOffer']->isActive() && $application['rejected'])
                                                 { ?>
                                                     <div class="col-md-6">
-                                                    <label><?php echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Cancelar Postulación</button>';?></label>
+                                                    <label><?php echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $application['jobOffer']->getJobOfferId() . '>Cancelar Postulación</button>';?></label>
                                                     <input type="hidden" value="<?php echo $student->getUserId()?>" name="studentId" form="deleteApplicant">
                                                     </div> <?php
                                                 }
                                             ?>
                                             <div class="col-md-6">
-                                                <button class="btn-success mx-2 btn" type="submit" name="id" form="info" value="<?php echo $jobOffer->getCompanyId() ?>">Detalles de la Compañía</button>
+                                                <button class="btn-success mx-2 btn" type="submit" name="id" form="info" value="<?php echo $application['jobOffer']->getCompanyId() ?>">Detalles de la Compañía</button> 
+                                                
                                             </div>
                                         </div>
+                                        <br> <hr> <br>
                                     
 
                                 <?php } }

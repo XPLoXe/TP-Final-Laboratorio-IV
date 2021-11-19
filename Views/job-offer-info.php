@@ -124,6 +124,7 @@ require_once('nav.php');
                             <td>
                                 <div class="col">
                                     <?php
+                                    
                                     if (Utils::isStudent() && !in_array($jobOffer->getJobOfferId(), $applications))
                                     {
                                         echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="apply" value='.$jobOffer->getJobOfferId().'>Postularse</button>';
@@ -131,7 +132,10 @@ require_once('nav.php');
                                     if(Utils::isAdmin() || Utils::isCompany())
                                     { 
                                         if (!empty($applicants))
-                                        {
+                                        {   
+                                            /* echo "<pre>";
+                                            var_dump($applicants);
+                                            echo "</pre>"; */
 
                                             foreach($applicants as $student)
                                             {
@@ -140,9 +144,7 @@ require_once('nav.php');
                                                     <input type="hidden" value="<?php echo $student->getUserId()?>" name="studentId">
                                                 </form>
 
-                                                <form id="studentInfo" action="<?php echo FRONT_ROOT ?>Student/ShowInfoView" name='studentInfo' method='POST'>
-                                                    <input type="hidden" value="<?php echo $student->getEmail()?>" name="studentEmail">
-                                                </form>
+                                                <form id="studentInfo" action="<?php echo FRONT_ROOT ?>Student/ShowInfoView" name='studentInfo' method='POST'></form>
 
                                                 <div class="row">
                                                     <br>

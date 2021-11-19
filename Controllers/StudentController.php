@@ -70,12 +70,14 @@
         public function ShowInfoView(array $parameters): void
         {
             Utils::checkUserLoggedIn();
-            $student = $this->studentDAO->GetStudentByEmailDB($parameters["studentEmail"]);
+            
+            
+            $student = $this->studentDAO->GetStudentByUserId($parameters["studentInfo"]);
+    
             $career = $this->careerDAO->GetCareerById($student->getCareerId());
             $jobOfferController = new JobOfferController();
             
-            $jobOffers = $jobOfferController->GetStudentApplications($student->getUserId());
-            
+            $applications = $jobOfferController->GetStudentApplications($student->getUserId()); 
         
 
             require_once(VIEWS_PATH."student-info.php");

@@ -60,7 +60,7 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link" href="<?php echo FRONT_ROOT ?>Student/ShowInfoView?studentEmail=<?php echo $_SESSION["loggedUser"]->getEmail()?>">Información Personal</a>
+        <a class="nav-link" href="<?php echo FRONT_ROOT ?>Student/ShowInfoView?studentInfo=<?php echo $_SESSION["loggedUser"]->getUserId()?>">Información Personal</a>
       </li>
 
 

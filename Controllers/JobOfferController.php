@@ -31,6 +31,8 @@
             $this->studentController = new StudentController;
             $this->userController = new UserController;
             $this->jobOfferDAO = new JobOfferDAO;
+            $this->jobPositionDAO = new JobPositionDAO;
+            $this->companyDAO = new CompanyDAO();
         }
 
 
@@ -118,7 +120,7 @@
 
         public function Edit(array $parameters)
         {
-            Utils::checkAdmin();
+            Utils::checkAdminOrCompany();
 
             $jobOffer = new JobOffer;
 
@@ -254,7 +256,7 @@
                 {
                     foreach ($applicationList as $application)
                     {
-                        array_push($applications, $application->getJobOfferId());
+                        array_push($applications, $application['jobOffer']->getJobOfferId());
                     }
                 }
             }
@@ -314,11 +316,12 @@
 
         public function ShowEditView(array $parameters): void
         {
-            Utils::checkAdmin();
+            Utils::checkAdminOrCompany();
+        
+            $jobOffer = $this->jobOfferDAO->GetJobOfferById($parameters['jobOfferId']);
             
-            $jobOffer = $this->jobOfferDAO->GetJobOfferById($this->GetAll(),$parameters['jobOfferId']);
-
             $jobPositionList = $this->jobPositionDAO->GetAll();
+            
             array_unshift($jobPositionList, $jobOffer->getJobPosition());
 
             $companyList = $this->companyDAO->GetAll();

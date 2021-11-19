@@ -96,7 +96,7 @@ class JobOfferDAO
                     $flyer = ' ';
 
                 $query =   "UPDATE ".$this->tableName." SET job_position_id = :job_position_id, 
-                company_id = :company_id, expiration_date = :expiration_date, description = :description 
+                user_company_id = :company_id, expiration_date = :expiration_date, description = :description 
                 ".$flyer." WHERE job_offer_id = :job_offer_id ;";
 
                 $parameters['job_offer_id'] = $jobOffer->getJobOfferId();
@@ -465,7 +465,10 @@ class JobOfferDAO
                     $jobOffer->getCompany()->setName($row['name']);
                     $jobOffer->setDescription($row['offer_description']);
                     $jobOffer->setActive($row['active']); // Using this as an auxiliar place for boolean value signifying cancelled application, don't tell anyone it's a secret
-                    array_push($applications, $jobOffer);
+                    $application['jobOffer'] = $jobOffer;
+                    $application['rejected'] = $row['application_active'];
+                    array_push($applications, $application);
+                    
                 }
             }
             return $applications;
