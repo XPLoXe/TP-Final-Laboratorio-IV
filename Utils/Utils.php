@@ -70,6 +70,11 @@
                 header("location: ../index.php");
         }
 
+        public static function checkAdminOrCompany()
+        {
+            if(!Utils::isAdmin() && !Utils::isCompany())
+                header("location: ../index.php");
+        }
 
         public static function checkCompany(): void
         {

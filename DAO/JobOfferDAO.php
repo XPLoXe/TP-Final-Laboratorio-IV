@@ -1,7 +1,8 @@
 <?php
     namespace DAO;
 
-    use DAO\Connection as Connection;
+use Controllers\StudentController;
+use DAO\Connection as Connection;
     use DAO\JobPositionDAO as JobPositionDAO;
     use DAO\StudentDAO as StudentDAO;
     use Models\JobOffer as JobOffer;
@@ -11,11 +12,14 @@
     use Utils\Utils as Utils;
     use DateTime;
     use Exception as Exception;
+use Models\Student;
 
-    class JobOfferDAO
+class JobOfferDAO
     {
         private $connection;
         private $tableName = "JobOffers";
+
+
 
         public function Add(JobOffer $jobOffer): void
         {
@@ -48,7 +52,7 @@
         {
             try
             {
-                $query =   "UPDATE ".$this->tableName." SET user_id = NULL, active = :active WHERE job_offer_id = :job_offer_id ;";
+                $query =   "UPDATE ".$this->tableName." SET active = :active WHERE job_offer_id = :job_offer_id ;";
 
                 $parameters['job_offer_id'] = $jobOfferId;
                 $parameters['active'] = 0;
@@ -56,13 +60,30 @@
                 $this->connection = Connection::GetInstance();
 
                 $resultSet = $this->connection->ExecuteNonQuery($query, $parameters);
+
             }
             catch (Exception $ex)
             {
                 throw $ex;
             }
+
+            $this->ThankingEmail($this->GetJobOfferById($jobOfferId));
+
         }
 
+        public function ThankingEmail(JobOffer $jobOffer): void
+        {
+            $studentController = new StudentController();
+            $studentList = $studentController->GetApplicants($jobOffer->getJobOfferId());
+
+            foreach ($studentList as $student)
+            {
+                mail($student->getEmail(), JOBOFFER_CULMINATE_EMAIL_SUBJECT, JOBOFFER_CULMINATE_EMAIL_BODY, JOBOFFER_CULMINATE_EMAIL_HEADER);
+            }
+        }
+
+
+        
 
         public function Edit(JobOffer $jobOffer)
         {
@@ -239,14 +260,16 @@
         }
 
 
-        public function DeleteApplication(int $jobOfferId): void
+        public function DeleteApplication(int $jobOfferId, int $user_student_id): void
         {
             try
             {
-                $query = "UPDATE ".$this->tableName." SET user_id = :user_id WHERE job_offer_id = :job_offer_id ;";
+                $tableName = "applications";
+                $query = "UPDATE ".$tableName." SET active = :active WHERE job_offer_id = :job_offer_id AND user_student_id = :user_student_id ;";
 
-                $parameters["user_id"] = NULL;
+                $parameters["active"] = 0;
                 $parameters["job_offer_id"] = $jobOfferId;
+                $parameters["user_student_id"] = $user_student_id;
 
                 $this->connection = Connection::GetInstance();
 
@@ -416,9 +439,10 @@
 
         public function GetStudentApplications(int $userId): array
         {
-            $query = "SELECT job_offer_id FROM Applications WHERE user_student_id = :user_student_id ;";
+            $query = "SELECT job_offer_id FROM Applications WHERE user_student_id = :user_student_id AND active = :active;";
 
             $parameters['user_student_id'] = $userId;
+            $parameters['active'] = 1;
 
             $this->connection = Connection::GetInstance();
             $resultSet = $this->connection->Execute($query, $parameters);

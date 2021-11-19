@@ -287,9 +287,11 @@
             $query = "SELECT s.user_student_id, email, first_name, last_name FROM ".$this->tableName." as s
                     INNER JOIN Users u ON u.user_id = s.user_student_id
                     INNER JOIN Applications app ON app.user_student_id = s.user_student_id
-                    WHERE app.job_offer_id = :job_offer_id ;";
+                    WHERE app.job_offer_id = :job_offer_id 
+                    AND app.active = :active ;";
 
             $parameters['job_offer_id'] = $jobOfferId;
+            $parameters['active'] = 1;
 
             $this->connection = Connection::GetInstance();
 
