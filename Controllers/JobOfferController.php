@@ -233,8 +233,17 @@
             if (Utils::isAdmin() || Utils::isCompany())
                 $applicants = $this->studentController->GetApplicants($jobOffer->getJobOfferId());
             else if (Utils::isStudent())
-                $applications = $this->GetStudentApplications($_SESSION['loggedUser']->getUserId());
-
+            {
+                $applicationList = $this->GetStudentApplications($_SESSION['loggedUser']->getUserId());
+                $applications = array();
+                if (!empty($applicationList))
+                {
+                    foreach ($applicationList as $application)
+                    {
+                        array_push($applications, $application->getJobOfferId());
+                    }
+                }
+            }
             require_once(VIEWS_PATH."job-offer-info.php");
         }
 
