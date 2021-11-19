@@ -230,7 +230,7 @@
             
             $jobOffer = $this->jobOfferDAO->GetJobOfferById($parameters['jobOfferId']);
 
-            if (Utils::isAdmin())
+            if (Utils::isAdmin() || Utils::isCompany())
                 $applicants = $this->studentController->GetApplicants($jobOffer->getJobOfferId());
             else if (Utils::isStudent())
                 $applications = $this->GetStudentApplications($_SESSION['loggedUser']->getUserId());

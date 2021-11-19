@@ -116,14 +116,10 @@ require_once('nav.php');
                                     {
                                         echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="apply" value='.$jobOffer->getJobOfferId().'>Postularse</button>';
                                     }
-                                    if(Utils::isAdmin())
-                                    {//or isCompany  
+                                    if(Utils::isAdmin() || Utils::isCompany())
+                                    { 
                                         if (!empty($applicants))
                                         {
-                                            ?>
-                                           
-                                            
-                                            <?php
 
                                             foreach($applicants as $student)
                                             {
