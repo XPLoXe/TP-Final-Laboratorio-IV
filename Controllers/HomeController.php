@@ -30,7 +30,7 @@
                     }
                 }
                 
-                header('location:'.FRONT_ROOT.'Home/Index');
+                require_once(VIEWS_PATH."home.php");
             }
             else
             {
