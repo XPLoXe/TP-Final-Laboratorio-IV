@@ -183,6 +183,7 @@
         {
             try
             {
+                
                 $jobPositionList = array();
 
                 $query = "SELECT * FROM ".$this->tableName." ";

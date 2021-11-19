@@ -144,9 +144,7 @@ require_once('nav.php');
                                                     <input type="hidden" value="<?php echo $student->getUserId()?>" name="studentId">
                                                 </form>
 
-                                                <form id="studentInfo" action="<?php echo FRONT_ROOT ?>Student/ShowInfoView" name='studentInfo' method='POST'>
-                                                    
-                                                </form>
+                                                <form id="studentInfo" action="<?php echo FRONT_ROOT ?>Student/ShowInfoView" name='studentInfo' method='POST'></form>
 
                                                 <div class="row">
                                                     <br>
@@ -158,7 +156,7 @@ require_once('nav.php');
                                                         <button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' <?php echo $jobOffer->getJobOfferId()?>'>Eliminar Postulante</button>
                                                     </div>
                                                     <div class="float-right"> 
-                                                        <button class="btn btn-info mx-2" type="submit" name="studentEmail" form="studentInfo" value=' <?php echo $student->getEmail()?>'>Información</button>
+                                                        <button class="btn btn-info mx-2" type="submit" name="studentInfo" form="studentInfo" value=' <?php echo $student->getUserId()?>'>Información</button>
                                                     </div>
                                                     <?php if (Utils::isCompany()) {?>
                                                         <form id="acceptApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/AcceptApplicant" name='acceptApplicant' method='POST'>

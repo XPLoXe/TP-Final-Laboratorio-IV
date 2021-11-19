@@ -72,7 +72,7 @@
             Utils::checkUserLoggedIn();
             
             
-            $student = $this->studentDAO->GetStudentByEmailDB($parameters["studentEmail"]);
+            $student = $this->studentDAO->GetStudentByUserId($parameters["studentInfo"]);
     
             $career = $this->careerDAO->GetCareerById($student->getCareerId());
             $jobOfferController = new JobOfferController();

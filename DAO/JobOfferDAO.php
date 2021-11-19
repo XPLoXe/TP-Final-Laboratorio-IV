@@ -97,7 +97,7 @@ class JobOfferDAO
                     $flyer = ' ';
 
                 $query =   "UPDATE ".$this->tableName." SET job_position_id = :job_position_id, 
-                company_id = :company_id, expiration_date = :expiration_date, description = :description 
+                user_company_id = :company_id, expiration_date = :expiration_date, description = :description 
                 ".$flyer." WHERE job_offer_id = :job_offer_id ;";
 
                 $parameters['job_offer_id'] = $jobOffer->getJobOfferId();
