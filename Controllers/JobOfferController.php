@@ -65,7 +65,7 @@
 
         public function Delete(array $parameters)
         {
-            Utils::checkAdmin();
+            Utils::checkAdminOrCompany();
 
             //Al eliminar una JobOffer, deberiamos eliminar todas las postulaciones de la misma
             $this->jobOfferDAO->Delete($parameters['jobOfferId']);
@@ -177,18 +177,20 @@
             // Ahora deleteApplicant elimina registros de studentsJobOffers
             //el delete me tiene q direccionar a la oferta de trabajo q estaba detallando
             $userController = new UserController;
+
+
+            $this->jobOfferDAO->DeleteApplication((int)$parameters["jobOfferId"], (int)$parameters["studentId"]);
             
-            $this->jobOfferDAO->DeleteApplication($parameters["jobOfferId"]);
 
             if (Utils::isAdmin()) {
-                $user = $userController->GetUserById((int) $parameters["userId"]);
+                $user = $userController->GetUserById((int)$parameters["studentId"]);
                 $to_email = $user->getEmail();
                 $subject = APPLY_DELETE_EMAIL_SUBJECT;
                 $body = APPLY_DELETE_EMAIL;
                 $headers = APPLY_DELETE_EMAIL_HEADER;
                 mail($to_email, $subject, $body, $headers);
-
             }
+
             $message = APPLY_DELETE;
             require_once(VIEWS_PATH."home.php");
         }
@@ -228,7 +230,7 @@
             
             $jobOffer = $this->jobOfferDAO->GetJobOfferById($parameters['jobOfferId']);
 
-            if (Utils::isAdmin())
+            if (Utils::isAdmin() || Utils::isCompany())
                 $applicants = $this->studentController->GetApplicants($jobOffer->getJobOfferId());
             else if (Utils::isStudent())
                 $applications = $this->GetStudentApplications($_SESSION['loggedUser']->getUserId());

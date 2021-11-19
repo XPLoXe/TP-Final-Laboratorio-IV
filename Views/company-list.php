@@ -78,6 +78,7 @@
                                     <?php
                                     if (Utils::isAdmin()) 
                                     {
+
                                         echo '<button class="btn btn-success" type= "submit" name="companyId" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
                                         echo '<button class="btn btn-danger" type="submit" onclick="return confirmDelete()" name="companyId" form="delete" value='.$company->getCompanyId().'>Eliminar</button>';
 
