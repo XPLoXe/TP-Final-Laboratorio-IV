@@ -62,10 +62,11 @@
                     <form id="edit" action="<?php echo FRONT_ROOT ?>JobOffer/ShowEditView" name='edit' method='POST'></form>
                     <form id="delete" action="<?php echo FRONT_ROOT ?>JobOffer/Delete" name='delete' method='POST'></form>
                     <form id="info" action="<?php echo FRONT_ROOT ?>JobOffer/ShowInfoView" name='info' method='POST'></form>
-                    <table class="table bg-light-alpha">
                     <?php
                     foreach ($jobOfferList as $jobOffer) {
-                    ?>  <table class="table bg-light-alpha">
+                    ?>  
+                    <div class="bg-light-alpha">
+                        <table class="table">
                         <tr>
                             <td>
                                 <div class="row">
@@ -113,10 +114,10 @@
                                 </div>
                             </td>
                         </tr>
-                    </table>
+                        </table>
+                    </div>
                     <?php
                     }
-                ?></table> <?php
                 }?>
             </div>
         </section>

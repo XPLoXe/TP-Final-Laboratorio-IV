@@ -63,13 +63,13 @@ require_once('nav.php');
                 <form id="apply" action="<?php echo FRONT_ROOT ?>JobOffer/Apply" name='apply' method='POST'></form>
                 <form id="generatePDF" action="<?php echo FRONT_ROOT ?>JobOffer/GeneratePDF" name='generatePDF' method='POST' target='_blank'></form>
                 
-                   
-                <table class="table bg-light-alpha">
+                <div class="bg-light-alpha">
+                <table class="table">
 
                         <?php if (Utils::isAdmin()) {?>                       
                         <tr>
                             <td>
-                                <div class="float-center">
+                                <div class="d-flex justify-content-around">
                                     <?php
                                         echo '<button class="btn btn-warning mx-2" type= "submit" name="jobOfferId" form="generatePDF" value=' . $jobOffer->getJobOfferId() . '>Generar PDF</button> ';
                                         echo '<button class="btn btn-success mx-2" type= "submit" name="jobOfferId" form="edit" value=' . $jobOffer->getJobOfferId() . '>Editar</button> ';
@@ -132,11 +132,7 @@ require_once('nav.php');
                                     if(Utils::isAdmin() || Utils::isCompany())
                                     { 
                                         if (!empty($applicants))
-                                        {   
-                                            /* echo "<pre>";
-                                            var_dump($applicants);
-                                            echo "</pre>"; */
-
+                                        {   echo '<div class="text-center text-white mt-2"><h3><strong> Postulantes </h3></strong></div>';
                                             foreach($applicants as $student)
                                             {
                                             ?>
@@ -146,28 +142,24 @@ require_once('nav.php');
 
                                                 <form id="studentInfo" action="<?php echo FRONT_ROOT ?>Student/ShowInfoView" name='studentInfo' method='POST'></form>
 
-                                                <div class="row">
-                                                    <br>
-                                                    <br>
-                                                    <strong class="float-left">
-                                                        <?php echo $student->getLastName()." ".$student->getFirstName()." | ".$student->getEmail(); ?>
-                                                    </strong>
-                                                    <div class="float-right"> 
-                                                        <button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' <?php echo $jobOffer->getJobOfferId()?>'>Eliminar Postulante</button>
-                                                    </div>
-                                                    <div class="float-right"> 
+                                                <div >
+
+                                                    <div class="d-inline-flex p-2 pl-5"><h5><?php echo $student->getLastName()." ".$student->getFirstName()." <strong class='h4'>|</strong> ".$student->getEmail(); ?></h5></div>
+                                                    
+                                                    <div class="d-inline-flex float-sm-right p-2">
+                                                        <button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value='<?php echo $jobOffer->getJobOfferId()?>'>Eliminar</button>
                                                         <button class="btn btn-info mx-2" type="submit" name="studentInfo" form="studentInfo" value=' <?php echo $student->getUserId()?>'>Información</button>
+                                                        <?php if (Utils::isCompany()) {?>
+                                                            <button class="btn btn-success mx-2" type="submit" onclick="return confirmAcceptApplicant()" name="jobOfferId" form="acceptApplicant" value='<?php echo $jobOffer->getJobOfferId()?>'>Aceptar</button>
+                                                            <form id="acceptApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/AcceptApplicant" name='acceptApplicant' method='POST'>
+                                                                <input type="hidden" value="<?php echo $student->getUserId()?>" name="studentId">
+                                                                <input type="hidden" value="<?php echo $jobOffer->getCompanyName()?>" name="companyName">
+                                                            </form>
+                                                        <?php }?>
                                                     </div>
-                                                    <?php if (Utils::isCompany()) {?>
-                                                        <form id="acceptApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/AcceptApplicant" name='acceptApplicant' method='POST'>
-                                                            <input type="hidden" value="<?php echo $student->getUserId()?>" name="studentId">
-                                                            <input type="hidden" value="<?php echo $jobOffer->getCompanyName()?>" name="companyName">
-                                                        </form>
-                                                        <div class="float-right"> 
-                                                            <button class="btn btn-success mx-2" type="submit" onclick="return confirmAcceptApplicant()" name="jobOfferId" form="acceptApplicant" value=' <?php echo $jobOffer->getJobOfferId()?>'>Aceptar Postulante</button>
-                                                        </div>
-                                                    <?php }?>
+
                                                 </div>
+                                                <br>
                                             <?php
                                             }
                                         }
@@ -180,7 +172,8 @@ require_once('nav.php');
                                 </div>
                             </td>
                         </tr>
-                    </table>
+                </table>
+                </div>
         </div>
     </section>
 </main>

@@ -31,9 +31,18 @@ if (!isset($_SESSION["loggedUser"]))
                 <strong>Radicada en:&nbsp</strong> <?php echo $company->getCity() ?> <br> 
               </h4>
             </div>
-            <div class="row d-flex  ">
-              <strong class="text-center  justify-content-md-center mt-4"><?php echo $company->getDescription() ?></strong>
+            <div class="row d-flex">
+              <strong class="text-center justify-content-md-center mt-4"><?php echo $company->getDescription() ?></strong>
             </div>
+            <?php 
+            if (Utils::isCompany() || Utils::isAdmin())
+            {?>
+              <div class="row d-flex text-center justify-content-md-center pt-3">
+                <button class="btn btn-success btn-primary btn-lg " type= "submit" name="companyId" form="edit" value="<?php echo $company->getCompanyId() ?>">Editar</button>
+              </div>
+            <?php 
+            }                                
+            ?>
         </div>
 
       </div>
@@ -41,14 +50,7 @@ if (!isset($_SESSION["loggedUser"]))
       <div class="row d-flex justify-content-around font-weight-bold">
         <div class="col-6"><h5> <img src="<?php echo FRONT_ROOT.IMG_PATH ?>tel.png">&nbsp&nbsp&nbsp<?php echo $company->getPhoneNumber()?></h5></div>
         <div class="col-6"><h5> <img src="<?php echo FRONT_ROOT.IMG_PATH ?>email.png">&nbsp&nbsp&nbsp<?php echo $company->getEmail()?></h5></div>
-        <?php 
-        if (Utils::isCompany() || Utils::isAdmin())
-        {
-          ?> 
-          <?php
-          echo '<button class="btn btn-primary btn-lg btn-success" type= "submit" name="companyId" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
-        }                                        
-        ?>
+        
       </div>
         
       

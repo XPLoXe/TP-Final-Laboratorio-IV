@@ -74,19 +74,19 @@
                                 <td><?php echo $company->getCity() ?></td>
                                 <td><?php echo $company->getPhoneNumber(); ?></td>
                                 <td style="max-width:300px" ><?php echo $company->getEmail() ?></td>
-                                <td><button class="btn btn-dark mx-2" type="submit" name="id" form="info" value='<?php echo $company->getCompanyId() ?>'>Detalles</button>
+                                <td>
+                                    <button class="btn btn-dark mx-2" type="submit" name="id" form="info" value='<?php echo $company->getCompanyId() ?>'>Detalles</button>
                                     <?php
                                     if (Utils::isAdmin()) 
                                     {
-
                                         echo '<button class="btn btn-success mx-2" type= "submit" name="companyId" form="edit" value=' . $company->getCompanyId() . '>Editar</button> ';
                                         echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDelete()" name="companyId" form="delete" value='.$company->getCompanyId().'>Eliminar</button>';
 
                                         if (!$company->isApproved())
                                             echo '<button class="btn btn-warning mx-2" type="submit" onclick="return confirmRegister()" name="companyId" form="register" value='.$company->getCompanyId().'>Registrar</button>';
 
-                                    } ?></td>
-                                </form>
+                                    } ?>
+                                </td>
                             </tr> 
                         <?php 
                         } 
