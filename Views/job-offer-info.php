@@ -62,7 +62,6 @@ require_once('nav.php');
                 <form id="delete" action="<?php echo FRONT_ROOT ?>JobOffer/Delete" name='delete' method='POST'></form>
                 <form id="apply" action="<?php echo FRONT_ROOT ?>JobOffer/Apply" name='apply' method='POST'></form>
                 <form id="generatePDF" action="<?php echo FRONT_ROOT ?>JobOffer/GeneratePDF" name='generatePDF' method='POST' target='_blank'></form>
-                <form id="studentInfo" action="<?php echo FRONT_ROOT ?>Student/ShowInfoView" name='studentInfo' method='POST' target='_blank'></form>
                 
                    
                 <table class="table bg-light-alpha">
@@ -140,6 +139,11 @@ require_once('nav.php');
                                                 <form id="deleteApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/DeleteApplicant" name='deleteApplicant' method='POST'>
                                                     <input type="hidden" value="<?php echo $student->getUserId()?>" name="studentId">
                                                 </form>
+
+                                                <form id="studentInfo" action="<?php echo FRONT_ROOT ?>Student/ShowInfoView" name='studentInfo' method='POST'>
+                                                    <input type="hidden" value="<?php echo $student->getEmail()?>" name="studentEmail">
+                                                </form>
+
                                                 <div class="row">
                                                     <br>
                                                     <br>
