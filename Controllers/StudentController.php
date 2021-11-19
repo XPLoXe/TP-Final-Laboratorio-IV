@@ -139,13 +139,15 @@
                 }
                 else
                 {
-                    //error message and relocate
+                    $message = ERROR_VERIFY_EMAIL ;
+                    require_once(VIEWS_PATH."login.php");
                 }
                 
             }
             else
             {
-                //error message and relocate
+                $message = ERROR_VERIFY_PASSWORD ;
+                require_once(VIEWS_PATH."login.php");
             }
             
         }
