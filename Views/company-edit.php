@@ -1,5 +1,8 @@
 <?php
-    if (!isset($_SESSION["loggedUser"])) 
+
+use Utils\Utils;
+
+if (!isset($_SESSION["loggedUser"])) 
         header("location: ../index.php");
 
     require_once('nav.php');
@@ -12,48 +15,76 @@
                     <div class="row">
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Nombre</label>
+                                   <label for=""><strong>Nombre</strong></label>
                                    <input type="text" name="name" class="form-control" value="<?php echo $company->getName() ?>">
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Año de fundación</label>
-                                   <input type="number" name="yearFoundation" class="form-control" value="<?php echo $company->getYearFoundation() ?>">
+                                   <label for=""><strong>Año de fundación</strong></label>
+                                   <input type="number" name="yearOfFoundation" min="1901" max="<?php echo date("Y"); ?>" class="form-control" value="<?php echo $company->getYearOfFoundation() ?>">
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Ciudad</label>
+                                   <label for=""><strong>Ciudad</strong></label>
                                    <input type="text" name="city" class="form-control" value="<?php echo $company->getCity() ?>">
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Descripción</label>
-                                   <input type="text" name="description" class="form-control" value="<?php echo $company->getDescription() ?>">
-                              </div>
-                         </div>
-                         <div class="col-lg-4">
-                              <div class="form-group">
-                                   <label for="">Email</label>
+                                   <label for=""><strong>Email</strong></label>
                                    <input type="email" name="email" class="form-control" value="<?php echo $company->getEmail() ?>">
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Teléfono</label>
+                                   <label for=""><strong>Teléfono</strong></label>
                                    <input type="text" name="phoneNumber" class="form-control" value="<?php echo $company->getPhoneNumber() ?>">
                               </div>
                          </div>
                          <div class="col-lg-4">
                               <div class="form-group">
-                                   <label for="">Logo</label>
-                                   <img style="max-height: 50px" src="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>"></img>
-                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control">
+                                   <label for=""><strong>Logo</strong></label>
+                                   <img style="max-height: 50px" src="data:image/png;base64, <?php echo $company->getLogo() ?>"></img>
+                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control" value="<?php echo $company->getLogo() ?>">
+                              </div>
+                         </div>
+                         <div class="col-lg-4">
+                              <div class="form-group">
+                                   <label for=""><strong>Descripción</strong></label> <strong></strong>
+                                   <textarea id="bio" name="description" class="form-control" style="width: 800px; height: 150px;" ><?php echo $company->getDescription() ?></textarea>
                               </div>
                          </div>
                     </div>
+                    <?php if (Utils::isAdmin() || Utils::isCompany()){?>
+                         <br>
+                         <div class="row">
+                              <div class="col-lg-4">
+                                   <div class="form-group">
+                                        <label for=""><strong>Contraseña</strong></label>
+                                        <input type="text" name="password" class="form-control" value="<?php echo $company->getPassword() ?>">
+                                   </div>
+                              </div>
+                              <?php if (Utils::isAdmin()) {?>
+                                   <div class="col-lg-4">
+                                        <div class="form-group">
+                                             <label for=""><strong>Estado</strong></label>
+                                             <div>
+                                                  <input type="radio" id="Aprobada" name="state" value="1" checked>
+                                                  <label>Aprobada</label>
+                                             </div>
+                                             <div>
+                                                  <input type="radio" id="Desaprobada" name="state" value="0">
+                                                  <label>Desaprobada</label>
+                                             </div>
+                                        </div>
+                                   </div>
+                              <?php }?>
+                              
+                         </div>
+                    <?php }?>
+                    
                     <button type="submit" name="id" value="<?php echo $company->getCompanyId() ?>" class="btn btn-dark ml-auto d-block">Aceptar</button>
                </form>
           </div>

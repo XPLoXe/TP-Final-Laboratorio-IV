@@ -10,17 +10,23 @@
           <link rel="stylesheet" type="text/css" href="css\estilos.css">
      </head>
      <body>
-          <main class="d-flex align-items-center justify-content-center height-100">
+          <br>
+          <main class="d-flex align-items-center justify-content-center height-99">
                <div class="content">
                     <header class="text-center">
-                         <h1>Bienvenido <?php echo Utils::getLoggedUserFullName() ?> <br> Bolsa de Trabajo</h1>
+                         <?php echo $message ?>
+                         <h1><Strong>Bienvenido <?php echo Utils::getLoggedUserFullName() ?> <br> Bolsa de Trabajo</Strong></h1>
                     </header>
                </div>
           </main>
+          <br>
+          <h2 style="text-align: center;">BTC PRICE: <?php echo $btc?></h2>
+          <h2 style="text-align: center;">ETH PRICE: <?php echo $eth?></h2>
+          <h2 style="text-align: center;">LTC PRICE: <?php echo $ltc?></h2>
+          
      </body>
      
 </html>
 
 <?php
     require_once('footer.php');
-?>

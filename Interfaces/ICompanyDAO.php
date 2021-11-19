@@ -3,9 +3,10 @@
 
     use Models\Company as Company;
 
-    interface ICompanyDAO
+    interface ICareerDAO
     {
         function Add(Company $company);
+        function Delete(int $companyId);
+        function Edit(Company $company);
         function GetAll();
     }
-?>

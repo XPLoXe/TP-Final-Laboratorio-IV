@@ -7,6 +7,7 @@
         private $method;
         private $parameters = array();
         
+
         public function __construct()
         {
             $url = filter_input(INPUT_GET, "url", FILTER_SANITIZE_URL);
@@ -33,8 +34,8 @@
 
                 if (!empty($_GET))
                 {                    
-                    foreach ($_GET as $key => $value)                    
-                        array_push($this->parameters, $value);
+                    foreach ($_GET as $key => $value)      
+                        $this->parameters[$key] = $value;
                 }
                 else
                     $this->parameters = $urlArray;
@@ -45,27 +46,35 @@
             if ($_FILES)
             {
                 unset($this->parameters["button"]);
-
+                
                 foreach ($_FILES as $key => $file)
+                {
                     $this->parameters[$key] = $file;
+                }
             }
         }
+
 
         private static function getMethodRequest()
         {
             return $_SERVER["REQUEST_METHOD"];
         }            
 
-        public function getController() {
+
+        public function getController() 
+        {
             return $this->controller;
         }
 
-        public function getMethod() {
+
+        public function getMethod() 
+        {
             return $this->method;
         }
 
-        public function getparameters() {
+
+        public function getparameters() 
+        {
             return $this->parameters;
         }
     }
-?>

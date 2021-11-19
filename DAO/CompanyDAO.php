@@ -1,229 +1,342 @@
 <?php
-
     namespace DAO;
 
-    use Interfaces\ICompanyDAO as ICompanyDAO;
     use Models\Company as Company;
+    use Models\User as User;
+    use Models\UserRole as UserRole;
+    use DAO\UserDAO as UserDAO;
+    use Exception;
 
-    class CompanyDAO implements ICompanyDAO
+    class CompanyDAO
     {
-        private $companyList = array();
+        private $tableName = "Companies";
+        private $userDAO;
+
+        public function __construct()
+        {
+            $this->userDAO = new UserDAO();
+        }
+
 
         public function Add(Company $company)
         {
-            $this->RetrieveData();
-
-            if ($this->checkIfCompanyExists($company->getName()))
+            try
             {
-                array_push($this->companyList, $company);
+                $query = "INSERT INTO ".$this->tableName." (user_company_id, name, year_of_foundation, city, description, logo, phone_number, approved) VALUES (:user_company_id, :name, :year_of_foundation, :city, :description, :logo, :phone_number, :approved);";
 
-                $this->SaveData();
+                
+                $this->userDAO->Add($company->getUser());
+                
+                $parameters["user_company_id"] = (string)$this->userDAO->GetLastId();
+                
+                $parameters["name"] = $company->getName();
+                $parameters["year_of_foundation"] = $company->getYearOfFoundation();
+                $parameters["city"] = $company->getCity();
+                $parameters["description"] = $company->getDescription();
+                $parameters["logo"] = $company->getLogo();
+                $parameters["phone_number"] = $company->getPhoneNumber();
+                $parameters["approved"] = $company->isApproved();
+                
+                $this->connection = Connection::GetInstance();
+    
+                $this->connection->ExecuteNonQuery($query, $parameters);
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
             }
         }
 
-        
-        public function getCompanyList()
+
+        public function Delete(int $companyId): void
         {
-            return $this->companyList;
+            try
+            {
+                $this->userDAO->Delete($companyId);
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
         }
 
-        public function checkIfCompanyExists($companyName){
 
-            $this->RetrieveData();
+        public function Edit(company $company)
+        {
+            try
+            {
+                $this->userDAO->Edit($company->getUser()); // Edit the user part of company
 
-            foreach($this->companyList as $company){
+                if ($company->getLogo() != null)
+                {
+                    $logo = 'logo = :logo,';
+                    $parameters['logo'] = base64_encode(file_get_contents($company->getLogo()));
+                } else
+                    $logo = "";
 
-                if( strcasecmp ($company->getName(), $companyName ) === 0 )
+                $query = "UPDATE ".$this->tableName." 
+                          SET name = :name, year_of_foundation = :year_of_foundation, city = :city, description = :description, $logo phone_number = :phone_number 
+                          WHERE user_company_id = :company_id ;";
+
+                $parameters['company_id'] = $company->getCompanyId();
+                $parameters['name'] = $company->getName();
+                $parameters['year_of_foundation'] = $company->getYearOfFoundation();
+                $parameters['city'] = $company->getCity();
+                $parameters['description'] = $company->getDescription();
+                $parameters['phone_number'] = $company->getPhoneNumber();
+                
+
+                $this->connection = Connection::GetInstance();
+
+                $this->connection->ExecuteNonQuery($query, $parameters);
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
+        public function IsNameInDB(string $name): bool
+        {
+            try
+            {
+                $query = "SELECT name FROM ".$this->tableName." WHERE name = :name ;";
+
+                $parameters['name'] = $name;
+ 
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query,$parameters);
+                
+                if (!empty($resultSet))
+                    return true;
+                else
                     return false;
             }
-
-            return true;
-
-        }
-        
-        public function GetAll()
-        {
-            $this->RetrieveData();
-            
-            return $this->companyList;
-        }
-
-        public function getCompanyByEmail($email)
-        {
-            $this->RetrieveData();
-
-            foreach ($this->companyList as $$company) {
-
-                if ($email == $company->getEmail()) {
-                    return $company;
-                }
-            }
-
-            return null;
-        }
-
-        public function getCompanyById($id)
-        {
-            $this->RetrieveData();
-
-            foreach ($this->companyList as $company) {
-
-                if ($company->getCompanyId() == $id)
-                    return $company;
-            }
-
-            return null;
-        }
-
-        public function isNameinCompanyName($companyName,$name)
-        {
-            if (stripos($companyName,$name) === false)
-                return false;
-            else
-                return true;
-        }
-
-        public function getCompaniesFilterByName($name)
-        {
-            $this->RetrieveData();
-
-            $filterCompanies = array();
-
-            foreach ($this->companyList as $company)
+            catch (Exception $ex)
             {
-                if ( $this->isNameinCompanyName($company->getName(),$name) && $company->isActive() )
-                    array_push($filterCompanies, $company);
+                throw $ex;
             }
+        }
 
-            if (!empty($filterCompanies)) 
+
+        public function IsEmailInDB(string $email): bool
+        {
+            try
             {
-                $this->companyList = $filterCompanies;
-
-                return true;
-
-            } else
-
-                return false;
+                return $this->userDAO->IsEmailInDB($email);
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
         }
 
-        public function deleteCompany($id)
+
+        public function GetAll( $onlyApproved = true ): array
         {
-            $this->RetrieveData();
+            try
+            {
+                $userCompanyList = $this->userDAO->GetAll(ROLE_COMPANY);
 
-            $company = $this->getCompanyById($id);
-            $company->setActive(false);
+                $companyList = array();
 
-            $this->SaveData();
-        }
+                if($onlyApproved == true)
+                    $parameters['approved'] = 1;
+                else
+                    $parameters['approved'] = 0;
 
-        public function editCompany($companyId, $name, $yearFoundation, $city, $description, $logo, $tmp_name, $email, $phoneNumber): Company
-        {
-            $this->RetrieveData();
 
-            foreach ($this->companyList as $company) {
+                $query = 'SELECT * FROM '.$this->tableName.'  WHERE approved = :approved ORDER BY user_company_id ;';
 
-                if ($company->getCompanyId() == $companyId) 
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->Execute($query, $parameters);
+                
+                foreach ($resultSet as $row)
                 {
-                    $company->setName($name);
-                    $company->setYearFoundation($yearFoundation);
-                    $company->setCity($city);
-                    $company->setDescription($description);
-                    $company->setEmail($email);
-                    $company->setPhoneNumber($phoneNumber);
+                    $user = $this->userDAO->GetSpecificUser($userCompanyList,$row["user_company_id"]);
 
-                    #die(var_dump($tmp_name));
+                    $company = new Company($user->getUserId());
 
-                    if (!empty($tmp_name))
+                    $company->setEmail($user->getEmail());
+                    $company->setPassword($user->getPassword());
+                    $company->setUserRole($user->getUserRole());
+                    //$company->setActive($user->getActive());
+                    
+                    $company->setName($row["name"]);
+                    $company->setYearOfFoundation($row["year_of_foundation"]);
+                    $company->setCity($row["city"]);
+                    $company->setDescription($row["description"]);
+                    $company->setLogo($row["logo"]);
+                    $company->setPhoneNumber($row["phone_number"]);
+                    $company->setApproved((bool)$row["approved"]);
+
+                    array_push($companyList,$company);
+                }
+                
+                return $companyList;
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+        
+        public function GetCompanyById(int $companyId): Company
+        {
+            try
+            {
+                $userCompany = $this->userDAO->GetUserById($companyId);
+
+                $query = "SELECT * FROM ".$this->tableName." WHERE user_company_id = :company_id;";
+
+                $parameters['company_id'] = $companyId;
+
+                $this->connection = Connection::GetInstance();
+
+                $row = $this->connection->Execute($query, $parameters)[0];
+
+                $company = new Company($row["user_company_id"]);
+                $company->setName($row["name"]);
+                $company->setYearOfFoundation($row["year_of_foundation"]);
+                $company->setCity($row["city"]);
+                $company->setDescription($row["description"]);
+                $company->setLogo($row["logo"]);
+                $company->setPhoneNumber($row["phone_number"]);
+                $company->setApproved($row['approved']);
+
+                $company->setEmail($userCompany->getEmail());
+                $company->setPassword($userCompany->getPassword());
+                $company->setUserRole($userCompany->getUserRole());
+                $company->setActive($userCompany->isActive());
+               
+                return $company;  
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+        }
+
+
+        public function GetCompaniesFilteredByName(string $name): array
+        {
+            try
+            {    
+                $query = "SELECT user_company_id, name, year_of_foundation, city, c.description as company_description, logo, phone_number, approved, email, u.user_role_id, ur.description as role_description, ur.active FROM ".$this->tableName." as c 
+                          INNER JOIN Users u ON c.user_company_id = u.user_id
+                          INNER JOIN UserRoles ur ON u.user_role_id = ur.user_role_id
+                          WHERE name LIKE '%$name%' AND u.active = :active;";
+
+                $parameters['active'] = true;
+                
+                $this->connection = Connection::GetInstance();
+    
+                $filteredCompanies = $this->connection->Execute($query, $parameters);
+
+                $companyList = array();
+
+                if (!empty($filteredCompanies))
+                {
+                    foreach ($filteredCompanies as $row)
                     {
-                        echo "No estoy vacío";
-                        #die(var_dump($tmp_name, $logo));
-                        $this->SaveImage($tmp_name, $logo);
-                        $company->setLogo($logo);
+                        $company = new Company($row["user_company_id"]);
+                        $company->setName($row["name"]);
+                        $company->setYearOfFoundation($row["year_of_foundation"]);
+                        $company->setCity($row["city"]);
+                        $company->setDescription($row["company_description"]);
+                        $company->setLogo($row["logo"]);
+                        $company->setPhoneNumber($row["phone_number"]);
+                        $company->setApproved($row['approved']);
+                        $company->setEmail($row['email']);
+                        $company->setUserRole(new UserRole($row['user_role_id']));
+                        $company->getUserRole()->setDescription($row['role_description']);
+                        $company->getUserRole()->setActive($row['active']);
+                        $company->setActive(true);
+
+                        array_push($companyList,$company);
                     }
-                    $this->SaveData();
-
-                    return $company;
                 }
+                return $companyList;
             }
-
-            return null;
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
         }
 
-        public function getActiveCompanies()
+        public function GetCompanyByUser($user): Company
         {
-            $this->RetrieveData();
+            try
+            {
+                $userCompany= $this->userDAO->GetUserById($user->getUserId());
 
-            $activeCompanies = array();
+                $query = 'SELECT * FROM '.$this->tableName.' WHERE user_company_id = :user_company_id;';
 
-            foreach ($this->companyList as $company) {
+                $parameters['user_company_id'] = $userCompany->getUserId();
 
-                if ($company->isActive()) {
-                    array_push($activeCompanies, $company);
-                }
-            }
+                $this->connection = Connection::GetInstance();
 
-            return $activeCompanies;
-        }
-
-        private function RetrieveData()
-        {
-            $this->companyList = array();
-
-            if (file_exists('Data/companies.json')) {
-
-                $jsonContent = file_get_contents('Data/companies.json');
-
-                $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
-
-                foreach ($arrayToDecode as $valuesArray) {
-
+                $row = $this->connection->Execute($query, $parameters)[0];
+                
+                if (!empty($row))
+                {
                     $company = new Company();
 
-                    $company->setCompanyId($valuesArray["companyId"]);
-                    $company->setName($valuesArray["name"]);
-                    $company->setYearFoundation($valuesArray["yearFoundation"]);
-                    $company->setCity($valuesArray["city"]);
-                    $company->setDescription($valuesArray["description"]);
-                    $company->setLogo($valuesArray["logo"]); //check this
-                    $company->setEmail($valuesArray["email"]);
-                    $company->setPhoneNumber($valuesArray["phoneNumber"]);
-                    $company->setActive($valuesArray["active"]);
+                    $company->setCompanyId($userCompany->getUserId());
+                    $company->setEmail($userCompany->getEmail());
+                    $company->setPassword($userCompany->getPassword());
+                    $company->setUserRole($userCompany->getUserRole());
+                    $company->setActive($userCompany->isActive());
 
-                    array_push($this->companyList, $company);
+                    $company->setName($row["name"]);
+                    $company->setYearOfFoundation($row["year_of_foundation"]);
+                    $company->setCity($row["city"]);
+                    $company->setDescription($row["description"]);
+                    $company->setLogo($row["logo"]);
+                    $company->setPhoneNumber($row["phone_number"]);
+                    $company->setApproved($row["approved"]);                    
                 }
+                
+                return $company;
             }
-        }
-
-        public function SaveImage($tmp, $target)
-        {
-            move_uploaded_file($tmp, IMG_PATH.$target);
-        }
-
-        public function getCompanyPositionInArray($company)
-        {
-            return array_search($company,$this->companyList); //TODO: Rewrite this to avoid edge case where a company is deleted
-        }                                                     // and every id is now offset from array index
-
-        private function SaveData()
-        {
-            $arrayToEncode = array();
-
-            foreach ($this->companyList as $company) {
-
-                $valuesArray['companyId'] = $this->getCompanyPositionInArray($company);
-                $valuesArray['name'] = $company->getName();
-                $valuesArray['yearFoundation'] = $company->getYearFoundation();
-                $valuesArray['city'] = $company->getCity();
-                $valuesArray['description'] = $company->getDescription();
-                $valuesArray['logo'] = $company->getLogo();
-                $valuesArray['email'] = $company->getEmail();
-                $valuesArray['phoneNumber'] = $company->getPhoneNumber();
-                $valuesArray['active'] = $company->isActive();
-
-                array_push($arrayToEncode, $valuesArray);
+            catch (Exception $ex)
+            {
+                throw $ex;
             }
 
-            $jsonContent = json_encode($arrayToEncode, JSON_PRETTY_PRINT);
-            file_put_contents(JSON_PATH . 'companies.json', $jsonContent);
-        }    
+        }
+
+        public function setApprovedStatus(int $companyId, bool $flag): void
+        {
+            
+            try
+            {
+                $query =   "UPDATE ".$this->tableName." SET approved = :approved WHERE user_company_id = :user_company_id ;";
+
+                $parameters['user_company_id'] = $companyId;
+
+                if ($flag) 
+                {
+                    $parameters['approved'] = 1;
+                }
+                else
+                {
+                    $parameters['approved'] = 0;    
+                }
+                
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->ExecuteNonQuery($query, $parameters);
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+
+        }
     }

@@ -1,61 +1,95 @@
 <?php
     namespace Controllers;
 
-    use DAO\PasswordDAO;
-    use DAO\StudentDAO;
-    use Models\Student;
-
+    use Config\Message as Message;
+    use Controllers\StudentController as StudentController;
+    use Controllers\UserController as UserController;
+    use Controllers\CompanyController as CompanyController;
+    use DAO\JobOfferDAO as JobOfferDAO;
+    use DAO\UserDAO as UserDAO;
+    use Models\User as User;
     use Utils\Utils as Utils;
+    use Models\Student as Student;
+    use Models\Company as Company;
 
     class LoginController
     {
-        public function Login()
+        private $message;
+
+
+        public function ShowLoginView(array $parameters): void
         {
-            $parameters = array();
-            
-            if ($_SERVER['REQUEST_METHOD'] == "POST") 
+            $message = $parameters['message'];
+            require_once(VIEWS_PATH."login.php");
+        }
+
+        public function Login(): void
+        {
+            $jobOfferDAO = new JobOfferDAO;
+
+            if ($_SERVER['REQUEST_METHOD'] == "POST")
             {
-                $parameters = $_POST;
                 $email = $_POST["email"];
                 $password = $_POST["password"];
+                $message = "";
 
-                if (($email == "admin@admin.com") && ($password == "12345")) {
-                    $_SESSION["loggedUser"] = "admin";
-                    $_SESSION["isAdmin"] = true;
-                    //require_once(VIEWS_PATH."home.php"); //admin page redirect
-                    require_once(VIEWS_PATH."home.php"); //Lo hago para debuggear nomas
-                } else
+                $userController = new UserController();
+                
+                if ($userController->IsEmailInDataBase($email)) //TODO: rewrite
                 {
-                    //loading students
-                    $studentsDAO = new StudentDAO();
-                    $studentsList = array();
-                    $studentsList = $studentsDAO->GetAll();
-                    $student = new Student();
-                    $student = $studentsDAO->getStudentByEmail($email);
-
-                    //loading passwords
-                    $passwordDAO = new PasswordDAO();
-                    $passwordList = array();
-                    $passwordList = $passwordDAO->GetAll();
-
-                    if (!is_null($student)) {
-                        
-                        if ($passwordDAO->CheckUser($student->getStudentID(), $password)) {
-                            $_SESSION["loggedUser"] = $student;
-                            $_SESSION["isAdmin"] = false;
-                            require_once(VIEWS_PATH."home.php"); //regular user redirect
-                        }
-                        else
+                    $user = $userController->GetUserByEmail($email);
+                    
+                    if ($user->getPassword() == $password)
+                    {                        
+                        if ($user->getUserRoleDescription() == ROLE_ADMIN)
                         {
-                            echo "<script> if(confirm('Email or Password Incorrect, please try again'));</script>";
-                            require_once(VIEWS_PATH."login.php");
+                            //$jobOfferDAO->TryDatabaseUpdate(); 
+                            $_SESSION["loggedUser"] = $user;//admin
+                            header('location:'.FRONT_ROOT.'Home/Index');
+                        }
+                        else if ($user->getUserRoleDescription() == ROLE_STUDENT)
+                        {
+                            $studentController = new StudentController();
+                            $student = $studentController->GetStudentByUserId($user->getUserId());
+
+                            if ($student->isApiActive())
+                            {
+                                //$jobOfferDAO->TryDatabaseUpdate();
+                                $_SESSION["loggedUser"] = $student;
+                                header('location:'.FRONT_ROOT.'Home/Index');
+                            }
+                            else
+                            {
+                                header('location:'.FRONT_ROOT.'Login/ShowLoginView?message='.STUDENT_INACTIVE);
+                            }
+                        }
+                        else if ($user->getUserRole()->getDescription() == ROLE_COMPANY)
+                        {
+                            $companyController = new CompanyController();
+                            $company = $companyController->GetCompanyByUser($user);
+
+                            if ($company->isApproved())
+                            {
+                                //$jobOfferDAO->TryDatabaseUpdate();
+                                $_SESSION["loggedUser"] = $company;
+                                header('location:'.FRONT_ROOT.'Home/Index');
+                            }
+                            else
+                            {
+                                $message = COMPANY_NOT_APPROVED;
+                                require_once(VIEWS_PATH."login.php");
+                            }
                         }
                     }
                     else
                     {
-                        echo "<script> if(confirm('Email not found'));</script>";
+                        $message = WRONG_PASSWORD;
                         require_once(VIEWS_PATH."login.php");
                     }
+                } else
+                {
+                    $message = WRONG_EMAIL;// el mail no esta en la bd, no se puede logear
+                    require_once(VIEWS_PATH."login.php");
                 }
             } else
             {
@@ -65,11 +99,26 @@
         }
 
 
-        public function Logout()
+        public function Logout(): void
         {
-            $_SESSION = array(); //Clean every variable set in $_SESSION (session_destroy() does not clean them)
+            $_SESSION = array();
             session_destroy();
+            $message = "";
             require_once(VIEWS_PATH."login.php");
         }
+
+
+        public function ShowSignupView(): void
+        {
+            $userRoleController = new UserRoleController();
+            $message = "";
+            $studentRoleId = $userRoleController->GetIdByDescription(ROLE_STUDENT);
+            require_once(VIEWS_PATH."signup.php");
+        }
+
+
+        public function ShowSignupCompanyView(): void
+        {
+            require_once(VIEWS_PATH."company-register.php");
+        }
     }
-?>
