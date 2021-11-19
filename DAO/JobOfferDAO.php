@@ -466,7 +466,10 @@ class JobOfferDAO
                     $jobOffer->getCompany()->setName($row['name']);
                     $jobOffer->setDescription($row['offer_description']);
                     $jobOffer->setActive($row['active']); // Using this as an auxiliar place for boolean value signifying cancelled application, don't tell anyone it's a secret
-                    array_push($applications, $jobOffer);
+                    $application['jobOffer'] = $jobOffer;
+                    $application['rejected'] = $row['application_active'];
+                    array_push($applications, $application);
+                    
                 }
             }
             return $applications;

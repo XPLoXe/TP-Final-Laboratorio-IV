@@ -124,6 +124,7 @@ require_once('nav.php');
                             <td>
                                 <div class="col">
                                     <?php
+                                    
                                     if (Utils::isStudent() && !in_array($jobOffer->getJobOfferId(), $applications))
                                     {
                                         echo '<button class="btn btn-success mx-2" type="submit" name="jobOfferId" form="apply" value='.$jobOffer->getJobOfferId().'>Postularse</button>';
@@ -131,7 +132,10 @@ require_once('nav.php');
                                     if(Utils::isAdmin() || Utils::isCompany())
                                     { 
                                         if (!empty($applicants))
-                                        {
+                                        {   
+                                            /* echo "<pre>";
+                                            var_dump($applicants);
+                                            echo "</pre>"; */
 
                                             foreach($applicants as $student)
                                             {
@@ -141,7 +145,7 @@ require_once('nav.php');
                                                 </form>
 
                                                 <form id="studentInfo" action="<?php echo FRONT_ROOT ?>Student/ShowInfoView" name='studentInfo' method='POST'>
-                                                    <input type="hidden" value="<?php echo $student->getEmail()?>" name="studentEmail">
+                                                    
                                                 </form>
 
                                                 <div class="row">
@@ -154,7 +158,7 @@ require_once('nav.php');
                                                         <button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' <?php echo $jobOffer->getJobOfferId()?>'>Eliminar Postulante</button>
                                                     </div>
                                                     <div class="float-right"> 
-                                                        <button class="btn btn-info mx-2" type="submit" name="studentInfo" form="studentInfo" value=' <?php echo $student->getUserId()?>'>Información</button>
+                                                        <button class="btn btn-info mx-2" type="submit" name="studentEmail" form="studentInfo" value=' <?php echo $student->getEmail()?>'>Información</button>
                                                     </div>
                                                     <?php if (Utils::isCompany()) {?>
                                                         <form id="acceptApplicant" action="<?php echo FRONT_ROOT ?>JobOffer/AcceptApplicant" name='acceptApplicant' method='POST'>

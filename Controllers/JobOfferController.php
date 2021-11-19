@@ -254,7 +254,7 @@
                 {
                     foreach ($applicationList as $application)
                     {
-                        array_push($applications, $application->getJobOfferId());
+                        array_push($applications, $application['jobOffer']->getJobOfferId());
                     }
                 }
             }
