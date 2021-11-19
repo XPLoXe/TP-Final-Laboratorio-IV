@@ -52,7 +52,7 @@
             $jobOffer->setDescription($parameters["description"]);
             $jobOffer->setPublicationDate(new DateTime($parameters["publicationDate"]));
             $jobOffer->setExpirationDate(new DateTime($parameters["expirationDate"]));
-            if(!empty($parameters['flyer']['tmp_name']))
+            if(($parameters['flyer']['error']) == 0)
                 $jobOffer->setFlyer(base64_encode(file_get_contents($parameters['flyer']["tmp_name"])));
             $this->jobOfferDAO->Add($jobOffer);
 
