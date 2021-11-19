@@ -208,7 +208,7 @@
             mail($student->getEmail(), APPLY_ACCEPT_EMAIL_SUBJECT, APPLY_ACCEPT_EMAIL . $parameters["companyName"] , APPLY_ACCEPT_EMAIL_HEADER); //thanking mail
 
             $message = "<h4 class = 'text-center' style='color: greenyellow;'> El estudiante " . $student->getFirstName() ." ". $student->getLastName() . " ha sido aceptado </h4>";
-            require_once(VIEWS_PATH."home.php");
+            header('location:'.FRONT_ROOT.'Home/Index');
         }
 
 

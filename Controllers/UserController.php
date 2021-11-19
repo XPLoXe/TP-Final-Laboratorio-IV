@@ -107,7 +107,7 @@
                         $message = SIGNUP_SUCCESS;
 
                         if (Utils::isAdmin())
-                            require_once(VIEWS_PATH."home.php");
+                            header('location:'.FRONT_ROOT.'Home/Index');
                         else
                             require_once(VIEWS_PATH."login.php");
                     }

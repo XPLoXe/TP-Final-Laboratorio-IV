@@ -59,11 +59,13 @@
             {
                 $message = COMPANY_REGISTER_SUCCESS;
                 mail($company->getEmail(), COMPANY_REGISTER_EMAIL_SUBJECT, COMPANY_REGISTER_EMAIL_BODY);
-                require_once(VIEWS_PATH."home.php");
+                header('location:'.FRONT_ROOT.'Home/Index');
+                
             }
             else
             {
                 $message = COMPANY_REGISTERED;
+                
                 require_once(VIEWS_PATH."login.php");
             }
             
@@ -203,14 +205,14 @@
             }
         }
 
-        //La tengo q ver
+       
         public function RegisterNewCompany(array $parameters): void
         {
             $this->Add($parameters);
         }
 
 
-        //Esta tmb
+        
         public function RegisterExistingCompany(array $parameters): void
         {
             Utils::checkAdmin();
@@ -221,7 +223,7 @@
             $this->companyDAO->setApprovedStatus($company->getCompanyId(), true);
             $message = COMPANY_REGISTER_SUCCESS;
             
-            require_once(VIEWS_PATH."home.php");
+            header('location:'.FRONT_ROOT.'Home/Index');
         }
 
         private function GeneratePassword(string $name, int $year)
