@@ -48,7 +48,7 @@
         {
             try
             {
-                $query =   "UPDATE ".$this->tableName." SET user_id = NULL, active = :active WHERE job_offer_id = :job_offer_id ;";
+                $query =   "UPDATE ".$this->tableName." SET active = :active WHERE job_offer_id = :job_offer_id ;";
 
                 $parameters['job_offer_id'] = $jobOfferId;
                 $parameters['active'] = 0;

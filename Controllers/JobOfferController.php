@@ -65,7 +65,7 @@
 
         public function Delete(array $parameters)
         {
-            Utils::checkAdmin();
+            Utils::checkAdminOrCompany();
 
             //Al eliminar una JobOffer, deberiamos eliminar todas las postulaciones de la misma
             $this->jobOfferDAO->Delete($parameters['jobOfferId']);
