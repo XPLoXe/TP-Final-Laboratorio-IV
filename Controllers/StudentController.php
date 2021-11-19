@@ -155,17 +155,26 @@
         public function Add(Student $student)
         {
             
-            if ($this->userDAO->IsEmailInDB($student->getEmail()) || !$this->IsStudentActiveInUniversity($student->getEmail()))
-            {   
-                $message = ERROR_STUDENT_DUPLICATE ;
-                require_once(VIEWS_PATH."login.php");
-            }
-            else
+            if (!$this->userDAO->IsEmailInDB($student->getEmail()))
             {
-                $this->studentDAO->Add($student);
-                $message = SIGNUP_SUCCESS;
+                if ($this->IsStudentActiveInUniversity($student->getEmail()))
+                {   
+                    $this->studentDAO->Add($student);
+                    $message = SIGNUP_SUCCESS;
+                    require_once(VIEWS_PATH."login.php");
+                }
+                else
+                {
+                    $message = STUDENT_INACTIVE ;
+                    require_once(VIEWS_PATH."login.php");
+                }
+            } 
+            else 
+            {
+                $message = ERROR_VERIFY_EMAIL_DATABASE ;
                 require_once(VIEWS_PATH."login.php");
             }
+            
             
             
         }
