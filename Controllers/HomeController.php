@@ -5,11 +5,10 @@
 
     class HomeController
     {
-        public function Index($message = ""): void
+        public function Index(?array $text): void
         {
             if (Utils::isUserLoggedIn())
             {
-                $message = "";
                 $prices = $this->GetPricesFromBinance();
 
                 foreach ($prices as $k => $v)
@@ -29,6 +28,16 @@
                         $ltc = (double)$v['price'];
                     }
                 }
+                
+                if(is_null($text))
+                {
+                    $message = " ";
+                }
+                else
+                {
+                    $message = $text['message'];
+                }
+               
                 
                 require_once(VIEWS_PATH."home.php");
             }

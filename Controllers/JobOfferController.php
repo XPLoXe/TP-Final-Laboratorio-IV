@@ -170,7 +170,7 @@
                 $this->jobOfferDAO->Apply($parameters['jobOfferId'], $_SESSION["loggedUser"]->getUserId());
 
             $message = APPLY_SUCCESS;
-            header("location:".FRONT_ROOT."Home/Index");
+            header('location:'.FRONT_ROOT.'Home/Index?message='. APPLY_SUCCESS);
         }
 
 
