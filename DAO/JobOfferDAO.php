@@ -1,7 +1,8 @@
 <?php
     namespace DAO;
 
-    use DAO\Connection as Connection;
+use Controllers\StudentController;
+use DAO\Connection as Connection;
     use DAO\JobPositionDAO as JobPositionDAO;
     use DAO\StudentDAO as StudentDAO;
     use Models\JobOffer as JobOffer;
@@ -11,11 +12,14 @@
     use Utils\Utils as Utils;
     use DateTime;
     use Exception as Exception;
+use Models\Student;
 
-    class JobOfferDAO
+class JobOfferDAO
     {
         private $connection;
         private $tableName = "JobOffers";
+
+
 
         public function Add(JobOffer $jobOffer): void
         {
@@ -56,13 +60,30 @@
                 $this->connection = Connection::GetInstance();
 
                 $resultSet = $this->connection->ExecuteNonQuery($query, $parameters);
+
             }
             catch (Exception $ex)
             {
                 throw $ex;
             }
+
+            $this->ThankingEmail($this->GetJobOfferById($jobOfferId));
+
         }
 
+        public function ThankingEmail(JobOffer $jobOffer): void
+        {
+            $studentController = new StudentController();
+            $studentList = $studentController->GetApplicants($jobOffer->getJobOfferId());
+
+            foreach ($studentList as $student)
+            {
+                mail($student->getEmail(), JOBOFFER_CULMINATE_EMAIL_SUBJECT, JOBOFFER_CULMINATE_EMAIL_BODY, JOBOFFER_CULMINATE_EMAIL_HEADER);
+            }
+        }
+
+
+        
 
         public function Edit(JobOffer $jobOffer)
         {

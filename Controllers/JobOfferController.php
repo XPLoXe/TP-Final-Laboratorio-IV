@@ -178,9 +178,9 @@
             //el delete me tiene q direccionar a la oferta de trabajo q estaba detallando
             $userController = new UserController;
             
-            $this->jobOfferDAO->DeleteApplication($parameters["jobOfferId"]);
+            $this->jobOfferDAO->Delete((int)$parameters["jobOfferId"]);
 
-            if (Utils::isAdmin()) {
+            /* if (Utils::isAdmin()) {
                 $user = $userController->GetUserById((int) $parameters["userId"]);
                 $to_email = $user->getEmail();
                 $subject = APPLY_DELETE_EMAIL_SUBJECT;
@@ -188,7 +188,7 @@
                 $headers = APPLY_DELETE_EMAIL_HEADER;
                 mail($to_email, $subject, $body, $headers);
 
-            }
+            } */
             $message = APPLY_DELETE;
             require_once(VIEWS_PATH."home.php");
         }
