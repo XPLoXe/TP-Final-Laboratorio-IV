@@ -57,10 +57,8 @@
             
             if(Utils::isAdmin())
             {
-                $message = COMPANY_REGISTER_SUCCESS;
                 mail($company->getEmail(), COMPANY_REGISTER_EMAIL_SUBJECT, COMPANY_REGISTER_EMAIL_BODY);
-                header('location:'.FRONT_ROOT.'Home/Index');
-                
+                header('location:'.FRONT_ROOT.'Home/Index?message='. COMPANY_REGISTER_SUCCESS);
             }
             else
             {
@@ -221,9 +219,8 @@
             mail($company->getEmail(), COMPANY_REGISTER_EMAIL_SUBJECT, COMPANY_REGISTER_EMAIL_BODY); //mail notificando
             
             $this->companyDAO->setApprovedStatus($company->getCompanyId(), true);
-            $message = COMPANY_REGISTER_SUCCESS;
             
-            header('location:'.FRONT_ROOT.'Home/Index');
+            header('location:'.FRONT_ROOT.'Home/Index?message='. COMPANY_REGISTER_SUCCESS);
         }
 
         private function GeneratePassword(string $name, int $year)
