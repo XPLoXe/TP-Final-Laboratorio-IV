@@ -13,7 +13,7 @@
             <h3>Registrar nuevo usuario</h3>
             <?php echo $message ?>
         </header>
-        <form action="<?php echo FRONT_ROOT ?>User/Register" method="post" class="login-form bg-dark-alpha p-5 text-white">
+        <form action="<?php echo FRONT_ROOT ?>Student/RegisterNewStudent" method="post" class="login-form bg-dark-alpha p-5 text-white">
             <div class="form-group">
                 <label for="">Email</label>
                 <input type="email" name="email" class="form-control form-control-lg" placeholder="Ingrese su e-mail" required>

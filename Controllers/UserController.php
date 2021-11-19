@@ -36,13 +36,18 @@
             $student = new Student();
             $student = $this->studentController->GetStudentByEmail($email);
 
-            $user = new User();
+            $student->setPassword($password);
+
+            /* $user = new User();
+
             $user->setEmail($email);
             $user->setPassword($password);
             $user->setFirstName($student->getFirstName());
             $user->setLastName($student->getLastName());
             $user->setUserRole($userRole);
             $user->setAssociatedId($student->getStudentId());
+            */
+
 
             $this->userDAO->Add($user);
         }
@@ -60,7 +65,7 @@
         }
 
 
-        public function VerifyPassword(string $password, string $passwordConfirmation): bool
+        public function VerifyPassword(string $password, string $passwordConfirmation): bool //obsolete
         {
             if (strcmp($password, $passwordConfirmation) == 0)
                 return true;
@@ -72,7 +77,7 @@
         }
 
 
-        public function IsEmailInDataBase(string $email): bool
+        public function IsEmailInDataBase(string $email): bool 
         {
             if ($this->userDAO->IsEmailInDB($email))
             {
@@ -83,7 +88,7 @@
         }
 
 
-        public function Register(array $parameters): void
+        public function Register(array $parameters): void   //obsolete
         {
             $email = $parameters['email'];
             $password = $parameters['password'];
@@ -96,6 +101,7 @@
                 {
                     if (!$this->IsEmailInDataBase($email))
                     {   
+                        
                         $this->Add($email, $password, $userRoleId);
 
                         $message = SIGNUP_SUCCESS;
