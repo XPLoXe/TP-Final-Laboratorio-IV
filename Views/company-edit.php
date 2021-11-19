@@ -47,7 +47,7 @@ if (!isset($_SESSION["loggedUser"]))
                               <div class="form-group">
                                    <label for=""><strong>Logo</strong></label>
                                    <img style="max-height: 50px" src="data:image/png;base64, <?php echo $company->getLogo() ?>"></img>
-                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control" value="<?php echo FRONT_ROOT.IMG_PATH.$company->getLogo() ?>" required>
+                                   <input type="file" name="logo" accept=".jpg, jpeg, image/png, image/gif" class="form-control" value="<?php echo $company->getLogo() ?>">
                               </div>
                          </div>
                          <div class="col-lg-4">

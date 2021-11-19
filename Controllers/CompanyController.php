@@ -87,8 +87,7 @@
         public function Edit(array $parameters)
         {
             Utils::checkAdmin();
-
-
+            //die(var_dump($parameters));
             $company = new Company($parameters['id']);
             $userRole = $this->userRoleDAO->GetUserRoleByDescription(ROLE_COMPANY);
 
@@ -97,7 +96,8 @@
             $company->setYearOfFoundation($parameters['yearOfFoundation']);
             $company->setCity($parameters['city']);
             $company->setDescription($parameters['description']);
-            $company->setLogo($parameters['logo']['tmp_name']);
+            if ($parameters['logo']['error'] != 4)
+                $company->setLogo($parameters['logo']['tmp_name']);
             $company->setEmail($parameters['email']);
             $company->setPassword($parameters['password']);
             $company->setPhoneNumber($parameters['phoneNumber']);

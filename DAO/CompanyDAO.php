@@ -1,9 +1,9 @@
 <?php
-
     namespace DAO;
 
     use Models\Company as Company;
     use Models\User as User;
+    use Models\UserRole as UserRole;
     use DAO\UserDAO as UserDAO;
     use Exception;
 
@@ -65,26 +65,20 @@
         {
             try
             {
+                $this->userDAO->Edit($company->getUser()); // Edit the user part of company
 
-                if ($company->getLogo() !== '')
+                if ($company->getLogo() != null)
                 {
                     $logo = 'logo = :logo,';
                     $parameters['logo'] = base64_encode(file_get_contents($company->getLogo()));
                 } else
-                    $logo = ' ';
+                    $logo = "";
 
-                
-                $this->userDAO->Edit($company->getUser());
                 $query = "UPDATE ".$this->tableName." 
-                          SET name = :name, 
-                          year_of_foundation = :year_of_foundation, 
-                          city = :city, 
-                          description = :description,
-                          ". $logo ." 
-                          phone_number = :phone_number 
-                          WHERE user_company_id = :company_id;";
+                          SET name = :name, year_of_foundation = :year_of_foundation, city = :city, description = :description, $logo phone_number = :phone_number 
+                          WHERE user_company_id = :company_id ;";
 
-                $parameters['company_id'] = $company->getCompanyId();//Hace falta el companyId del modelo Company ? --> no se
+                $parameters['company_id'] = $company->getCompanyId();
                 $parameters['name'] = $company->getName();
                 $parameters['year_of_foundation'] = $company->getYearOfFoundation();
                 $parameters['city'] = $company->getCity();
@@ -233,7 +227,10 @@
         {
             try
             {    
-                $query = "SELECT * FROM ".$this->tableName." WHERE name LIKE '%$name%' AND active = :active;";
+                $query = "SELECT user_company_id, name, year_of_foundation, city, c.description as company_description, logo, phone_number, approved, email, u.user_role_id, ur.description as role_description, ur.active FROM ".$this->tableName." as c 
+                          INNER JOIN Users u ON c.user_company_id = u.user_id
+                          INNER JOIN UserRoles ur ON u.user_role_id = ur.user_role_id
+                          WHERE name LIKE '%$name%' AND u.active = :active;";
 
                 $parameters['active'] = true;
                 
@@ -247,21 +244,19 @@
                 {
                     foreach ($filteredCompanies as $row)
                     {
-                        $userCompany = $this->userDAO->GetUserById($companyId);
-
-                        $company = new Company($row["company_id"]);
+                        $company = new Company($row["user_company_id"]);
                         $company->setName($row["name"]);
                         $company->setYearOfFoundation($row["year_of_foundation"]);
                         $company->setCity($row["city"]);
-                        $company->setDescription($row["description"]);
+                        $company->setDescription($row["company_description"]);
                         $company->setLogo($row["logo"]);
                         $company->setPhoneNumber($row["phone_number"]);
                         $company->setApproved($row['approved']);
-
-                        $company->setEmail($userCompany->getEmail());
-                        $company->setPassword($userCompany->getPassword());
-                        $company->setUserRole($userCompany->getUserRole());
-                        $company->setActive($userCompany->isActive());
+                        $company->setEmail($row['email']);
+                        $company->setUserRole(new UserRole($row['user_role_id']));
+                        $company->getUserRole()->setDescription($row['role_description']);
+                        $company->getUserRole()->setActive($row['active']);
+                        $company->setActive(true);
 
                         array_push($companyList,$company);
                     }
