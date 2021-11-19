@@ -174,15 +174,12 @@
 
         public function DeleteApplicant(array $parameters): void
         {
-            // Ahora deleteApplicant elimina registros de studentsJobOffers
-            //el delete me tiene q direccionar a la oferta de trabajo q estaba detallando
             $userController = new UserController;
-
 
             $this->jobOfferDAO->DeleteApplication((int)$parameters["jobOfferId"], (int)$parameters["studentId"]);
             
-
-            if (Utils::isAdmin()) {
+            if (Utils::isAdmin()) 
+            {
                 $user = $userController->GetUserById((int)$parameters["studentId"]);
                 $to_email = $user->getEmail();
                 $subject = APPLY_DELETE_EMAIL_SUBJECT;
@@ -190,9 +187,8 @@
                 $headers = APPLY_DELETE_EMAIL_HEADER;
                 mail($to_email, $subject, $body, $headers);
             }
-
             $message = APPLY_DELETE;
-            require_once(VIEWS_PATH."home.php");
+            header("location:".FRONT_ROOT."Home/Index");
         }
 
 
@@ -335,15 +331,15 @@
 
         public function GeneratePDF(array $parameters)
         {
-            $jobOffer = $this->GetJobOfferById($parameters["jobOfferId"]);
-
-            $this->CreatePDF($jobOffer);
+            $jobOffer = $this->GetJobOfferById($parameters['jobOfferId']);
+            $applicants = $this->studentController->GetApplicants($parameters['jobOfferId']);
+            $this->CreatePDF($jobOffer, $applicants);
 
             require_once(VIEWS_PATH."job-offer-list.php");
         }
 
 
-        public function CreatePDF(JobOffer $jobOffer): void //must be created in another function because of how FPDF works
+        public function CreatePDF(JobOffer $jobOffer, array $applicants): void //must be created in another function because of how FPDF works
         {
             ob_end_clean(); //clears
             $pdf=new FPDF();
@@ -365,14 +361,27 @@
             $pdf->Cell(60,20,$jobOffer->getJobPosition()->getDescription());
             $pdf->Ln(20);
 
-            $pdf->SetFont('Arial', 'B', 12);
-            $pdf->Cell(60,20,"ID de usuario postulado: ");
-            $pdf->SetFont('Arial', '', 12);
-            $pdf->Cell(60,20,$jobOffer->getUserId());
-            $pdf->Ln(20);   
-
             $pdf->SetFont('Arial', '', 12);
             $pdf->Cell(60,20,$jobOffer->getDescription());
+            $pdf->Ln(20);
+            
+            $pdf->SetFont('Arial', 'B', 14);
+            if (!empty($applicants))
+            {
+                $pdf->SetFont('Arial', 'B', 14);
+                $pdf->Cell(60,20,"Usuarios postulados:");
+                $pdf->Ln(20);
+                foreach ($applicants as $applicant)
+                {
+                    $pdf->SetFont('Arial', '', 12);
+                    $pdf->Cell(20,10,"ID: ".$applicant->getUserId());
+                    $pdf->Cell(60,10,"Name: ".$applicant->getFirstName()." ".$applicant->getLastName());
+                    $pdf->Cell(60,10,"Email: ".$applicant->getEmail());
+                    $pdf->Ln(8);
+                }
+            } else
+                $pdf->Cell(60, 20,"No hay usuarios postulados.");
+            $pdf->Ln(20);
 
 
             $pdf->Output();
