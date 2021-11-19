@@ -66,13 +66,15 @@
             require_once(VIEWS_PATH."student-list.php");
         }
 
+
         public function ShowInfoView(): void
         {
             Utils::checkUserLoggedIn();
+
             $student = $this->studentDAO->GetStudentByEmail($_SESSION["loggedUser"]->getEmail());
             $career = $this->careerDAO->GetCareerById($student->getCareerId());
             $jobOfferController = new JobOfferController();
-            $jobOffer = $jobOfferController->GetJobOfferByUserId($_SESSION["loggedUser"]->getUserId());
+            $jobOffers = $jobOfferController->GetStudentApplications($student->getUserId());
 
             require_once(VIEWS_PATH."student-info.php");
         }

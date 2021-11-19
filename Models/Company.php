@@ -83,13 +83,16 @@
         }      
 
         
-        public function getLogo(): string
+        public function getLogo(): ?string
         {
-            return $this->logo;
+            if (isset($this->logo))
+                return $this->logo;
+            else
+                return null;
         }
 
 
-        public function setLogo( $logo ): void
+        public function setLogo($logo): void
         {
             if(empty($logo) || is_null($logo))
                 $this->logo = " ";

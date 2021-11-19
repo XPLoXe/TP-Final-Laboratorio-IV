@@ -36,7 +36,7 @@
                                     <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Información Personal</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Oferta Laboral</a>
+                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Postulaciones</a>
                                 </li>
                             </ul>
                         </div>
@@ -98,47 +98,53 @@
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                                <?php if (!is_null($jobOffer))
-                                { ?>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label>Compañía</label>
+                                <?php 
+                                if (!empty($jobOffers))
+                                {
+                                    foreach ($jobOffers as $jobOffer)
+                                    { ?>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Compañía</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><?php echo $jobOffer->getCompanyName(); ?></p>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <p><?php echo $jobOffer->getCompanyName(); ?></p>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Posición</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><?php echo $jobOffer->getJobPosition()->getDescription(); ?></p>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label>Posición</label>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <label>Descripción</label>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><?php echo $jobOffer->getDescription(); ?></p>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <p><?php echo $jobOffer->getJobPosition()->getDescription(); ?></p>
+                                        
+                                        <div class="row">
+                                            <?php
+                                                if ($jobOffer->isActive())
+                                                { ?>
+                                                    <div class="col-md-6">
+                                                    <label><?php echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Cancelar Postulación</button>';?></label>
+                                                    <input type="hidden" value="<?php echo $student->getUserId()?>" name="studentId" form="deleteApplicant">
+                                                    </div> <?php
+                                                }
+                                            ?>
+                                            <div class="col-md-6">
+                                                <button class="btn-success mx-2 btn" type="submit" name="id" form="info" value="<?php echo $jobOffer->getCompanyId() ?>">Detalles de la Compañía</button>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label>Descripción</label>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <p><?php echo $jobOffer->getDescription(); ?></p>
-                                        </div>
-                                    </div>
                                     
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <label><?php echo '<button class="btn btn-danger mx-2" type="submit" onclick="return confirmDeleteApplicant()" name="jobOfferId" form="deleteApplicant" value=' . $jobOffer->getJobOfferId() . '>Cancelar Postulación</button>';?></label>
-                                            <!-- <input type="hidden" value="<?php echo $jobOffer->getUserId()?>" name="userId" form="deleteApplicant"> -->
-                                            <?php echo '<input type="hidden" value='.$jobOffer->getUserId().' name="userId" form="deleteApplicant">' ?>
-                                            
-                                        </div>
-                                        <div class="col-md-6">
-                                            <button class="btn-success mx-2 btn" type="submit" name="id" form="info" value="<?php echo $jobOffer->getCompanyId() ?>">Detalles de la Compañía</button>
-                                        </div>
-                                    </div>
 
-
-                                <?php } 
+                                <?php } }
                                     else {?>
                                         <div class="col-md-6">
                                             <label>Usted no aplicó a ninguna Oferta Laboral </label>

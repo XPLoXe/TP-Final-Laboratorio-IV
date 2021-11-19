@@ -260,16 +260,16 @@ class JobOfferDAO
         }
 
 
-        public function DeleteApplication(int $jobOfferId, int $user_student_id): void
+        public function DeleteApplication(int $jobOfferId, int $userId): void
         {
             try
             {
-                $tableName = "applications";
+                $tableName = "Applications";
                 $query = "UPDATE ".$tableName." SET active = :active WHERE job_offer_id = :job_offer_id AND user_student_id = :user_student_id ;";
 
                 $parameters["active"] = 0;
                 $parameters["job_offer_id"] = $jobOfferId;
-                $parameters["user_student_id"] = $user_student_id;
+                $parameters["user_student_id"] = $userId;
 
                 $this->connection = Connection::GetInstance();
 
@@ -439,10 +439,14 @@ class JobOfferDAO
 
         public function GetStudentApplications(int $userId): array
         {
-            $query = "SELECT job_offer_id FROM Applications WHERE user_student_id = :user_student_id AND active = :active;";
+            $query = "SELECT jo.job_offer_id, jo.job_position_id, jp.description as job_position, c.user_company_id, c.name, jo.description as offer_description, app.active as application_active
+            FROM Applications app
+            INNER JOIN JobOffers jo ON jo.job_offer_id = app.job_offer_id
+            INNER JOIN JobPositions jp ON jo.job_position_id = jp.job_position_id
+            INNER JOIN Companies c ON jo.user_company_id = c.user_company_id
+            WHERE user_student_id = :user_student_id ;";
 
             $parameters['user_student_id'] = $userId;
-            $parameters['active'] = 1;
 
             $this->connection = Connection::GetInstance();
             $resultSet = $this->connection->Execute($query, $parameters);
@@ -452,8 +456,15 @@ class JobOfferDAO
             {
                 foreach ($resultSet as $row)
                 {
-                    $jobOfferId = $row['job_offer_id'];
-                    array_push($applications, $jobOfferId);
+                    $jobOffer = new JobOffer;
+                    $jobOffer->setJobOfferId($row['job_offer_id']);
+                    $jobOffer->setJobPosition(new JobPosition($row['job_position_id']));
+                    $jobOffer->getJobPosition()->setDescription($row['job_position']);
+                    $jobOffer->setCompany(new Company($row['user_company_id']));
+                    $jobOffer->getCompany()->setName($row['name']);
+                    $jobOffer->setDescription($row['offer_description']);
+                    $jobOffer->setActive($row['application_active']); // Using this as an auxiliar place for boolean value signifying cancelled application, don't tell anyone it's a secret
+                    array_push($applications, $jobOffer);
                 }
             }
             return $applications;

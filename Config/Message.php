@@ -7,7 +7,7 @@ define("ERROR_VERIFY_PASSWORD" , "<h4 class = 'text-center' style='color: red;'>
 define("ERROR_VERIFY_EMAIL", "<h4 class = 'text-center' style='color: red;'> El mail no existe </h4>");
 define("ERROR_VERIFY_EMAIL_DATABASE", "<h4 class = 'text-center' style='color: red;'> El email ya tiene una cuenta registrada </h4>");
 define("SIGNUP_SUCCESS", "<h4 class = 'text-center' style='color: green;'> Usuario registrado con éxito </h4>");
-define("ERROR_JOBOFFER_FILTER", "<strong style='color:red; font-size:small;'> Ninguna Compañia contiene el nombre ingresado </strong>");
+define("ERROR_JOBOFFER_FILTER", "<strong style='color:red; font-size:small;'> Ninguna oferta contiene el puesto ingresado </strong>");
 define("ERROR_COMPANY_FILTER", "<strong style='color:red; font-size:small;'> Ninguna Compañia contiene el nombre ingresado </strong>");
 define("ERROR_COMPANY_DUPLICATE", "<strong style='color:red; font-size:small;'> La Compañia ya existe </strong>");
 define("ERROR_STUDENT_DUPLICATE", "<h4  style='color:red;'> <strong> El Estudiante ya existe </strong> </h4>");
