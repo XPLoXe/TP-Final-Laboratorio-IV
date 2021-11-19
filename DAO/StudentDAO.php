@@ -152,7 +152,7 @@
             return null;
         }
 
-        /* public function GetStudentByEmailBD(string $email): Student
+        public function GetStudentByEmailBD(string $email): Student
         {
             $studentList = $this->GetAllFromAPI();//Base de datos
             
@@ -184,7 +184,7 @@
             {
                 throw $ex;
             }
-        } */
+        }
 
         public function GetStudentByUserId(int $userId): Student
         {
