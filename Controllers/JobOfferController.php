@@ -220,7 +220,7 @@
             $companyList = array();
             
             if (!Utils::isCompany()) 
-                $companyList = $companyController->GetAll(true);
+                $companyList = $companyController->GetAll(FILTER_TRUE);
             else
                 array_push($companyList, $companyController->GetCompanyById($_SESSION["loggedUser"]->getCompanyId()));
             
