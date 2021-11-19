@@ -35,9 +35,11 @@
                                 <li class="nav-item">
                                     <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Información Personal</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Postulaciones</a>
-                                </li>
+                                <?php if (Utils::isStudent() || Utils::isAdmin()) {?>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Postulaciones</a>
+                                    </li>
+                                <?php } ?>
                             </ul>
                         </div>
                     </div>
