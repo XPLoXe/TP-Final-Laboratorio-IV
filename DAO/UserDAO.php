@@ -194,7 +194,6 @@
         {
             try
             {
-                /* $query = "SELECT @@identity;"; */
                 $query = "SELECT LAST_INSERT_ID();";
 
 
@@ -214,7 +213,7 @@
 
         }
 
-        public function GetSpecificUser($userList, $id): User
+        public function GetSpecificUser($userList, $id)
         {
 
             foreach($userList as $user)
