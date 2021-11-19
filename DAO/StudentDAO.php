@@ -27,15 +27,15 @@
             {
                 $query = "INSERT INTO ".$this->tableName." (user_student_id, api_student_id, career_id, first_name, last_name, birth_date, phone_number, api_active) VALUES (:user_student_id, :api_student_id, :career_id, :first_name, :last_name, :birth_date, :phone_number, :api_active);";
 
-                $this->userDAO->Add($student->getUser());//pasar password en el controller
+                $this->userDAO->Add($student->getUser());
 
-                $parameters["user_student_id"] = $this->userDAO->GetLastId();
+                $parameters["user_student_id"] = (string)$this->userDAO->GetLastId();
 
                 $parameters["api_student_id"] = $student->getApiId();
                 $parameters["career_id"] = $student->getCareerId();
                 $parameters["first_name"] = $student->getFirstName();
                 $parameters["last_name"] = $student->getLastName();
-                $parameters["birth_date"] = $student->getBirthDay();
+                $parameters["birth_date"] = $student->getBirthDate()->format('Y-m-d');
                 $parameters["phone_number"] = $student->getPhoneNumber();
                 $parameters["api_active"] = $student->isApiActive();
                 
@@ -70,6 +70,7 @@
             try
             {
                 $userStudentList = $this->userDAO->GetAll(ROLE_STUDENT);
+                
                 $this->UpdateStudentsFromAPI();
 
                 $studentList = array();
@@ -88,7 +89,7 @@
 
                     $student = new Student();
 
-                    $student->setStudentId($user->getUserId());
+                    $student->setUserId($user->getUserId());
                     $student->setEmail($user->getEmail());
                     $student->setPassword($user->getPassword());
                     $student->setUserRole($user->getUserRole());
@@ -98,7 +99,7 @@
                     $student->setLastName($row["last_name"]);
                     $student->setApiId($row["api_student_id"]);
                     $student->setCareerId($row["career_id"]);
-                    $student->setBirthDay($row["birth_date"]);
+                    $student->setBirthDate($row["birth_date"]);
                     $student->setPhoneNumber($row["phone_number"]);
                     $student->setApiActive($row['api_active']);
                     //BD : API_ACTIVE (sobra)
@@ -140,7 +141,7 @@
 
         public function GetStudentByEmail(string $email)//LoginController
         {
-            $studentList = $this->GetAll();//Base de datos
+            $studentList = $this->GetAllFromAPI();//Base de datos
 
             foreach ($studentList as $student) 
             {
@@ -282,6 +283,39 @@
         }
 
 
+        private function GetAllFromAPI(): array // TODO: add $msg for situation where it can't retrieve students from API
+        {
+            $studentList = array();
+
+            $dataAPI = $this->GetStudentsFromApi();
+
+            if ($arrayToDecode = json_decode($dataAPI, true))
+            {
+                foreach ($arrayToDecode as $valuesArray)
+                {
+                    $student = new Student();
+                    $student->setApiId($valuesArray["studentId"]);
+                    $student->setCareerId($valuesArray["careerId"]);
+
+                    $student->setFirstName($valuesArray["firstName"]);
+                    $student->setLastName($valuesArray["lastName"]);
+                    $student->setDni($valuesArray["dni"]);
+                    $student->setFileNumber($valuesArray["fileNumber"]);
+                    $student->setGender($valuesArray["gender"]);
+                    $student->setBirthDate(new DateTime($valuesArray["birthDate"]));
+                    $student->setEmail($valuesArray["email"]);
+                    $student->setPhoneNumber($valuesArray["phoneNumber"]);
+                    $student->setApiActive($valuesArray["active"]);
+
+                    array_push($studentList, $student);
+                }
+            }
+            return $studentList;
+        }
+
+        
+
+
         public function GetApplicants(int $jobOfferId): array
         {
             $query = "SELECT s.user_student_id, email, first_name, last_name FROM ".$this->tableName." as s
@@ -315,4 +349,5 @@
             }
             return $applicants;
         }
+        
     }

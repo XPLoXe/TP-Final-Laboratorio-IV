@@ -132,4 +132,21 @@
         {
             $this->apiActive = $apiActive;
         }
+
+        public function getUser(): User
+        {
+            $user = new User;
+            $userRole = new UserRole(2);
+            $userRole->setActive(1);
+            
+            $userRole->setDescription("Student");
+
+            $user->setEmail($this->getEmail());
+            $user->setPassword($this->getPassword());
+            
+            $user->setUserRole($userRole);
+
+            return $user;
+        }
+
     }

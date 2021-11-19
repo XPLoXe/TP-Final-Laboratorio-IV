@@ -36,10 +36,7 @@
                 $company = new Company();
                 
                 $company->setEmail($parameters['email']);
-               
                 $company->setPassword($this->GeneratePassword($parameters['name'], $parameters['yearOfFoundation'])); 
-               
-
                 $company->setUserRole($this->userRoleDAO->GetUserRoleByDescription(ROLE_COMPANY));
                 $company->setActive(true);
 

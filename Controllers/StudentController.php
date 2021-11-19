@@ -4,6 +4,9 @@
     use Controllers\JobOfferController as JobOfferController;
     use DAO\CareerDAO as CareerDAO;
     use DAO\StudentDAO as StudentDAO;
+    use DAO\UserDAO;
+    use DAO\userRoleDAO;
+    use DateTime;
     use Models\Student as Student;
     use Models\User as User;
     use Utils\Utils as Utils;
@@ -12,12 +15,16 @@
     {
         private $studentDAO;
         private $careerDAO;
+        private $userRoleDAO;
+        private $userDAO;
+
 
         public function __construct()
         {
             $this->studentDAO = new StudentDAO();
             $this->careerDAO = new CareerDAO;
-            
+            $this->userRoleDAO = new userRoleDAO();
+            $this->userDAO = new UserDAO;
         }
 
         public function GetStudentByEmail(string $email)
@@ -33,12 +40,14 @@
 
 
         public function IsStudentActiveInUniversity(string $email): bool
-        {
+        {   
+            
             $student = $this->GetStudentByEmail($email);
+            
 
             if (!is_null($student))
             {
-                if ($student->isActive())
+                if ($student->isApiActive())
                     return true;
                 else
                     return false;
@@ -106,5 +115,51 @@
         public function GetApplicants(int $jobOfferId): array
         {
             return $this->studentDAO->GetApplicants($jobOfferId);
+        }
+
+        public function RegisterNewStudent(array $parameters):void
+        {
+            if ($this->VerifyPassword($parameters["password"], $parameters["password_confirmation"]))
+            {
+                $student = $this->GetStudentByEmail($parameters["email"]);
+                $student->setPassword($parameters["password"]);
+                $student->setUserRole($this->userRoleDAO->GetUserRoleByDescription(ROLE_STUDENT));
+                $student->setActive(true);
+                $this->Add($student);
+            }
+            else
+            {
+                //error message and relocate
+            }
+            
+        }
+
+        public function Add(Student $student)
+        {
+            
+            if ($this->userDAO->IsEmailInDB($student->getEmail()) || !$this->IsStudentActiveInUniversity($student->getEmail()))
+            {   
+                $message = ERROR_STUDENT_DUPLICATE ;
+                require_once(VIEWS_PATH."login.php");
+            }
+            else
+            {
+                $this->studentDAO->Add($student);
+                $message = SIGNUP_SUCCESS;
+                require_once(VIEWS_PATH."login.php");
+            }
+            
+            
+        }
+
+        public function VerifyPassword(string $password, string $passwordConfirmation): bool
+        {
+            if (strcmp($password, $passwordConfirmation) == 0)
+                return true;
+            else
+            {
+                $this->message = ERROR_VERIFY_PASSWORD;
+                return false;
+            }
         }
     }
