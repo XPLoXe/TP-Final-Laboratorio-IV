@@ -108,7 +108,7 @@ require_once('nav.php');
                         <tr>
                             <td>
                                 <div class="col">
-                                    <?php echo '<a class="btn btn-success mx-2" src="data:image/png;base64,'.$jobOffer->getFlyer().'">Flyer</a>'; ?>
+                                    <?php echo '<a class="btn btn-success" href="data:image/png;base64,'.$jobOffer->getFlyer().'"  alt="image flyer" download="flyer.png">Descargar Flyer</a>'; ?>
                                 </div>
                             </td>
                         </tr>
