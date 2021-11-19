@@ -67,30 +67,16 @@
         }
 
 
-        /* public function ShowInfoView(): void
-        {
-            Utils::checkUserLoggedIn();
-
-            $student = $this->studentDAO->GetStudentByEmail($_SESSION["loggedUser"]->getEmail());
-            $career = $this->careerDAO->GetCareerById($student->getCareerId());
-            $jobOfferController = new JobOfferController();
-            $jobOffers = $jobOfferController->GetStudentApplications($student->getUserId());
-
-            require_once(VIEWS_PATH."student-info.php");
-        } */
-
-
         public function ShowInfoView(array $parameters): void
         {
             Utils::checkUserLoggedIn();
-            $student = $this->studentDAO->GetStudentByEmail($parameters["studentEmail"]);
+            $student = $this->studentDAO->GetStudentByEmailDB($parameters["studentEmail"]);
             $career = $this->careerDAO->GetCareerById($student->getCareerId());
             $jobOfferController = new JobOfferController();
             
             $jobOffers = $jobOfferController->GetStudentApplications($student->getUserId());
             
-            
-            die;
+        
 
             require_once(VIEWS_PATH."student-info.php");
         }

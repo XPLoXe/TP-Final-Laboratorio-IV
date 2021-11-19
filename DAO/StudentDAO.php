@@ -152,32 +152,46 @@
             return null;
         }
 
-        public function GetStudentByEmailBD(string $email): Student
+        public function GetStudentByEmailDB(string $email): Student
         {
-            $studentList = $this->GetAllFromAPI();//Base de datos
-            
             try
             {
-                $student = new Student();
+                $userStudent= $this->userDAO->GetUserByEmail($email);
 
-                $student->setUserId($userStudent->getUserId());
-                $student->setEmail($userStudent->getEmail());
-                $student->setPassword($userStudent->getPassword());
-                $student->setUserRole($userStudent->getUserRole());
-                $student->setActive($userStudent->isActive());
+                $this->UpdateStudentsFromAPI();
 
-                $student->setFirstName($row["first_name"]);
-                $student->setLastName($row["last_name"]);
-                $student->setApiId($row["api_student_id"]);
-                $student->setCareerId($row["career_id"]);
-                $student->setBirthDate(new DateTime($row["birth_date"]));
-                $student->setPhoneNumber($row["phone_number"]);
-                $student->setApiActive($row["api_active"]);
+                $query = 'SELECT * FROM '.$this->tableName.' WHERE user_student_id = :user_student_id;';
 
-                $student->setFileNumber($studentAPI->getFileNumber());
-                $student->setDni($studentAPI->getDni());
-                $student->setGender($studentAPI->getGender());
+                $parameters['user_student_id'] = $userStudent->getUserId();
+
+                $this->connection = Connection::GetInstance();
+
+                $row = $this->connection->Execute($query, $parameters)[0];
                 
+                if (!empty($row))
+                {
+                    $studentAPI = $this->GetAPIStudentById($row["api_student_id"]);
+
+                    $student = new Student();
+
+                    $student->setUserId($userStudent->getUserId());
+                    $student->setEmail($userStudent->getEmail());
+                    $student->setPassword($userStudent->getPassword());
+                    $student->setUserRole($userStudent->getUserRole());
+                    $student->setActive($userStudent->isActive());
+
+                    $student->setFirstName($row["first_name"]);
+                    $student->setLastName($row["last_name"]);
+                    $student->setApiId($row["api_student_id"]);
+                    $student->setCareerId($row["career_id"]);
+                    $student->setBirthDate(new DateTime($row["birth_date"]));
+                    $student->setPhoneNumber($row["phone_number"]);
+                    $student->setApiActive($row["api_active"]);
+
+                    $student->setFileNumber($studentAPI->getFileNumber());
+                    $student->setDni($studentAPI->getDni());
+                    $student->setGender($studentAPI->getGender());
+                }
                 return $student;
             }
             catch (Exception $ex)
