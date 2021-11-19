@@ -32,7 +32,7 @@ class JobOfferDAO
                 $parameters["description"] = $jobOffer->getDescription();
                 $parameters["publication_date"] = $jobOffer->getPublicationDate()->format('Y-m-d');
                 $parameters["expiration_date"] = $jobOffer->getExpirationDate()->format('Y-m-d');
-                if(isset($jobOffer->getFlyer()))
+                if(($jobOffer->getFlyer() != null))
                     $parameters["flyer"] = $jobOffer->getFlyer();
 
                 $this->connection = Connection::GetInstance();
