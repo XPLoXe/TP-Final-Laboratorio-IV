@@ -192,8 +192,8 @@
                 $headers = APPLY_DELETE_EMAIL_HEADER;
                 mail($to_email, $subject, $body, $headers);
             }
-            $message = APPLY_DELETE;
-            header("location:".FRONT_ROOT."Home/Index");
+            
+            header("location:".FRONT_ROOT."Home/Index?message=". APPLY_DELETE);
         }
 
         public function AcceptApplicant(array $parameters)
@@ -208,7 +208,7 @@
             mail($student->getEmail(), APPLY_ACCEPT_EMAIL_SUBJECT, APPLY_ACCEPT_EMAIL . $parameters["companyName"] , APPLY_ACCEPT_EMAIL_HEADER); //thanking mail
 
             $message = "<h4 class = 'text-center' style='color: greenyellow;'> El estudiante " . $student->getFirstName() ." ". $student->getLastName() . " ha sido aceptado </h4>";
-            header('location:'.FRONT_ROOT.'Home/Index');
+            header('location:'.FRONT_ROOT.'Home/Index?message='. $message);
         }
 
 

@@ -28,8 +28,8 @@
                         $ltc = (double)$v['price'];
                     }
                 }
-                
-                if(is_null($text))
+               
+                if(empty($text))
                 {
                     $message = " ";
                 }
