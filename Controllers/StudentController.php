@@ -130,10 +130,18 @@
             if ($this->VerifyPassword($parameters["password"], $parameters["password_confirmation"]))
             {
                 $student = $this->GetStudentByEmail($parameters["email"]);
-                $student->setPassword($parameters["password"]);
-                $student->setUserRole($this->userRoleDAO->GetUserRoleByDescription(ROLE_STUDENT));
-                $student->setActive(true);
-                $this->Add($student);
+                if(!is_null($student))
+                {
+                    $student->setPassword($parameters["password"]);
+                    $student->setUserRole($this->userRoleDAO->GetUserRoleByDescription(ROLE_STUDENT));
+                    $student->setActive(true);
+                    $this->Add($student);
+                }
+                else
+                {
+                    //error message and relocate
+                }
+                
             }
             else
             {
