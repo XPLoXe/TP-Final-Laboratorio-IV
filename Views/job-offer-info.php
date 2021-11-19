@@ -66,7 +66,7 @@ require_once('nav.php');
                 <div class="bg-light-alpha">
                 <table class="table">
 
-                        <?php if (Utils::isAdmin()) {?>                       
+                        <?php if (Utils::isAdmin() || Utils::isCompany()) {?>                       
                         <tr>
                             <td>
                                 <div class="d-flex justify-content-around">
