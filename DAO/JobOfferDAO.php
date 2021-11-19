@@ -282,6 +282,8 @@ class JobOfferDAO
             }
         } 
 
+        
+
 
         public function IsUserIdInOffer(int $jobOfferId, int $userId): bool
         {
