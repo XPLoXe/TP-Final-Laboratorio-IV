@@ -249,44 +249,44 @@
         }
 
 
-        // public function GetStudentById(int $id)//API
-        // {
-        //     $this->RetrieveData();
+        /* public function GetStudentById(int $id)//API
+        {
+            $this->RetrieveData();
 
-        //     foreach ($this->studentList as $student) 
-        //     {
-        //         if ($student->getStudentId() == $id)
-        //             return $student;
-        //     }
+            foreach ($this->studentList as $student) 
+            {
+                if ($student->getStudentId() == $id)
+                    return $student;
+            }
 
-        //     return null;
-        // }
+            return null;
+        } */
 
-        // public function GetStudentByLastName(string $lastName)//API
-        // {
-        //     $this->RetrieveData();
+        public function GetStudentByLastName(string $lastName)//API
+        {
+            $studentList = $this->GetAllFromAPI();
 
-        //     foreach ($this->studentList as $student) 
-        //     {
-        //         if ($student->getLastName() == $lastName)
-        //             return $student;
-        //     }
+            foreach ($studentList as $student) 
+            {
+                if ($student->getLastName() == $lastName)
+                    return $student;
+            }
 
-        //     return null;
-        // }
+            return null;
+        }
 
-        // public function GetCareerIdByStudentId(string $studentId)//API
-        // {
-        //     $this->RetrieveData();
+        /* public function GetCareerIdByStudentId(string $studentId)//API
+        {
+            $studentList = $this->GetAllFromAPI();
 
-        //     foreach ($this->studentList as $student) 
-        //     {
-        //         if ($student->getStudentId() == $studentId)
-        //             return $student->getCareerId();
-        //     }
+            foreach ($studentList as $student) 
+            {
+                if ($student->getStudentId() == $studentId)
+                    return $student->getCareerId();
+            }
 
-        //     return null;  
-        // }
+            return null;  
+        } */
 
         private function GetStudentsFromApi(): string
         {
@@ -331,7 +331,7 @@
         }
 
 
-        private function GetAllFromAPI(): array // TODO: add $msg for situation where it can't retrieve students from API
+        public function GetAllFromAPI(): array // TODO: add $msg for situation where it can't retrieve students from API
         {
             $studentList = array();
 

@@ -61,7 +61,7 @@
         {
             Utils::checkUserLoggedIn();
 
-            $studentList = $this->studentDAO->GetAll();
+            $studentList = $this->studentDAO->GetAllFromAPI();
 
             require_once(VIEWS_PATH."student-list.php");
         }
@@ -103,7 +103,7 @@
                     if (is_null($student))
                     {
                         $message = ERROR_STUDENT_FILTER;
-                        $studentList = $this->studentDAO->GetAll();
+                        $studentList = $this->studentDAO->GetAllFromAPI();
                     } 
                     else
                         array_push($studentList, $student);
