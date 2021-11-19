@@ -85,8 +85,8 @@
 
         public function Edit(array $parameters)
         {
-            Utils::checkAdmin();
-            //die(var_dump($parameters));
+            Utils::checkAdminOrCompany();
+            
             $company = new Company($parameters['id']);
             $userRole = $this->userRoleDAO->GetUserRoleByDescription(ROLE_COMPANY);
 
@@ -98,14 +98,14 @@
             if ($parameters['logo']['error'] != 4)
                 $company->setLogo($parameters['logo']['tmp_name']);
             $company->setEmail($parameters['email']);
-            $company->setPassword($parameters['password']);
             $company->setPhoneNumber($parameters['phoneNumber']);
-            $company->setApproved((bool)$parameters['state']);
+            $company->setPassword($parameters['password']);
 
-            $this->companyDAO->setApprovedStatus((int)$parameters['id'], $parameters['state']); 
-
-           
-            
+            if(Utils::isAdmin())
+            {
+                $company->setApproved((bool)$parameters['state']);
+                $this->companyDAO->setApprovedStatus((int)$parameters['id'], $parameters['state']); 
+            }
             
             $this->companyDAO->Edit($company);
 

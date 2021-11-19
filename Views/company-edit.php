@@ -57,7 +57,7 @@ if (!isset($_SESSION["loggedUser"]))
                               </div>
                          </div>
                     </div>
-                    <?php if (Utils::isAdmin()){?>
+                    <?php if (Utils::isAdmin() || Utils::isCompany()){?>
                          <br>
                          <div class="row">
                               <div class="col-lg-4">
@@ -66,19 +66,21 @@ if (!isset($_SESSION["loggedUser"]))
                                         <input type="text" name="password" class="form-control" value="<?php echo $company->getPassword() ?>">
                                    </div>
                               </div>
-                              <div class="col-lg-4">
-                                   <div class="form-group">
-                                        <label for=""><strong>Estado</strong></label>
-                                        <div>
-                                             <input type="radio" id="Aprobada" name="state" value="1" checked>
-                                             <label>Aprobada</label>
-                                        </div>
-                                        <div>
-                                             <input type="radio" id="Desaprobada" name="state" value="0">
-                                             <label>Desaprobada</label>
+                              <?php if (Utils::isAdmin()) {?>
+                                   <div class="col-lg-4">
+                                        <div class="form-group">
+                                             <label for=""><strong>Estado</strong></label>
+                                             <div>
+                                                  <input type="radio" id="Aprobada" name="state" value="1" checked>
+                                                  <label>Aprobada</label>
+                                             </div>
+                                             <div>
+                                                  <input type="radio" id="Desaprobada" name="state" value="0">
+                                                  <label>Desaprobada</label>
+                                             </div>
                                         </div>
                                    </div>
-                              </div>
+                              <?php }?>
                               
                          </div>
                     <?php }?>
