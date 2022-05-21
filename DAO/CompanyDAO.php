@@ -5,16 +5,19 @@
     use Models\User as User;
     use Models\UserRole as UserRole;
     use DAO\UserDAO as UserDAO;
+    use DAO\JobOfferDAO as JobOfferDAO;
     use Exception;
 
     class CompanyDAO
     {
         private $tableName = "Companies";
         private $userDAO;
+        private $JobOfferDAO;
 
         public function __construct()
         {
             $this->userDAO = new UserDAO();
+            $this->jobOfferDAO = new JobOfferDAO();
         }
 
 
@@ -53,11 +56,20 @@
             try
             {
                 $this->userDAO->Delete($companyId);
+
+                $parameters['companyId'] = $companyId;
+                $query = "UPDATE ".$this->tableName." SET approved = false WHERE user_company_id = :companyId ;";
+                $this->connection = Connection::GetInstance();
+                $this->connection->ExecuteNonQuery($query, $parameters);
+
+                $this->jobOfferDAO->DeleteByCompanyId($companyId);
+
             }
             catch (Exception $ex)
             {
                 throw $ex;
             }
+
         }
 
 
@@ -159,6 +171,8 @@
                 {
                     $user = $this->userDAO->GetSpecificUser($userCompanyList,$row["user_company_id"]);
 
+                
+
                     $company = new Company($user->getUserId());
 
                     $company->setEmail($user->getEmail());
@@ -183,7 +197,10 @@
             {
                 throw $ex;
             }
+
         }
+
+        
 
         
         public function GetCompanyById(int $companyId): Company

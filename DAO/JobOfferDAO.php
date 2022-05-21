@@ -1,8 +1,8 @@
 <?php
     namespace DAO;
 
-use Controllers\StudentController;
-use DAO\Connection as Connection;
+    use Controllers\StudentController;
+    use DAO\Connection as Connection;
     use DAO\JobPositionDAO as JobPositionDAO;
     use DAO\StudentDAO as StudentDAO;
     use Models\JobOffer as JobOffer;
@@ -12,7 +12,7 @@ use DAO\Connection as Connection;
     use Utils\Utils as Utils;
     use DateTime;
     use Exception as Exception;
-use Models\Student;
+    use Models\Student;
 
 class JobOfferDAO
     {
@@ -68,6 +68,28 @@ class JobOfferDAO
 
             $this->ThankingEmail($this->GetJobOfferById($jobOfferId));
 
+        }
+
+        public function DeleteByCompanyId(int $companyId) : void
+        {
+            try
+            {
+                $query =   "UPDATE ".$this->tableName." SET active = :active WHERE user_company_id = :companyId ;";
+
+                $parameters['companyId'] = $companyId;
+                $parameters['active'] = 0;
+
+                $this->connection = Connection::GetInstance();
+
+                $resultSet = $this->connection->ExecuteNonQuery($query, $parameters);
+
+            }
+            catch (Exception $ex)
+            {
+                throw $ex;
+            }
+
+            $this->ThankingEmail($this->GetJobOfferByCompanyId($companyId));
         }
 
         public function ThankingEmail(JobOffer $jobOffer): void
@@ -144,10 +166,11 @@ class JobOfferDAO
 
         public function TryDatabaseUpdate(): void
         {
+            $today = date("Y-m-d");
+
             if (file_exists(UPDATE_FILE_PATH))
             {
                 $lastUpdate = date(file_get_contents(UPDATE_FILE_PATH));
-                $today = date("Y-m-d");
 
                 if ($lastUpdate < $today)
                 {
@@ -284,7 +307,7 @@ class JobOfferDAO
         
 
 
-        public function IsUserIdInOffer(int $jobOfferId, int $userId): bool
+        public function IsUserIdInOffer(int $userId): bool
         {
             try
             {
@@ -436,6 +459,56 @@ class JobOfferDAO
             } else
                 return false;
         }
+
+        public function GetJobOfferByCompanyId(int $companyId): JobOffer
+        {
+            $query = "SELECT jo.description as job_offer_description ,jo.publication_date,jo.expiration_date,
+            jo.job_offer_id, jo.active, cp.name, cp.city, jp.description as job_position_description,
+            cr.description as career_description, jp.job_position_id,
+            cr.career_id, cp.user_company_id, jp.career_id, jo.flyer
+            FROM JobOffers jo
+            INNER JOIN Companies cp on jo.user_company_id = cp.user_company_id
+            INNER JOIN JobPositions jp on jo.job_position_id = jp.job_position_id
+            INNER JOIN Careers cr on jp.career_id = cr.career_id
+            WHERE jo.user_company_id = :companyId ";
+
+            $parameters['companyId'] = $companyId;
+
+            $this->connection = Connection::GetInstance();
+
+            $result = $this->connection->Execute($query, $parameters)[0];
+
+            if (!empty($result))
+            {
+                $jobOffer = new JobOffer();
+                        
+                $jobOffer->setJobOfferId($result["job_offer_id"]);
+
+                $jobPosition = new JobPosition($result['job_position_id']);
+                $jobPosition->setDescription($result['job_position_description']);
+                $jobPosition->setCareerId($result['career_id']);
+                $jobOffer->setJobPosition($jobPosition);
+
+                $company = new Company($result['user_company_id']);
+                $company->setName($result['name']);
+                $company->setCity($result['city']);
+                $jobOffer->setCompany($company);
+
+                $jobOffer->setDescription($result['job_offer_description']);
+                $jobOffer->setPublicationDate(new DateTime($result['publication_date']));
+                $jobOffer->setExpirationDate(new DateTime($result['expiration_date']));
+                $jobOffer->setActive($result['active']);
+                if (!empty($result['flyer']))
+                    $jobOffer->setFlyer($result['flyer']);
+                else
+                    $jobOffer->setFlyer("");
+
+                return $jobOffer;
+            } else
+                return false;
+        }
+
+        
 
 
         public function GetStudentApplications(int $userId): array
