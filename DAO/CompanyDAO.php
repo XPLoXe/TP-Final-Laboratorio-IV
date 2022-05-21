@@ -12,7 +12,7 @@
     {
         private $tableName = "Companies";
         private $userDAO;
-        private $JobOfferDAO;
+        private $jobOfferDAO;
 
         public function __construct()
         {
